@@ -664,7 +664,98 @@ class arrayString
 
         return new int[] { gSum, gsi, gei };
     }
-    
+    // Maximum sum rectangle in a 2D matrix
+    public static int kadanesForMatrix(int []arr)
+    {
+        int gsum = -(int)1e9;
+        int csum = 0;
+
+        for(int ele : arr)
+        {
+            
+            csum = Math.max(ele , csum + ele);
+            gsum = Math.max(gsum , csum);
+            
+        }
+        //System.out.println(gsum);
+        return gsum;
+    }
+    public static int maximumSumRectangle(int R, int C, int M[][]) 
+    {
+        int []arr = new int[C];
+        int MaxSum = -(int)1e9;
+        for(int k = 0;k<R;k++)
+        {
+            for(int i = k;i<R;i++)
+            {
+                for(int j = 0;j<C;j++)
+                {
+                    arr[j] += M[i][j];
+                }
+                MaxSum = Math.max(MaxSum,kadanesForMatrix(arr));
+            }
+            Arrays.fill(arr,0);
+        }
+        System.out.println(MaxSum);
+        return MaxSum;
+
+    }
+    // if we want to print matrix
+    int maximumSumRectangle_02(int R, int C, int arr[][]) {
+        int n = R, m = C, maxSum = -(int) 1e9;
+        int[] colPrefixSum = new int[m];
+
+        int r1 = 0, c1 = 0, r2 = 0, c2 = 0;
+
+        for (int fixRow = 0; fixRow < n; fixRow++) {
+
+            Arrays.fill(colPrefixSum, 0);
+
+            for (int row = fixRow; row < n; row++) {
+                for (int col = 0; col < m; col++)
+                    colPrefixSum[col] += arr[row][col];
+
+                int[] res = kadanesAlgoGenericSubarray(colPrefixSum);
+                if (res[0] >= maxSum) {
+                    maxSum = res[0];
+                    r1 = fixRow;
+                    c1 = res[1];
+                    r2 = row;
+                    c2 = res[2];
+                }
+            }
+        }
+
+        for (int i = r1; i <= r2; i++) {
+            for (int j = c1; j <= c2; j++) {
+                System.out.print(arr[i][j] + " ");
+            }
+            System.out.println();
+        }
+
+        return maxSum;
+    }
+    // rabbits in forest leetcode 781
+    public static int numRabbits(int[] arr) 
+    {
+        HashMap<Integer,Integer> map = new HashMap<>();
+        int sum = 0;
+        for(int i = 0;i < arr.length;i++)
+        {
+           int ele = arr[i];
+           if(!map.containsKey(ele))
+           {
+               if(ele!=0) map.put(ele,ele);
+               sum += ele+1;
+           }
+           else
+           {
+               map.put(ele , map.get(ele) -1);
+               if(map.get(ele) <= 0) map.remove(ele);
+           }
+        }
+        return sum;
+    }
     public static void main(String[] args) 
     {
         // int[] arr = new int[]{2,0,0,1,0,2,0,0,1,1,0};
@@ -677,6 +768,8 @@ class arrayString
         //System.out.println(CountSubArraysExactlyK(new int[]{1,2,1,2,3}, 2));
         //longestkSubstr("aabacbebebe", 3);
         //kadanes(new int[]{-2, -3, 4, -1, -2, 1, 5, -3});
-        kadanesGeneric(new int[]{-2, -3, 4, -1, -2, 1, 5, -3});
+        //kadanesGeneric(new int[]{-2, -3, 4, -1, -2, 1, 5, -3});
+        int[][]matrix = new int[][]{{1,2,-1,-4,-20},{-8,-3,4,2,1},{3,8,10,1,3},{-4,-1,1,7,-6}};
+        maximumSumRectangle(4, 5, matrix);
     }
 }
