@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch arrayString",
+            "request": "launch",
+            "mainClass": "arrayString",
+            "projectName": "Code_Pep_ee163942"
+        },
+        {
+            "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}"

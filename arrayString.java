@@ -1,6 +1,8 @@
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
 
 class arrayString
 {
@@ -558,6 +560,111 @@ class arrayString
         return length;
     }
     
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        PriorityQueue<Integer> pq = new PriorityQueue<>((a, b) -> {
+            return nums[b] - nums[a]; // other - this, reverse of default behaviour.
+        });
+
+        int n = nums.length, idx = 0;
+        int[] ans = new int[n - k + 1];
+        for (int i = 0; i < nums.length; i++) {
+            while (pq.size() != 0 && pq.peek() <= i - k)
+                pq.remove();
+
+            pq.add(i);
+
+            if (i >= k - 1)
+                ans[idx++] = nums[pq.peek()];
+        }
+        return ans;
+    }
+
+    public int[] maxSlidingWindow2(int[] nums, int k) {
+        LinkedList<Integer> deque = new LinkedList<>();
+        int n = nums.length, idx = 0;
+        int[] ans = new int[n - k + 1];
+        for (int i = 0; i < nums.length; i++) {
+            while (deque.size() != 0 && deque.getFirst() <= i - k)
+                deque.removeFirst();
+
+            while (deque.size() != 0 && nums[deque.getLast()] <= nums[i])
+                deque.removeLast();
+
+            deque.addLast(i);
+
+            if (i >= k - 1)
+                ans[idx++] = nums[deque.getFirst()];
+        }
+        return ans;
+    }
+    // kadanes 
+    public static void kadanes(int[] arr)
+    {
+        int gsum = 0;
+        int csum = 0;
+        for(int ele : arr)
+        {
+            csum += ele;
+            if(csum <= 0) csum = 0;
+            if(csum > gsum) gsum = csum;
+        }
+        System.out.println(gsum);
+    }
+    public static void kadanesGeneric(int[] arr)
+    {
+        int gsum = -(int)1e9;
+        int csum = 0;
+
+        for(int ele : arr)
+        {
+            
+            csum = Math.max(ele , csum + ele);
+            gsum = Math.max(gsum , csum);
+            
+        }
+        System.out.println(gsum);
+    }
+
+    public static int kadanesAlgo_SubArray(int[] arr) 
+    {
+        int gSum = 0, cSum = 0, gsi = 0, gei = 0, csi = 0;
+        for (int i = 0; i < arr.length; i++) {
+            int ele = arr[i];
+            cSum += ele;
+            if (cSum > gSum) {
+                gSum = cSum;
+
+                gsi = csi;
+                gei = i;
+            }
+            if (cSum <= 0) {
+                cSum = 0;
+                csi = i + 1;
+            }
+        }
+
+        return gSum;
+    }
+    public static int[] kadanesAlgoGenericSubarray(int[] arr) {
+        int gSum = -(int) 1e9, cSum = 0, gsi = 0, gei = 0, csi = 0;
+        for (int i = 0; i < arr.length; i++) {
+            int ele = arr[i];
+            cSum += ele;
+            if (ele >= cSum) {
+                cSum = ele;
+                csi = i;
+            }
+
+            if (cSum > gSum) {
+                gSum = cSum;
+                gsi = csi;
+                gei = i;
+            }
+        }
+
+        return new int[] { gSum, gsi, gei };
+    }
+    
     public static void main(String[] args) 
     {
         // int[] arr = new int[]{2,0,0,1,0,2,0,0,1,1,0};
@@ -569,5 +676,7 @@ class arrayString
         //AtmostkCount(new int[]{2, 1, 2, 1, 6}, 2);
         //System.out.println(CountSubArraysExactlyK(new int[]{1,2,1,2,3}, 2));
         //longestkSubstr("aabacbebebe", 3);
+        //kadanes(new int[]{-2, -3, 4, -1, -2, 1, 5, -3});
+        kadanesGeneric(new int[]{-2, -3, 4, -1, -2, 1, 5, -3});
     }
 }
