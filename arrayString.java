@@ -664,7 +664,7 @@ class arrayString
 
         return new int[] { gSum, gsi, gei };
     }
-    // Maximum sum rectangle in a 2D matrix
+    // 
     public static int kadanesForMatrix(int []arr)
     {
         int gsum = -(int)1e9;
@@ -756,6 +756,43 @@ class arrayString
         }
         return sum;
     }
+    // leetcode 560 SubArray sum ( Prefix Sum ) Approach using HashMap
+    public static int subarraySum(int[] nums, int k) 
+    {
+        int sum = 0;
+        int count = 0;
+        HashMap<Integer,Integer> map = new HashMap<>();
+        map.put(0,1);
+        for(int ele : nums)
+        {
+            sum += ele;
+            if(map.containsKey(sum - k)) count+=map.get(sum-k);
+            if(!map.containsKey(sum)) map.put(sum,1);
+            else if(map.containsKey(sum)) map.put(sum , map.get(sum)+1);
+        }
+        return count;
+    }
+    // leetcode 1074
+    public static int numSubmatrixSumTarget(int M[][] , int tar) 
+    {
+        int []arr = new int[M[0].length];
+        int count = 0;
+        for(int k = 0;k<M.length;k++)
+        {
+            for(int i = k;i<M.length;i++)
+            {
+                for(int j = 0;j<M[0].length;j++)
+                {
+                    arr[j] += M[i][j];
+                }
+                count += subarraySum(arr,tar);
+            }
+            Arrays.fill(arr,0);
+        }
+        System.out.println(count);
+        return count;
+
+    }
     public static void main(String[] args) 
     {
         // int[] arr = new int[]{2,0,0,1,0,2,0,0,1,1,0};
@@ -769,7 +806,7 @@ class arrayString
         //longestkSubstr("aabacbebebe", 3);
         //kadanes(new int[]{-2, -3, 4, -1, -2, 1, 5, -3});
         //kadanesGeneric(new int[]{-2, -3, 4, -1, -2, 1, 5, -3});
-        int[][]matrix = new int[][]{{1,2,-1,-4,-20},{-8,-3,4,2,1},{3,8,10,1,3},{-4,-1,1,7,-6}};
-        maximumSumRectangle(4, 5, matrix);
+        //int[][]matrix = new int[][]{{1,2,-1,-4,-20},{-8,-3,4,2,1},{3,8,10,1,3},{-4,-1,1,7,-6}};
+        // maximumSumRectangle(4, 5, matrix);
     }
 }
