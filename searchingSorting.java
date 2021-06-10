@@ -218,6 +218,56 @@ class searchingSorting
         System.out.println(count);
         print1D(arr);
     }
+    // Leetcode 33 search in rotated sorted array
+    // hum sorted region ke basis par decision le sakte hei
+    public static int search(int[] arr, int data) 
+    {
+        int lo = 0;
+        int hi = arr.length-1;
+        
+        while(lo<=hi)
+        {
+            int mid = (lo + hi)/2;
+            if(data == arr[mid]) return mid;
+            else if(arr[mid]>=arr[lo])
+            {
+                if(data < arr[mid] && data >= arr[lo]) hi = mid - 1; //data < arr[mid] ismei <= par check karna zaroori nahihei  
+                else lo = mid + 1;                                   //kyoki data = mid wali condition oopar hi check hori hei                           
+            }
+            else //if(arr[hi] >= arr[mid])
+            {
+                if(data <= arr[hi] && data > arr[mid]) lo = mid+1;
+                else hi = mid-1;
+            }
+        }
+        
+        return -1;
+    }
+    // leetcode 81
+    public static boolean search1(int[] arr, int data) 
+    {
+        int lo = 0;
+        int hi = arr.length-1;
+        
+        while(lo<=hi)
+        {
+            int mid = (lo + hi)/2;
+            if(data == arr[mid] || data == arr[hi]) return true;
+            else if(arr[mid] > arr[lo])
+            {
+                if(data < arr[mid] && data >= arr[lo]) hi = mid - 1;//data < arr[mid] ismei <= par check karna zaroori nahihei  
+                else lo = mid + 1;                                  //kyoki data = mid wali condition oopar hi check hori hei 
+            }
+            else if(arr[hi] > arr[mid])
+            {
+                if(data <= arr[hi] && data > arr[mid]) lo = mid+1;
+                else hi = mid-1;
+            }
+            else hi--;
+        }
+        
+        return false;
+    }
     public static void main(String[] args) 
     {
         // int[]arr = new int[]{1,3,7,9,11,13,15,17,19,21,23,25};
