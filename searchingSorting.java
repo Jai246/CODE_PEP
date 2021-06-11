@@ -268,6 +268,43 @@ class searchingSorting
         
         return false;
     }
+    // leetcode 153
+    public static  int findMin(int[] arr) 
+    {
+        int lo = 0, hi = arr.length - 1;
+        if(arr[lo] <= arr[hi]) return arr[lo];
+
+        while(lo < hi)
+        {
+            int mid = (lo + hi) / 2;
+
+            if(arr[mid] < arr[hi]) hi = mid;
+            else if(arr[lo] <= arr[mid]) lo = mid + 1;
+            // else lo++; // if ele is duplicate.
+        }
+
+        return arr[lo];
+    }
+    // leetcode 154
+    public static int findMin1(int[] arr) 
+    {
+        int n = arr.length, si = 0, ei = n - 1;
+        if (arr[si] < arr[ei])
+            return arr[si];
+
+        while (si < ei)
+        {
+            int mid = (si + ei) / 2;
+            if (arr[mid] < arr[ei])
+                ei = mid;
+            else if (arr[mid] > arr[ei])
+                si = mid + 1;
+            else
+                ei--;
+        }
+
+        return arr[si];
+    } 
     public static void main(String[] args) 
     {
         // int[]arr = new int[]{1,3,7,9,11,13,15,17,19,21,23,25};
