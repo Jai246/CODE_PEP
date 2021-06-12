@@ -1,3 +1,8 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
 class searchingSorting
 {
     public static void print1D(int[]arr)
@@ -303,11 +308,240 @@ class searchingSorting
         }
 
         return arr[si];
-    } 
+    }
+    // leetcode 167
+    public static int[] twoSum(int[] arr,int data) 
+    {
+        int ei = 0;
+        int si = arr.length-1;
+        while(ei<si)
+        {
+            int sum = arr[ei] + arr[si];
+            if(sum == data) return new int[]{ei+1,si+1};//because indexes are not zero based
+            else if(sum>data) si--;
+            else ei++;
+        }
+        return new int[]{-1,-1};
+    }
+    // Printing Target sum No Duplicates
+    public static void twoSumPrint(int[] arr , int data , int si , int ei) // withen given range
+    {
+        while(si < ei)
+        {
+            // while(si > 0 && arr[si] == arr[si-1]) si++;
+            // while(ei < arr.length-1 && arr[ei] == arr[ei+1]) ei--;
+            int sum = arr[si] + arr[ei];
+            if(si < ei && sum == data)
+            {
+                System.out.println("{" + arr[si] + "," + arr[ei] + "}");
+                si++;
+                ei--;
+                while(si < ei && si > 0 && arr[si] == arr[si-1]) si++;
+                while(si < ei && ei < arr.length-1 && arr[ei] == arr[ei+1]) ei--;
+            }
+            else if(sum > data) ei--;
+            else si++;
+        }
+    }
+    // leetcode 15
+    public List<List<Integer>> twoSumPrint(int[] arr , int data , int si , int ei , int i) // withen given range
+    {
+        List<List<Integer>> list = new ArrayList<>();
+        while(si < ei)
+        {
+            int sum = arr[si] + arr[ei];
+            if(si < ei && sum == data)
+            {
+                List<Integer> temp = new ArrayList<>();
+                temp.add(arr[i]);
+                temp.add(arr[si]);
+                temp.add(arr[ei]);
+                list.add(temp);
+                si++;
+                ei--;
+                while(si < ei && si > 0 && arr[si] == arr[si-1]) si++;
+                while(si < ei && ei < arr.length-1 && arr[ei] == arr[ei+1]) ei--;
+            }
+            else if(sum > data) ei--;
+            else si++;
+        }
+        return list;
+    }
+    public List<List<Integer>> threeSum(int[] arr) 
+    {
+        Arrays.sort(arr);
+        int target = 0;
+        int i = 0;
+        List<List<Integer>> list = new ArrayList<>();
+        while(i < arr.length && arr.length >= 3)
+        {
+            while(i >=1 && i<arr.length && arr[i] == arr[i-1]) i++;
+            int j = i+1; int k = arr.length-1;
+            if(j<arr.length) {
+                List<List<Integer>> temp = twoSumPrint(arr,target-arr[i],j,k,i);
+                for(List<Integer> ele : temp) list.add(ele);
+            }
+            i++;
+        }
+     return list;
+    }
+    // leetcode 4 sum
+    public static List<List<Integer>> fourSum(int[] arr, int target) 
+    {
+        Arrays.sort(arr);
+        List<List<Integer>> list = new ArrayList<>();
+        int i = 0;
+        while(i < arr.length)
+        {
+            while(i > 0 && i < arr.length && arr[i] == arr[i-1]) i++;
+            if(i < arr.length){
+                List<List<Integer>> temp = threeSum(arr , i, target-arr[i]);
+                for(List<Integer> ele : temp) list.add(ele);
+                i++;
+            }
+        }
+        return list;
+    }
+    public static List<List<Integer>> threeSum(int[] arr ,int n, int target) 
+    {
+        int i = n+1;
+        List<List<Integer>> list = new ArrayList<>();
+        while(i < arr.length && arr.length >= 3)
+        {
+            while(i > n+1 && i<arr.length && arr[i] == arr[i-1]) i++;
+            int j = i+1; int k = arr.length-1;
+            if(j<arr.length) {
+                List<List<Integer>> temp = twoSumPrint(arr,target-arr[i],j,k,i,n);
+                for(List<Integer> ele : temp) list.add(ele);
+            }
+            i++;
+        }
+     return list;
+    }
+    public static List<List<Integer>> twoSumPrint(int[] arr , int data , int si , int ei , int i , int h) // withen given range
+    {
+        List<List<Integer>> list = new ArrayList<>();
+        while(si < ei)
+        {
+            int sum = arr[si] + arr[ei];
+            if(si < ei && sum == data)
+            {
+                List<Integer> temp = new ArrayList<>();
+                temp.add(arr[h]);
+                temp.add(arr[i]);
+                temp.add(arr[si]);
+                temp.add(arr[ei]);
+                list.add(temp);
+                si++;
+                ei--;
+                while(si < ei && si > 0 && arr[si] == arr[si-1]) si++;
+                while(si < ei && ei < arr.length-1 && arr[ei] == arr[ei+1]) ei--;
+            }
+            else if(sum > data) ei--;
+            else si++;
+        }
+        return list;
+    }
+    // More generic way using recursion
+    public List<List<Integer>> twoSumR(int[] arr, int target, int si, int ei) {
+        List<List<Integer>> ans = new ArrayList<>();
+        while (si < ei) {
+            int sum = arr[si] + arr[ei];
+            if (sum == target) {
+                ArrayList<Integer> smallAns = new ArrayList<>();
+                smallAns.add(arr[si]);
+                smallAns.add(arr[ei]);
+                ans.add(smallAns);
+                si++;
+                ei--;
+                while (si < ei && arr[si] == arr[si - 1])
+                    si++;
+                while (si < ei && arr[ei] == arr[ei + 1])
+                    ei--;
+            } else if (sum < target)
+                si++;
+            else
+                ei--;
+        }
+
+        return ans;
+    }
+    public void prepareAns(List<List<Integer>> ans, List<List<Integer>> smallAns, int fixEle) {
+
+        for (List<Integer> arr : smallAns) {
+            List<Integer> ar = new ArrayList<>();
+            ar.add(fixEle);
+            for (int ele : arr)
+                ar.add(ele);
+            ans.add(ar);
+        }
+    }
+    public List<List<Integer>> kSum(int[] arr, int target, int k, int si, int ei) {
+        if (k == 2)
+            return twoSumR(arr, target, si, ei);
+
+        List<List<Integer>> ans = new ArrayList<>();
+        for (int i = si; i < ei;) {
+            List<List<Integer>> smallAns = kSum(arr, target - arr[i], k - 1, i + 1, ei);
+            prepareAns(ans, smallAns, arr[i]);
+            i++;
+            while (i < ei && arr[i] == arr[i - 1])
+                i++;
+        }
+
+        return ans;
+    }
+    // leetcode 454
+    public static int twoSumCount(int[] nums1, int[] nums2, int target) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int ele : nums1)
+            map.put(ele, map.getOrDefault(ele, 0) + 1);
+
+        int count = 0;
+        for (int ele : nums2)
+            if (map.containsKey(target - ele))
+                count += map.get(target - ele);
+
+        return count;
+    }
+
+    public static int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int e1 : nums1)
+            for (int e2 : nums2)
+                map.put(e1 + e2, map.getOrDefault(e1 + e2, 0) + 1); // putting all possible combinations
+
+        int count = 0, target = 0;
+        for (int e1 : nums3)
+            for (int e2 : nums4)
+                if (map.containsKey(target - e1 - e2)) // Testing for all possible combinations from two arrays 
+                    count += map.get(target - e1 - e2);// without actually making an array
+
+        return count;
+    }
+    public static int fourSumCountType2(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int n = nums1.length, idx = 0;
+        int[] A = new int[n * n];
+        int[] B = new int[n * n];
+
+        for (int e1 : nums1)
+            for (int e2 : nums2)
+                A[idx++] = e1 + e2;
+
+        idx = 0;
+        for (int e1 : nums3)
+            for (int e2 : nums4)
+                B[idx++] = e1 + e2;
+
+        return twoSumCount(A, B, 0);
+    }
     public static void main(String[] args) 
     {
         // int[]arr = new int[]{1,3,7,9,11,13,15,17,19,21,23,25};
         // binarySearchInsert(arr, 11, 0, arr.length-1);
-        inversionCount();
+        //inversionCount();
+        int[] arr = new int[]{-1,-1,-1,-1,-1,-1,1,1,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,6,6,6,6};
+        twoSumPrint(arr, 5,0,arr.length-1);
     }    
 }
