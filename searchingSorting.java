@@ -280,12 +280,11 @@ class searchingSorting
 
             if(arr[mid] < arr[hi]) hi = mid;
             else if(arr[lo] <= arr[mid]) lo = mid + 1;
-            // else lo++; // if ele is duplicate.
         }
 
         return arr[lo];
     }
-    // leetcode 154
+    // leetcode 154 Important
     public static int findMin1(int[] arr) 
     {
         int n = arr.length, si = 0, ei = n - 1;
