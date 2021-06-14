@@ -226,7 +226,8 @@ public class LIS
             }
         }
     }
-    public int findNumberOfLIS(int[] arr) {
+    public int findNumberOfLIS(int[] arr) 
+    {
         int n = arr.length;
         int[] dp = new int[n];
         int[] count = new int[n];

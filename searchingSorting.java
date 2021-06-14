@@ -519,7 +519,8 @@ class searchingSorting
 
         return count;
     }
-    public static int fourSumCountType2(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+    public static int fourSumCountType2(int[] nums1, int[] nums2, int[] nums3, int[] nums4) 
+    {
         HashMap<Integer, Integer> map = new HashMap<>();
         int n = nums1.length, idx = 0;
         int[] A = new int[n * n];
@@ -536,12 +537,105 @@ class searchingSorting
 
         return twoSumCount(A, B, 0);
     }
+    // leetcode 658
+    public static int insertPosition(int[] arr, int data) {
+        int n = arr.length, si = 0, ei = n - 1;
+        while (si <= ei) {
+            int mid = (si + ei) / 2;
+            if (arr[mid] <= data)
+                si = mid + 1;
+            else
+                ei = mid - 1;
+        }
+
+        return si;
+    }
+    // if the difference comes out to be same then we will drop the greater element
+    public static List<Integer> findClosestElements(int[] arr, int k, int x) {
+        ArrayList<Integer> ans = new ArrayList<>();
+        for (int ele : arr)
+            ans.add(ele);
+
+        int n = arr.length;
+        if (x <= arr[0])
+            return ans.subList(0, k);
+        else if (x >= arr[n - 1])
+            return ans.subList(n - k, n);
+        else {
+            int idx = insertPosition(arr, x);
+            int lr = Math.max(0, idx - k);
+            int rr = Math.min(n - 1, idx + k);
+
+            while ((rr - lr + 1) > k) {
+                if (x - arr[lr] > arr[rr] - x)
+                    lr++;
+                else
+                    rr--; // if the difference comes out to be same then we will drop the greater element
+            }
+            return ans.subList(lr, rr + 1);
+        }
+    }
+
+    // O(log(n) + k) ratlo
+    public static List<Integer> findClosestElements_02(int[] arr, int k, int x) {
+        ArrayList<Integer> ans = new ArrayList<>();
+        for (int ele : arr)
+            ans.add(ele);
+
+        int n = arr.length;
+        if (x <= arr[0])
+            return ans.subList(0, k); // {arr.begin(), arr.begin() + k}
+        else if (x >= arr[n - 1])
+            return ans.subList(n - k, n); // {arr.end() - k, arr.end()}
+        else {
+            int lr = 0, rr = n - k;
+            while (lr < rr) {
+                int mid = (lr + rr) / 2;
+                if (x - arr[mid] > arr[mid + k] - x)
+                    lr = mid + 1;
+                else
+                    rr = mid;
+            }
+
+            return ans.subList(lr, lr + k);
+        }
+    }
+    // leetcode 300
+    public static  int insertPosition(ArrayList<Integer> list, int data) {
+        int n = list.size(), si = 0, ei = n - 1;
+        while (si <= ei) {
+            int mid = (si + ei) / 2;
+            if (list.get(mid) <= data)
+                si = mid + 1;
+            else
+                ei = mid - 1;
+        }
+        int insertPos = si;
+        int lastIndex = si - 1;
+        return lastIndex >= 0 && list.get(lastIndex) == data ? lastIndex : insertPos;
+    }
+
+    public static int lengthOfLIS(int[] nums) {
+        int n = nums.length;
+        if (n <= 1)
+            return n;
+
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int ele : nums) {
+            int loc = insertPosition(list, ele);
+            if (loc == list.size())
+                list.add(ele);
+            else
+                list.set(loc, ele);
+        }
+        return list.size();
+    }
     public static void main(String[] args) 
     {
         // int[]arr = new int[]{1,3,7,9,11,13,15,17,19,21,23,25};
         // binarySearchInsert(arr, 11, 0, arr.length-1);
         //inversionCount();
-        int[] arr = new int[]{-1,-1,-1,-1,-1,-1,1,1,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,6,6,6,6};
-        twoSumPrint(arr, 5,0,arr.length-1);
+        // int[] arr = new int[]{-1,-1,-1,-1,-1,-1,1,1,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,6,6,6,6};
+        // twoSumPrint(arr, 5,0,arr.length-1);
     }    
 }
