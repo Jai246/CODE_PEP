@@ -730,8 +730,9 @@ class searchingSorting
                 si = distance + 1e-6;
             else
                 ei = distance;
+            System.out.println("si -> " + si);
+            System.out.println("ei -> " + ei);
         }
-
         return ei;
     }
     public static void main(String[] args) 
@@ -741,7 +742,15 @@ class searchingSorting
         //inversionCount();
         // int[] arr = new int[]{-1,-1,-1,-1,-1,-1,1,1,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,6,6,6,6};
         // twoSumPrint(arr, 5,0,arr.length-1);
-        int[] arr = new int []{1,2,3,4,5,6,7,8,9,10};
-        System.out.println(minmaxGasDist(arr, 10));
+        //int[] arr = new int []{1,2,3,4,5,6,7,8,9,10};
+        int[] arr = new int []{10, 19, 25, 27, 56, 63, 70, 87, 96, 97};
+        System.out.println(minmaxGasDist(arr, 3));
+        //0.5000005335135318
+        //10
+        //0.5000005335135318
+        //17
+        //0.5000005335135318
+        //18
+        //0.3333343946928645
     }    
 }
