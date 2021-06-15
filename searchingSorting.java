@@ -537,6 +537,60 @@ class searchingSorting
 
         return twoSumCount(A, B, 0);
     }
+    public static int twoSumCount(int[] AB , int[] CD)
+    {
+        Arrays.sort(AB);
+        Arrays.sort(CD);
+        int i = 0;
+        int j = CD.length-1;
+        int res = 0;
+        while(i<AB.length && j>=0)
+        {
+            int sum = AB[i] + CD[j];
+            if(sum == 0)
+            {
+                int countr = 1;
+                int countl = 1;
+                i++;
+                j--;
+                
+                while(i<AB.length && AB[i] == AB[i-1])
+                {
+                    countl++;
+                    i++;
+                }
+                while(j >=0 && CD[j] == CD[j+1])
+                {
+                    countr++;
+                    j--;
+                }
+                res += countl * countr;
+            }
+            else if(sum < 0) i++;
+            else j--;
+        }
+        
+        return res;
+    }
+    public static int fourSumCount3(int[] A, int[] B, int[] C, int[] D) 
+    {
+        int m = A.length;
+        int[] AB = new int[m*m];
+        int[] CD = new int[m*m];
+        int k = 0;
+        
+        for(int i = 0;i<m;i++)
+        {
+            for(int j = 0;j<m;j++)
+            {
+                AB[k] = A[i] + B[j];
+                CD[k] = C[i] + D[j];
+                k++;
+            }
+        }
+        
+        return twoSumCount(AB,CD);
+    }
     // leetcode 658
     public static int insertPosition(int[] arr, int data) {
         int n = arr.length, si = 0, ei = n - 1;
@@ -629,6 +683,33 @@ class searchingSorting
                 list.set(loc, ele);
         }
         return list.size();
+    }
+    // leetcode 875
+    public static boolean isPossibletoeat(int[] a,int x,int H)
+    {
+        int count = 0;
+        for(int i = a.length-1;i>=0;i--)// we are sorting because and running from back because hume jaldi pata chaljayega 
+        {// ki yeh possible answer hei ki nhi kyuki hum max element se start kar rahe hei
+            count += a[i] / x + ( a[i] % x == 0 ? 0 : 1 );// we are doing this because if we do normal divide lets say 29/25  then we get 
+            if(count > H) return false;// 1 but actually the answer is 2 so thats why we are adding 1 to it
+        }
+        
+        return true;
+    }
+    public static int minEatingSpeed(int[] piles, int H) 
+    {
+        Arrays.sort(piles);
+        int minspeed = 1;
+        int maxspeed = (int)1e9;
+        int speed = 0;
+        while(minspeed < maxspeed)
+        {
+            speed = minspeed + (maxspeed - minspeed) / 2;
+            if(isPossibletoeat(piles,speed,H)) maxspeed = speed;
+            else minspeed = speed + 1;
+        }
+        
+        return maxspeed;
     }
     public static void main(String[] args) 
     {
