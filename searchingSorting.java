@@ -711,7 +711,7 @@ class searchingSorting
         
         return maxspeed;
     }
-    // leetcode 774 locked minimise the maximim distance bw gas stations
+    // leetcode 774 Locked minimise the maximim distance bw gas stations
     public static boolean itIsCorrectPenatly(int[] arr, double distance, int k) 
     {
         int noOfGasStation = 0, n = arr.length;
