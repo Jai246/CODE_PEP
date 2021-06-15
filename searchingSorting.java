@@ -711,6 +711,30 @@ class searchingSorting
         
         return maxspeed;
     }
+    // leetcode 774 locked minimise the maximim distance bw gas stations
+    public static boolean itIsCorrectPenatly(int[] arr, double distance, int k) 
+    {
+        int noOfGasStation = 0, n = arr.length;
+        for (int i = 1; i < n; i++) {
+            noOfGasStation += (arr[i] - arr[i - 1]) / distance;
+            if (noOfGasStation > k)
+                return false;
+        }
+
+        return true;
+    }
+    public static double minmaxGasDist(int[] stations, int k) {
+        double si = 0.0, ei = 1e9;
+        while ((ei - si) > 1e-6) {
+            double distance = (ei + si) / 2.0;
+            if (!itIsCorrectPenatly(stations, distance, k))
+                si = distance + 1e-6;
+            else
+                ei = distance;
+        }
+
+        return ei;
+    }
     public static void main(String[] args) 
     {
         // int[]arr = new int[]{1,3,7,9,11,13,15,17,19,21,23,25};
@@ -718,5 +742,7 @@ class searchingSorting
         //inversionCount();
         // int[] arr = new int[]{-1,-1,-1,-1,-1,-1,1,1,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,6,6,6,6};
         // twoSumPrint(arr, 5,0,arr.length-1);
+        int[] arr = new int []{1,2,3,4,5,6,7,8,9,10};
+        System.out.println(minmaxGasDist(arr, 9));
     }    
 }
