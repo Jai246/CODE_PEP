@@ -720,7 +720,6 @@ class searchingSorting
             if (noOfGasStation > k)
                 return false;
         }
-
         return true;
     }
     public static double minmaxGasDist(int[] stations, int k) {
@@ -743,6 +742,6 @@ class searchingSorting
         // int[] arr = new int[]{-1,-1,-1,-1,-1,-1,1,1,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,6,6,6,6};
         // twoSumPrint(arr, 5,0,arr.length-1);
         int[] arr = new int []{1,2,3,4,5,6,7,8,9,10};
-        System.out.println(minmaxGasDist(arr, 9));
+        System.out.println(minmaxGasDist(arr, 10));
     }    
 }
