@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-
 class ArticulationPoint
 {
     static int N = 7;
