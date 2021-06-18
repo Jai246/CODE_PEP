@@ -1,4 +1,6 @@
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 class dp_faang
@@ -11,6 +13,17 @@ class dp_faang
     {
         for(int[]a : arr) {
             print1D(a);
+            System.out.println();
+        }
+    }
+    public static void print1Dboolean(boolean[] arr)
+    {
+        for(boolean ele : arr) System.out.print((ele ? "True" : "False") +  " ");
+    }
+    public static void print2dboolean(boolean[][] arr)
+    {
+        for(boolean[]a : arr) {
+            print1Dboolean(a);
             System.out.println();
         }
     }
@@ -93,7 +106,7 @@ class dp_faang
         for(int i = 0;i<n;i++) max = Math.max(max , lisLr[i] + lisRl[i] - arr[i]);
         return max;
     }
-    // LCS OF 3 STRINGS
+    // LCS OF 3 STRINGS GFG 
     public static int lcs(String A , String B , String C)
     {
         int count = 0;
@@ -118,11 +131,85 @@ class dp_faang
     { 
         return lcs(A,B,C);
     }
+    // Geeks For Geeks Partiton Equal SubSet
+    public static void subSetSum(int[] val , int target)
+    {
+        boolean[][] dp = new boolean[val.length+1][target+1];
+        System.out.println(memoSubSet(0, target, val, dp) ? "True" : "False");
+        print2dboolean(dp);
+    }
+    public static boolean memoSubSet(int i , int tar ,int[] val , boolean[][]dp)
+    {
+        if(tar == 0) return dp[i][tar] =  true;
+        if(i == val.length) return dp[i][tar] = false;
+        if(dp[i][tar]) return true;
+        boolean res = false;
+        for(int j = i;j<val.length;j++)
+        {
+            if(tar - val[j]>=0) res = res || memoSubSet(j+1,tar - val[j],val,dp);
+            res = res || memoSubSet(j+1, tar, val, dp); 
+        }
+        return dp[i][tar] = res;
+    }
+    // box stacking problem
+    public static class pair
+    {
+        int l = 0;
+        int b = 0;
+        int h = 0;
+        pair(int l , int b , int h)
+        {
+            this.l = l;
+            this.b = b;
+            this.h = h;
+        }
+    }
+    public static void maxHeight(int[] height, int[] width, int[] length, int n)
+    {
+        pair[] lis = new pair[3*n];
+        int j = 0;
+        for(int i = 0;i<n;i++)
+        {
+            lis[j++] = new pair(height[i] , width[i] , length[i]);
+            lis[j++] = new pair(height[i] , length[i] , width[i]);
+            lis[j++] = new pair(width[i] , length[i] , height[i]);
+        }
+        Arrays.sort(lis ,Collections.reverseOrder((pair a , pair b) -> 
+        {
+            return a.l*a.b - b.l*b.b;
+        }));
+        LisForBoxStacking(lis);
+    }
+    public static void LisForBoxStacking(pair[] dim)
+    {
+        int[]dp = new int[dim.length];
+        int max = -(int)1e9;
+        for(int i = 0;i<dim.length;i++)
+        {
+            dp[i] = dim[i].h;
+            for(int j = i-1;j>=0;j--)
+            {
+                if(((dim[i].l < dim[j].l && dim[i].b < dim[j].b) || (dim[i].l < dim[j].b && dim[i].b < dim[j].l)) && dim[i].h+dp[j] > dp[i]) dp[i] = dim[i].h + dp[j];
+                max  = Math.max(max , dp[i]);
+            }
+        }
+        System.out.println(max);
+        for(int k = 0;k<dim.length;k++)
+        {
+            System.out.println(dim[k].l + " " + dim[k].b + " " + dim[k].h );
+        }
+        print1D(dp);
+    }
     public static void main(String[] args) {
         // int[] arr1 = new int[]{1, 15, 51, 45, 33,100, 12, 18, 9};
         // maxSumBS(arr1, 9);
         //LCSof3("geeks","geeksfor", "geeksforgeeks", 5, 8, 13);
-        LCSof3("abcd","efgh","ijkl", 4, 4, 4);
-
+        //LCSof3("abcd","efgh","ijkl", 4, 4, 4);
+        // int[]val = new int[]{2,3,5,7};
+        // subSetSum(val, 20);
+        int[] height = new int[]{5,3};
+        int[] width = new int[]{2,5};
+        int[] length = new int[]{6,3};
+        maxHeight(height, width, length, height.length);
     }
 }

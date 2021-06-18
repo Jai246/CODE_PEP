@@ -496,7 +496,7 @@ public class coinSet
     }
     public static void main(String[] args)
     {
-        int[] arr = new int[]{2,3,5,7};
+        //int[] arr = new int[]{2,3,5,7};
         // int tar = 10;
         // int[] arr2 = new int[]{3,4,5,2};
         // int tar2 = 9;
@@ -512,10 +512,9 @@ public class coinSet
         //Solution_Print(arr2, tar2);
         //SubsetSum_Rear(arr,tar);
         //SubsetSum_DP_Type1(arr,2);
-        SubsetSum_DP_Type1_TotalWays(arr, 10);
+        //SubsetSum_DP_Type1_TotalWays(arr, 10);
         //findTargetSumWays(arr3, tar3);
         //KnapSack_Unbounded();
         //temp();
-        
     }
 }
