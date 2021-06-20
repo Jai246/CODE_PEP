@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.PriorityQueue;
 class dp_faang
 {
@@ -189,7 +190,7 @@ class dp_faang
             dp[i] = dim[i].h;
             for(int j = i-1;j>=0;j--)
             {
-                if(((dim[i].l < dim[j].l && dim[i].b < dim[j].b) || (dim[i].l < dim[j].b && dim[i].b < dim[j].l)) && dim[i].h+dp[j] > dp[i]) dp[i] = dim[i].h + dp[j];
+                if(((dim[i].l < dim[j].l && dim[i].b < dim[j].b)||(dim[i].l < dim[j].b && dim[i].b < dim[j].l)) && dim[i].h+dp[j] > dp[i]) dp[i] = dim[i].h + dp[j];
                 max  = Math.max(max , dp[i]);
             }
         }
@@ -200,16 +201,91 @@ class dp_faang
         }
         print1D(dp);
     }
-    public static void main(String[] args) {
+    // gfg form a palindrome
+    public static int countMin(String str)
+    {
+        int[][] dp = new int[str.length()][str.length()];
+        for(int[] ele : dp) Arrays.fill(ele , -1);
+        System.out.println(countMin_memo(str, 0, str.length()-1, dp));
+        return countMin_memo(str, 0, str.length()-1, dp);
+    }
+    public static int countMin_memo(String s ,int i , int j ,  int[][] dp)
+    {
+        if(i > j) return 0;
+        if(i==j) return dp[i][j] = 0;
+        if(dp[i][j] != -1) return dp[i][j];
+        int count = (int)1e9;
+        if(s.charAt(i) == s.charAt(j)) count = countMin_memo(s , i+1 , j-1 , dp);
+        else
+        {
+            count = Math.min(countMin_memo(s,i+1,j-1,dp)+2,Math.min(countMin_memo(s,i+1,j , dp)+1,countMin_memo(s, i, j-1 , dp)+1));
+        }
+        return dp[i][j] = count;
+    }
+    // maximum rod cutting
+    public static int maxProd(int n)
+    {
+        if (n == 0 || n == 1) return 0;
+        int max_val = 0;
+        for (int i = 1; i < n; i++)
+        max_val = Math.max(max_val,Math.max(i * (n - i),maxProd(n - i) * i));
+        return max_val;
+    }
+    // question Geeks For Geeks optimal game startegy
+    public static void countMaximum(int arr[], int n) // Apply gap strategy for tabluation
+    {
+        long[][] dp = new long[n][n];
+        for(long[] ele : dp) Arrays.fill(ele , -(int)1e9);
+        System.out.println(countMaximumMain(arr,0,n-1, dp));
+        //return countMaximum(arr,0,n-1, dp);
+    }
+    public static long countMaximumMain(int arr[],int i , int j ,  long[][] dp)
+    {
+        if(i == j) return dp[i][j] = arr[i];
+        if(i == j-1) return dp[i][j] = Math.max(arr[i],arr[j]);
+        if(dp[i][j] != -(int)1e9) return dp[i][j];
+        long max = -(int)1e9;
+        if(j > i){ 
+        long val1 = Math.min(arr[i] + countMaximumMain(arr, i+2, j, dp) ,arr[i] + countMaximumMain(arr, i+1, j-1, dp));
+        long val2 = Math.min(arr[j] + countMaximumMain(arr, i+1, j-1, dp) ,arr[j] + countMaximumMain(arr, i, j-2, dp));
+        max = Math.max(val1 , val2);
+        }
+        return dp[i][j] = max;
+    }
+    // leetcode 139 word break
+    public boolean wordBreak(String s, List<String> wordDict) 
+    {
+        return wordBreakMemo(s, new HashSet<>(wordDict), 0, new Boolean[s.length()]);
+    }
+
+    private boolean wordBreakMemo(String s, HashSet<String> wordDict, int start, Boolean[] memo) {
+        if (start == s.length()) return true;
+        
+        if (memo[start] != null) return memo[start];
+        
+        for (int end = start + 1; end <= s.length(); end++) 
+        {
+            if (wordDict.contains(s.substring(start, end)) && wordBreakMemo(s, wordDict, end, memo)) 
+            {
+                return memo[start] = true;
+            }
+        }
+        return memo[start] = false;
+    }
+    public static void main(String[] args) 
+    {
         // int[] arr1 = new int[]{1, 15, 51, 45, 33,100, 12, 18, 9};
         // maxSumBS(arr1, 9);
-        //LCSof3("geeks","geeksfor", "geeksforgeeks", 5, 8, 13);
-        //LCSof3("abcd","efgh","ijkl", 4, 4, 4);
+        // LCSof3("geeks","geeksfor", "geeksforgeeks", 5, 8, 13);
+        // LCSof3("abcd","efgh","ijkl", 4, 4, 4);
         // int[]val = new int[]{2,3,5,7};
         // subSetSum(val, 20);
-        int[] height = new int[]{5,3};
-        int[] width = new int[]{2,5};
-        int[] length = new int[]{6,3};
-        maxHeight(height, width, length, height.length);
+        // int[] height = new int[]{5,3};
+        // int[] width = new int[]{2,5};
+        // int[] length = new int[]{6,3};
+        // maxHeight(height, width, length, height.length);
+        // countMin("abababababa");
+        // int[] arr = new int[]{20,30,2,10};
+        // countMaximum(arr, 4);
     }
 }
