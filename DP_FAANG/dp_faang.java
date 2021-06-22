@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -257,8 +258,7 @@ class dp_faang
     {
         return wordBreakMemo(s, new HashSet<>(wordDict), 0, new Boolean[s.length()]);
     }
-
-    private boolean wordBreakMemo(String s, HashSet<String> wordDict, int start, Boolean[] memo) {
+    public boolean wordBreakMemo(String s, HashSet<String> wordDict, int start, Boolean[] memo) {
         if (start == s.length()) return true;
         
         if (memo[start] != null) return memo[start];
@@ -272,6 +272,45 @@ class dp_faang
         }
         return memo[start] = false;
     }
+    // Mobile Numeric KeyPad
+    public static long getCount(int N)
+	{
+        if(N == 1) return 10;
+        int[][] map = new int[11][];
+        map[0] = new int[]{};
+        map[1] = new int[]{4,2};
+        map[2] = new int[]{1,3,5};
+        map[3] = new int[]{2,6};
+        map[4] = new int[]{1,7,5};
+        map[5] = new int[]{2,4,6,8};
+        map[6] = new int[]{3,5,9};
+        map[7] = new int[]{4,8};
+        map[8] = new int[]{5,7,10,9};
+        map[9] = new int[]{6,8};
+        map[10] = new int[]{8};
+
+        long[] dp1 = new long[11];
+        long[] dp2 = new long[11];
+        Arrays.fill(dp1,1);
+        Arrays.fill(dp2,1);
+        dp1[0] = 0;
+        dp2[0] = 0;
+        for(int i = 1;i<N;i++)
+        {
+            for(int j = 1;j<11;j++)
+            {
+                for(int ele : map[j])
+                {
+                    dp2[j] += dp1[ele]; 
+                }
+            }
+            for(int k = 0;k<11;k++) dp1[k] = dp2[k];
+        }
+        long sum = 0;
+        for(long ele : dp1) sum += ele;
+        System.out.println(sum);
+        return sum;
+	}
     public static void main(String[] args) 
     {
         // int[] arr1 = new int[]{1, 15, 51, 45, 33,100, 12, 18, 9};
@@ -287,5 +326,6 @@ class dp_faang
         // countMin("abababababa");
         // int[] arr = new int[]{20,30,2,10};
         // countMaximum(arr, 4);
+        getCount(2);
     }
 }
