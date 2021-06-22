@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 class dp_faang
 {
     public static void print1D(int[] arr)
@@ -14,6 +15,17 @@ class dp_faang
     public static void print2d(int[][] arr)
     {
         for(int[]a : arr) {
+            print1D(a);
+            System.out.println();
+        }
+    }
+    public static void print1D(long[] arr)
+    {
+        for(long ele : arr) System.out.print(ele +  " ");
+    }
+    public static void print2d(long[][] arr)
+    {
+        for(long[]a : arr) {
             print1D(a);
             System.out.println();
         }
@@ -258,16 +270,17 @@ class dp_faang
     {
         return wordBreakMemo(s, new HashSet<>(wordDict), 0, new Boolean[s.length()]);
     }
-    public boolean wordBreakMemo(String s, HashSet<String> wordDict, int start, Boolean[] memo) {
+    public boolean wordBreakMemo(String s, Set<String> wordDict, int start, Boolean[] memo) {
         if (start == s.length()) return true;
-        
         if (memo[start] != null) return memo[start];
         
         for (int end = start + 1; end <= s.length(); end++) 
         {
-            if (wordDict.contains(s.substring(start, end)) && wordBreakMemo(s, wordDict, end, memo)) 
+            if (wordDict.contains(s.substring(start, end))) 
             {
-                return memo[start] = true;
+                boolean res = wordBreakMemo(s, wordDict, end, memo);
+                if(res) return memo[start] = true;
+                // matlab agar true aaya tho return kardo aage kuch karne ki zaroorat nahi hei agar false aaya toh loop ko aage badhao
             }
         }
         return memo[start] = false;
@@ -311,6 +324,31 @@ class dp_faang
         System.out.println(sum);
         return sum;
 	}
+    // geeks for geeks painters partitian problem
+    
+    public static void minTime(int[] arr,int n,int k)
+    {
+        long [][] dp = new long[n+1][k+1];
+        System.out.println(paintersPartitian(arr, arr.length, 3, dp));
+        print2d(dp);
+    }
+    public static long paintersPartitian(int[] arr,int n,int k , long[][]dp)
+    {
+        if(k == 1) return dp[n][k] = sum(0, n, arr);
+        if(n == 1) return dp[n][k] = arr[0];
+        long best = (long)1e10;
+        for(int i = 1 ;i<=n;i++)
+        {
+            best = Math.min(best , Math.max(paintersPartitian(arr , i , k-1 , dp) , sum(i , n , arr)));
+        }
+        return dp[n][k] = best;
+    }
+    public static long sum(int i , int j , int[] arr)
+    {
+        long total = 0;
+        for(int k = i;k<j;k++) total+=arr[k];
+        return total;
+    }
     public static void main(String[] args) 
     {
         // int[] arr1 = new int[]{1, 15, 51, 45, 33,100, 12, 18, 9};
@@ -326,6 +364,8 @@ class dp_faang
         // countMin("abababababa");
         // int[] arr = new int[]{20,30,2,10};
         // countMaximum(arr, 4);
-        getCount(2);
+        //getCount(2);
+        int[] arr = new int[]{5,7,54,67,90,3,21,23,44,67,99};
+        minTime(arr, arr.length, 3);
     }
 }
