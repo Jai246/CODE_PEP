@@ -324,24 +324,45 @@ class dp_faang
         System.out.println(sum);
         return sum;
 	}
-    // geeks for geeks painters partitian problem
-    
+    // Geeks For Geeks painters partitian problem
+    // Memoisation solution is giving TLE on GFG
+    // Tabulation solution also giving TLE on GFG
     public static void minTime(int[] arr,int n,int k)
     {
-        long [][] dp = new long[n+1][k+1];
-        System.out.println(paintersPartitian(arr, arr.length, 3, dp));
+        long [][] dp = new long[k+1][n+1];
+        System.out.println(paintersPartitian(arr, n, k, dp));
         print2d(dp);
     }
     public static long paintersPartitian(int[] arr,int n,int k , long[][]dp)
     {
-        if(k == 1) return dp[n][k] = sum(0, n, arr);
-        if(n == 1) return dp[n][k] = arr[0];
+        if(k == 1) return dp[k][n] = sum(0, n, arr);
+        if(n == 1) return dp[k][n] = arr[0];
         long best = (long)1e10;
         for(int i = 1 ;i<=n;i++)
         {
             best = Math.min(best , Math.max(paintersPartitian(arr , i , k-1 , dp) , sum(i , n , arr)));
         }
-        return dp[n][k] = best;
+        return dp[k][n] = best;
+    }
+    public static long minTime_dp(int arr[], int n, int k)
+    {
+        long dp[][] = new long[k+1][n+1];
+        for (int i = 1; i <= n; i++)
+            dp[1][i] = sum(0, i - 1 , arr);
+      
+        for (int i = 1; i <= k; i++)
+            dp[i][1] = arr[0];
+      
+        for (int i = 2; i <= k; i++) {
+            for (int j = 2; j <= n; j++) {
+      
+                long best = Integer.MAX_VALUE;
+      for (int p = 1; p <= j; p++) best = Math.min(best, Math.max(dp[i - 1][p],sum(p, j - 1 , arr)));      
+      
+                dp[i][j] = best;
+            }
+        }
+        return dp[k][n];
     }
     public static long sum(int i , int j , int[] arr)
     {
@@ -365,7 +386,7 @@ class dp_faang
         // int[] arr = new int[]{20,30,2,10};
         // countMaximum(arr, 4);
         //getCount(2);
-        int[] arr = new int[]{5,7,54,67,90,3,21,23,44,67,99};
-        minTime(arr, arr.length, 3);
+        // int[] arr = new int[]{10,20,30,40,60,90,44,56,78,33,21,55,67,88};
+        // minTime(arr, arr.length, 4);
     }
 }
