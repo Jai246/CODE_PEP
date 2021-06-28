@@ -370,6 +370,68 @@ class dp_faang
         for(int k = i;k<j;k++) total+=arr[k];
         return total;
     }
+    // word wrap GFG
+    public static int solveWordWrap (int[] nums, int k)
+    {
+        int[] dp = new int[nums.length+1];
+        Arrays.fill(dp,-1);
+        solve(nums,0,k,dp);
+        return dp[0];
+    }
+    public static int solve(int []arr , int i , int k , int[] dp)
+    {
+        if(dp[i] != -1) return dp[i];
+        int sum = 0;
+        int minCost = (int)1e9;
+        for(int j=i;j<arr.length;j++)
+        {
+            sum += arr[j];
+            if((sum + (j-i)) <= k)
+            {
+                if(j<arr.length-1) minCost = Math.min(minCost,k-(sum + (j-i)) + solve(arr,j+1,k,dp));
+                else return dp[i] = 0;
+            }
+        }
+        return dp[i] = minCost;
+    }
+    // Largest Sum Subarray with atleast k elements
+    public long maxSumWithK(long a[], long n, long k)
+    {
+        long arr[]  = new long[(int)a.length];
+        long sum = 0;
+        for(int i = 0;i<n;i++)
+        {
+            if((sum + a[i]) > a[i])
+            {
+                sum += a[i];
+                arr[i] = sum;
+            }
+            else
+            {
+                arr[i] = a[i];
+                sum = a[i];
+            }
+        }
+        
+        long exactK = 0;
+        
+        for(int i = 0;i<k;i++)
+        {
+            exactK += a[i];
+        }
+        
+        long lSum = exactK;
+        
+        for(long i = k;i<n;i++)
+        {
+            exactK = (exactK + a[(int) i])- a[(int) (i-k)];
+            long temp = exactK + arr[(int) (i-k)];
+            lSum = Math.max(lSum , Math.max(exactK , temp));
+            
+        }
+        
+        return lSum;
+    }
     public static void main(String[] args) 
     {
         // int[] arr1 = new int[]{1, 15, 51, 45, 33,100, 12, 18, 9};
@@ -388,5 +450,6 @@ class dp_faang
         //getCount(2);
         // int[] arr = new int[]{10,20,30,40,60,90,44,56,78,33,21,55,67,88};
         // minTime(arr, arr.length, 4);
+        System.out.println(solveWordWrap(new int[]{3,2,2,5}, 6));
     }
 }
