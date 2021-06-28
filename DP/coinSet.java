@@ -258,52 +258,6 @@ public class coinSet
         print2D(dp);
         System.out.println(dp[arr.length-1][tar]);
     }
-    // Subset Sum Count Front Video in dry run folder
-    // Here One thing to notics is here we are using subsequence methode instead of using a for loop
-    public static int getCount_dp(int arr[] , int sum)
- 	{
- 	    int[][] dp = new int[arr.length + 1][sum + 1];
- 	    
- 	    for(int j = 0;j<=sum;j++)
- 	    {
- 	        for(int i = arr.length;i>=0;i--)    
- 	        {
- 	            if(j == 0)
- 	            {
- 	                dp[i][j] = 1;
- 	                continue;
- 	            }
- 	            if(i == arr.length)
- 	            {
- 	                dp[i][j] = 0;
- 	                continue;
- 	            }
- 	            if(i + 1 <= arr.length && (j - arr[i]) >= 0) dp[i][j] = (dp[i][j] +  dp[i+1][j - arr[i]]) % ((int)1e9 + 7);
- 	            if(i + 1 <= arr.length) dp[i][j] = (dp[i][j] + dp[i+1][j]) % ((int)1e9 + 7);
- 	        }
- 	    }
- 	    return dp[0][sum];
- 	}
-     public static int getCount_1(int []arr , int j , int sum , int[][]dp)
-	{
-	    if(sum == 0) return dp[j][sum] = 1;
-	    if(dp[j][sum] != -1) return dp[j][sum];
-	    int count = 0;
-	    for(int i = j;i<arr.length;i++)
-	    {
-	        if(i+1 <= arr.length && sum - arr[i] >= 0) count = (count +  getCount_1(arr , i+1 , sum - arr[i] , dp) % ((int)1e9 + 7)) % ((int)1e9 + 7);
-	    }
-	    return dp[j][sum] = count % ((int)1e9 + 7);
- 	}
-    public static int getCount_2(int []arr , int j , int sum , int[][]dp)
-	{
-	    if(sum == 0) return dp[j][sum] = 1;
-	    if(dp[j][sum] != -1) return dp[j][sum];
-	    int count = 0;
-	    if(j+1 <= arr.length && sum - arr[j] >= 0) count = (count +  getCount_2(arr , j+1 , sum - arr[j] , dp) % ((int)1e9 + 7)) % ((int)1e9 + 7);
-	    if(j+1 <= arr.length) count = (count +  getCount_2(arr , j+1 , sum, dp) % ((int)1e9 + 7)) % ((int)1e9 + 7);
-	    return dp[j][sum] = count % ((int)1e9 + 7);
- 	}
     public static void SubsetSum_DP_Type1(int[] arr , int tar)
     {
         boolean[][] dp = new boolean[arr.length+1][tar+1];
@@ -358,6 +312,54 @@ public class coinSet
         if(tar - arr[i-1]>=0 && dp[i][tar]) printingSubsets(dp,arr,i-1,tar-arr[i-1],str +" "+ arr[i-1]);
         if(i-1>=0) printingSubsets(dp,arr,i-1,tar,str);
     }
+    // AAGE SE
+    // Subset Sum Count Front Video in dry run folder
+    // Here One thing to notics is here we are using subsequence methode instead of using a for loop
+    public static int getCount_dp(int arr[] , int sum)
+ 	{
+ 	    int[][] dp = new int[arr.length + 1][sum + 1];
+ 	    
+ 	    for(int j = 0;j<=sum;j++)
+ 	    {
+ 	        for(int i = arr.length;i>=0;i--)    
+ 	        {
+ 	            if(j == 0)
+ 	            {
+ 	                dp[i][j] = 1;
+ 	                continue;
+ 	            }
+ 	            if(i == arr.length)
+ 	            {
+ 	                dp[i][j] = 0;
+ 	                continue;
+ 	            }
+ 	            if(i + 1 <= arr.length && (j - arr[i]) >= 0) dp[i][j] = (dp[i][j] +  dp[i+1][j - arr[i]]) % ((int)1e9 + 7);
+ 	            if(i + 1 <= arr.length) dp[i][j] = (dp[i][j] + dp[i+1][j]) % ((int)1e9 + 7);
+ 	        }
+ 	    }
+ 	    return dp[0][sum];
+ 	}
+     public static int getCount_1(int []arr , int j , int sum , int[][]dp)
+	{
+	    if(sum == 0) return dp[j][sum] = 1;
+	    if(dp[j][sum] != -1) return dp[j][sum];
+	    int count = 0;
+	    for(int i = j;i<arr.length;i++)
+	    {
+	        if(i+1 <= arr.length && sum - arr[i] >= 0) count = (count +  getCount_1(arr , i+1 , sum - arr[i] , dp) % ((int)1e9 + 7)) % ((int)1e9 + 7);
+	    }
+	    return dp[j][sum] = count % ((int)1e9 + 7);
+ 	}
+    public static int getCount_2(int []arr , int j , int sum , int[][]dp)
+	{
+	    if(sum == 0) return dp[j][sum] = 1;
+	    if(dp[j][sum] != -1) return dp[j][sum];
+	    int count = 0;
+	    if(j+1 <= arr.length && sum - arr[j] >= 0) count = (count +  getCount_2(arr , j+1 , sum - arr[j] , dp) % ((int)1e9 + 7)) % ((int)1e9 + 7);
+	    if(j+1 <= arr.length) count = (count +  getCount_2(arr , j+1 , sum, dp) % ((int)1e9 + 7)) % ((int)1e9 + 7);
+	    return dp[j][sum] = count % ((int)1e9 + 7);
+ 	}
+    
     // 416
     public static boolean canPartition(int[] arr) 
     {
