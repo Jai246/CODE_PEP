@@ -432,6 +432,117 @@ class dp_faang
         
         return lSum;
     }
+    // Geeks For Geeks Perfect Sum
+    public static void perfectSum(int arr[],int n, int sum) 
+	{
+        int[][] dp = new int[n+1][sum+1];
+        for(int[] ele : dp) Arrays.fill(ele,-1);
+        
+        getCount(arr,0,sum,dp);
+        print2d(dp);
+        //return getCount_dp(arr ,sum ,n, dp);
+	}
+	public static int getCount(int []arr , int j , int sum , int[][]dp)
+	{
+	    if(sum == 0) return dp[j][sum] = 1;
+	    if(dp[j][sum] != -1) return dp[j][sum];
+	    int count = 0;
+	    for(int i = j;i<arr.length;i++)
+	    {
+	        if(i+1 <= arr.length && sum - arr[i] >= 0) count = (count +  getCount(arr , i+1 , sum - arr[i] , dp) % ((int)1e9 + 7)) % ((int)1e9 + 7);
+	    }
+	    return dp[j][sum] = count % ((int)1e9 + 7);
+ 	}
+    public static int getCount_dp(int arr[] , int sum)
+ 	{
+ 	    int[][] dp = new int[arr.length + 1][sum + 1];
+ 	    
+ 	    for(int j = 0;j<=sum;j++)
+ 	    {
+ 	        for(int i = arr.length;i>=0;i--)    
+ 	        {
+ 	            if(j == 0)
+ 	            {
+ 	                dp[i][j] = 1;
+ 	                continue;
+ 	            }
+ 	            if(i == arr.length)
+ 	            {
+ 	                dp[i][j] = 0;
+ 	                continue;
+ 	            }
+ 	            if(i + 1 <= arr.length && (j - arr[i]) >= 0) dp[i][j] = (dp[i][j] +  dp[i+1][j - arr[i]]) % ((int)1e9 + 7);
+ 	            if(i + 1 <= arr.length) dp[i][j] = (dp[i][j] + dp[i+1][j]) % ((int)1e9 + 7);
+ 	        }
+ 	    }
+ 	    return dp[0][sum];
+ 	}
+    // Check O(n^3) Solution On Geeks For Geeks 
+    // Geeks For geeks Longest Even Length Substring such that Sum of First and Second Half is same O(n^2) Time and O(n^2) Space
+     public static void getLength(int []arr)
+     {
+        int n = arr.length;
+        int[][] dp = new int[arr.length][arr.length];
+        int length = 0;
+        for(int k = 0;k<n;k++)
+        {
+            for(int i = 0 , j = k; j<n ;j++,i++)
+            {
+                if(k == 0)
+                {
+                    dp[i][j] = arr[i];
+                    continue;
+                }
+                dp[i][j] = dp[i][j-1] + arr[j];
+            }
+        }
+        print2d(dp);
+
+        for(int k = 0;k<n;k++)
+        {
+            for(int i = 0 , j = k; j<n ;j++,i++)
+            {
+                if((i + (j-i+1)) < n && (j + (j-i+1)) < n && dp[i][j] == dp[i + (j-i+1)][j + (j-i+1)])
+                {
+                    length = Math.max(length , 2*(j-i+1));
+                }
+            }
+        }
+        System.out.println(length);
+    }
+    // O(n^2) Time and O(1) Space;
+    public static void getLength_2(int []arr)
+    {
+        int n = arr.length;
+        int max = 0;
+            for(int length = 1;length<=n/2;length++)
+            {
+                int l = 0;
+                int r = 0;
+                int lsum = 0;
+                int rsum = 0;
+                while(l < length)
+                {
+                    lsum += arr[l];
+                    l++;
+                }
+                r = l;
+                while(r < arr.length && r < length + l)
+                {
+                    rsum += arr[r];
+                    r++;
+                }
+                while(r-l == length && l<=arr.length && r<=arr.length)
+                {
+                    if(lsum == rsum) max = Math.max(max , r-l);  
+                    if(l < arr.length) lsum = (lsum - arr[l - length]) + arr[l];
+                    if(r < arr.length) rsum = (rsum - arr[r - length]) + arr[r];
+                    l++;
+                    r++;
+                }
+            }
+        System.out.println(max * 2);
+}
     public static void main(String[] args) 
     {
         // int[] arr1 = new int[]{1, 15, 51, 45, 33,100, 12, 18, 9};
@@ -447,9 +558,17 @@ class dp_faang
         // countMin("abababababa");
         // int[] arr = new int[]{20,30,2,10};
         // countMaximum(arr, 4);
-        //getCount(2);
+        // getCount(2);
         // int[] arr = new int[]{10,20,30,40,60,90,44,56,78,33,21,55,67,88};
         // minTime(arr, arr.length, 4);
-        System.out.println(solveWordWrap(new int[]{3,2,2,5}, 6));
+        // System.out.println(solveWordWrap(new int[]{3,2,2,5}, 6));
+        // int[] arr = new int[]{2,3,5,6,8,10};
+        // int[][] dp = new int[7][11];
+        // perfectSum(arr,6,10);
+        // int[] arr = new int[]{1,5,3,8,0,2,3};
+        // int[] arr = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0};
+        // int[] arr = new int[]{0,0,0,0,5,5,5,5,5,5,5,5,5,0,0,0,0};
+        // getLength_2(arr);
+        
     }
 }
