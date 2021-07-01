@@ -542,7 +542,93 @@ class dp_faang
                 }
             }
         System.out.println(max * 2);
-}
+    }
+    // lEETCODE lONGEST COMMON INCREASING SUBSEQUENCE IMPORTANT PROBLEM VIDEO IN VS VS CODE MUST WATCH
+    public static int LCIS(int[] arr1, int m, int[] arr2, int n) 
+    {
+        int table[] = new int[m];
+
+        for (int i = 0; i < n; i++)
+        {
+            int current = 0;
+
+            for (int j = 0; j < m; j++)
+            {
+                if (arr1[i] == arr2[j])
+                    if (current + 1 > table[j])
+                        table[j] = current + 1;
+ 
+                if (arr1[i] > arr2[j])
+                    if (table[j] > current)
+                        current = table[j];
+            }
+        }
+        int result = 0;
+        for (int i=0; i<m; i++)
+            if (table[i] > result)
+                result = table[i];
+ 
+        return result;
+    }
+    // LEETCODE 357
+    // Exponential Solution
+    public static int countNumbersWithUniqueDigits(int n) 
+    {
+        if(n == 1 || n == 0) 
+        {
+            return (n == 1) ? 10 : 1; 
+        }
+        int val = (int)(Math.pow(10, n));
+        return countNumbersWithUniqueDigits(val,0) + 1;
+    }
+    public static boolean canWe(int no , int i)
+    {
+        if(no == 0 && i == 0) return false;
+        while(no!=0)
+        {
+            if(i == no % 10) return false;
+            no = no / 10;
+        }
+        return true;
+    }
+    public static int countNumbersWithUniqueDigits(int n , int val) 
+    {
+        int count = 0;
+        for(int i = 0;i<=9;i++)
+        {
+            if((val * 10) + i < n && canWe(val,i)) count += countNumbersWithUniqueDigits(n, (val * 10) + i) + 1;
+        }
+        return count;
+    }
+    //O(1) Solution Easy Explaination just dry run you will get to know
+    public static int countNumbersWithUniqueDigits_(int n) 
+    {
+        if (n == 0) {
+            return 1;
+        }
+        int ans = 10, base = 9;
+        for (int i = 2; i <= n; i++) {
+            base = base * (9 - i + 2);
+            ans += base;
+        }
+        return ans;
+    }
+    // Maximize The Cut Segments GEEKS FOR GEEKS
+    public static int maximizeCuts_dp(int n, int x, int y, int z)
+    {
+        int[] dp = new int[n+1];
+        dp[0] = 1;
+        for(int i = 1;i<=n;i++)
+        {
+            int countA = (i-x >=0) ? (i-x == 0) ? dp[i-x] : ((dp[i-x] == 0) ? 0 : dp[i-x] + 1) : 0;
+            int countB = (i-y >=0) ? (i-y == 0) ? dp[i-y] : ((dp[i-y] == 0) ? 0 : dp[i-y] + 1) : 0;
+            int countC = (i-z >=0) ? (i-z == 0) ? dp[i-z] : ((dp[i-z] == 0) ? 0 : dp[i-z] + 1) : 0;
+
+            dp[i] = Math.max(countA , Math.max(countB , countC));
+        }
+        print1D(dp);
+        return dp[n];
+    }
     public static void main(String[] args) 
     {
         // int[] arr1 = new int[]{1, 15, 51, 45, 33,100, 12, 18, 9};
@@ -569,6 +655,8 @@ class dp_faang
         // int[] arr = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0};
         // int[] arr = new int[]{0,0,0,0,5,5,5,5,5,5,5,5,5,0,0,0,0};
         // getLength_2(arr);
-        
+        //System.out.println(countNumbersWithUniqueDigits(2));
+        //System.out.println(maximizeCuts(7, 5, 5, 2));
+        System.out.println(maximizeCuts_dp(7,5,5,3));
     }
 }
