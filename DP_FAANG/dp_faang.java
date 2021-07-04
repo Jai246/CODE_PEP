@@ -214,7 +214,7 @@ class dp_faang
         }
         print1D(dp);
     }
-    // gfg form a palindrome
+    // gfg Min insertions to form a palindrome
     public static int countMin(String str)
     {
         int[][] dp = new int[str.length()][str.length()];
@@ -370,6 +370,181 @@ class dp_faang
         for(int k = i;k<j;k++) total+=arr[k];
         return total;
     }
+    // LEETCODE CAPACITY TO SHIOP PACKAGES WITHEN D DAYS BINARY SEARCH
+    public static boolean check(int val , int[] weights , int days)
+    {
+        int sum = 0;
+        int count = 1;
+        for(int ele : weights)
+        {
+            if(ele > val) return false; //means val is small
+            sum += ele;
+            if(sum > val)
+            {
+                count++;
+                sum = ele;
+            }
+            if(count > days) return false;// means val is small
+        }
+        return true;
+        
+    }
+    public int shipWithinDays(int[] weights, int days) 
+    {
+        int si = 1;
+        int ei = (int)1e9;
+        while(si < ei)
+        {
+            int mid = (si + ei)/2;
+            if(!check(mid , weights , days)) si = mid+1;
+            else ei = mid;
+        }
+        return si;
+    }
+    // MINIMUM NO OF DAYS TO MAKE M BOCQUETE
+    public boolean check(int val , int k , int m , int[] arr)
+    {
+        int b = 0;
+        int f = 0;
+        for(int i = 0;i<arr.length;i++)
+        {
+            if(arr[i] > val)
+            {
+                if(f < k) f = 0;
+                continue;
+            }
+            if(arr[i] <= val)
+            {
+                f++;
+                if(f == k)
+                {
+                    b++;
+                    f = 0;
+                }
+                if(b == m) return true;
+            }
+        }
+        return false;
+    }
+    public int minDays(int[] arr, int m, int k) 
+    {
+        if(m*k > arr.length) return -1;
+        int si = 0;
+        int ei = (int)1e9+7;
+        while(si < ei)
+        {
+            int mid = (si+ei)/2;
+            if(check(mid , k , m , arr)) ei = mid;
+            else si = mid+1;
+        }
+        return (ei == (int)1e9+7) ?  -1 : ei ;
+    }
+    // ALLOCATE BOOKS PAGES
+    public static boolean check1(int val , int[] a , int stu)
+    {
+        int sum = 0;
+        int c = 1;
+        for(int ele : a)
+        {
+            if(ele > val) return false;
+            sum += ele;
+            if(sum > val)
+            {
+                c++;
+                sum = ele;
+            }
+            if(c > stu) return false;
+        }
+        return true;
+    }
+    public static int findPages(int[]a,int n,int m)
+    {
+        int ei = (int)1e9;
+        int si = 1;
+        
+        while(si < ei)
+        {
+            int mid = (si+ei)/2;
+            if(check1(mid , a , m)) ei = mid;
+            else si = mid + 1;
+        }
+        return si;
+    }
+    // INTERLEAVINJG STRINGS LEETCODE  
+    public boolean isInterleave(String s1, String s2, String s3) 
+    {
+        if(s1.length() + s2.length() != s3.length()) return false;
+        boolean[][] dp = new boolean[s1.length()+1][s2.length()+1];
+        //return check(s1,s2,s3,0,0,dp);
+        return check(s1,s2,s3,dp);
+    }
+    public boolean check(String s1, String s2, String s3 , int i , int j , boolean[][]dp)
+    {
+        if(i == s1.length() && j == s2.length()) dp[i][j] = true;
+        if(dp[i][j]) return true;
+        
+        boolean temp = false;
+        
+        if(i < s1.length() && s1.charAt(i) == s3.charAt(i+j)) temp = temp || check(s1,s2,s3,i+1,j,dp);
+        if(j < s2.length() && s2.charAt(j) == s3.charAt(i+j)) temp = temp || check(s1,s2,s3,i,j+1,dp);
+        
+        return dp[i][j] = temp;
+    }
+    public boolean check(String s1, String s2, String s3 , boolean[][]dp)
+    {
+        dp[s1.length()][s2.length()] = true;        
+        for(int i = s1.length(); i>=0;i--)
+        {
+            for(int j = s2.length(); j>=0;j--)
+            {
+                if(i+1 <= s1.length() && s1.charAt(i) == s3.charAt(i+j)) dp[i][j] = dp[i+1][j];
+                if(j+1 <= s2.length() && s2.charAt(j) == s3.charAt(i+j)) dp[i][j] = dp[i][j] || dp[i][j+1];       
+            }
+        }
+        return dp[0][0];
+    }
+    // PROBABLITY OF KNIGHT TO REMAIN IN THE CHESS BOARD
+    public double knightProbability(int n, int k, int row, int column) 
+    {
+        double[][] curr = new double[n][n];
+        double[][] next = new double[n][n];
+        curr[row][column] = 1;
+        double max = 0.0;
+        int[][] dir = new int[][]{{-2,-1},{-1,-2},{-2,1},{-1,2},{1,-2},{2,-1},{1,2},{2,1}};
+        for(int l = 0;l<k;l++)
+        {
+            for(int i=0;i<n;i++)
+            {
+                for(int j=0;j<n;j++)
+                {
+                    if(curr[i][j]!=0)
+                    {
+                        for(int[] d : dir)
+                        {
+                            int x = i + d[0];
+                            int y = j + d[1];
+                            
+                            if(x < n && y < n && x>=0 && y>=0)
+                            {
+                                next[x][y] += (curr[i][j] * 1/8);
+                            }
+                        }
+                    }
+                }
+            }
+            curr = next;
+            next = new double[n][n];
+        }
+        for(int i = 0;i<n;i++)
+        {
+            for(int j = 0;j<n;j++)
+            {
+                max += curr[i][j];
+            }
+        }
+        return max;
+    }
+
     // word wrap GFG
     public static int solveWordWrap (int[] nums, int k)
     {
@@ -394,6 +569,35 @@ class dp_faang
         }
         return dp[i] = minCost;
     }
+    // REMOVE IN ELEMENTS EITHER SIDE -> 2MIN > MAX
+    public static int minRemoval(int arr[], int n) 
+    {
+        Arrays.sort(arr);
+        int[][] dp = new int[n][n];
+        solve(arr , n , dp);
+        return dp[0][arr.length-1];
+    }
+    public static void solve(int []arr , int n, int[][]dp)
+    {
+        for(int k = 1;k<n;k++)
+        {
+            for(int i = 0,j = k;i<n && j<n;i++,j++)
+            {
+                if(j-i == 1)
+                {
+                    dp[i][j] = 0;
+                    continue;
+                }
+                if(arr[i]*2 >= arr[j])
+                {
+                    dp[i][j] = 0;
+                    continue;
+                }
+                dp[i][j] = Math.min(dp[i+1][j] , dp[i][j-1]) + 1;
+            }
+        }
+    }
+    
     // Largest Sum Subarray with atleast k elements
     public long maxSumWithK(long a[], long n, long k)
     {
@@ -657,6 +861,6 @@ class dp_faang
         // getLength_2(arr);
         //System.out.println(countNumbersWithUniqueDigits(2));
         //System.out.println(maximizeCuts(7, 5, 5, 2));
-        System.out.println(maximizeCuts_dp(7,5,5,3));
+        //System.out.println(maximizeCuts_dp(7,1,2,3));
     }
 }
