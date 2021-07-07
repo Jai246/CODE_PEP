@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
+
 class dp_faang
 {
     public static void print1D(int[] arr)
@@ -833,6 +834,143 @@ class dp_faang
         print1D(dp);
         return dp[n];
     }
+    // Maximum Product SubArray
+    public static long maxProduct(int[] arr, int n) 
+    {
+        long min = 1;
+        long max = 1;
+        long ans = 0;
+        for(int i = 0;i<n;i++)
+        {
+            if(arr[i] == 0)
+            {
+                min = 1;
+                max = 1;
+                continue;
+            }
+            long temp1 = Math.min(arr[i] ,Math.min(arr[i]*min , arr[i]*max));
+            long temp2 = Math.max(arr[i] ,Math.max(arr[i]*min , arr[i]*max));
+            min = temp1;
+            max = temp2;
+            System.out.println(max);
+            System.out.println(min);
+            System.out.println(ans);
+            System.out.println("##############################");
+            ans = Math.max(ans,max);
+        }
+        return ans;
+    }
+    // leetcode 472 Concatenated Words SOLVE THIS QUESTION USING TRIES !!!!!!!!!!!!!!!!!!!!!!!!
+    public static List<String> findAllConcatenatedWordsInADict(String[] words) 
+    {
+        List<String> ans = new ArrayList<>();
+        HashSet<String> map = new HashSet<>();
+        for(String word : words) map.add(word);
+
+        for(String word : words)
+        {
+            boolean res = helperFun(word,map,0,0);
+            if(res) ans.add(word);
+        }
+        return ans;
+    }
+    public static boolean helperFun(String word , HashSet<String> map , int j , int count)
+    {
+        if(j == word.length() && count > 1) return true;
+        boolean res = false;
+        for(int i=j+1;i<=word.length();i++)
+        {
+            if(j-i != word.length() && map.contains(word.substring(j,i)))
+            {
+                res = res || helperFun(word, map, i, count + 1);
+                if(res) return res;
+            }
+        }
+        return res;
+    }
+    // GEEKS FOR GEEKS COUNT NO OF HOPS
+    public static long mod =  (long)1000000007;
+    public static long countWays(int n)
+    { 
+        long[] dp = new long[n+1];
+        dp[0] = 1;
+        for(int j = 1;j<=n;j++)
+        {
+            for(int i = 1;i<=3;i++)
+            {
+                if(j-i >= 0) dp[j] = (dp[j] + dp[j-i]) % mod;
+            }   
+        }
+        return dp[n];
+    }
+    //geeks for geeks count numbers containing 4 Check Dp Solution On geeks for geeks
+    public static int countNumberswith4(int n) 
+    {
+        int result = 0;
+      
+        // One by one compute sum of digits
+        // in every number from 1 to n
+        for (int x=1; x<=n; x++)
+            result += has4(x)? 1 : 0;
+      
+        return result;
+    }
+    public static boolean has4(int x)
+    {
+        while (x != 0)
+        {
+            if (x%10 == 4)
+               return true;
+            x   = x /10;
+        }
+        return false;
+    }
+    // geeks for geeks Count of strings that can be formed using a, b and c under given constraints 
+    // dp memoisation solution 3D Dp not passing on geeks for geeks giving stack OverFlow
+    // check for the combination solution
+    public static int countStrUtil(int[][][] dp, int n,int bCount, int cCount)
+    {
+ 
+        if (bCount < 0 || cCount < 0)
+        {
+            return 0;
+        }
+        if (n == 0)
+        {
+            return 1;
+        }
+        if (bCount == 0 && cCount == 0)
+        {
+            return 1;
+        }
+ 
+        if (dp[n][bCount][cCount] != -1)
+        {
+            return dp[n][bCount][cCount];
+        }
+
+        int res = countStrUtil(dp, n - 1, bCount, cCount);
+        res += countStrUtil(dp, n - 1, bCount - 1, cCount);
+        res += countStrUtil(dp, n - 1, bCount, cCount - 1);
+ 
+        return (dp[n][bCount][cCount] = res);
+    }
+ 
+    public static long countStr(long n)
+    {
+        int[][][] dp = new int[(int)n + 1][2][3];
+        for (int i = 0; i < (int)n + 1; i++)
+        {
+            for (int j = 0; j < 2; j++)
+            {
+                for (int k = 0; k < 3; k++)
+                {
+                    dp[i][j][k] = -1;
+                }
+            }
+        }
+        return countStrUtil(dp, (int)n,1,2);
+    }
     public static void main(String[] args) 
     {
         // int[] arr1 = new int[]{1, 15, 51, 45, 33,100, 12, 18, 9};
@@ -859,8 +997,14 @@ class dp_faang
         // int[] arr = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0};
         // int[] arr = new int[]{0,0,0,0,5,5,5,5,5,5,5,5,5,0,0,0,0};
         // getLength_2(arr);
-        //System.out.println(countNumbersWithUniqueDigits(2));
-        //System.out.println(maximizeCuts(7, 5, 5, 2));
-        //System.out.println(maximizeCuts_dp(7,1,2,3));
+        // System.out.println(countNumbersWithUniqueDigits(2));
+        // System.out.println(maximizeCuts(7, 5, 5, 2));
+        // System.out.println(maximizeCuts_dp(7,1,2,3));
+        // System.out.println(maxProduct(new int[]{6,-3,-10,0,-3}, 5));
+        // List<String> res = findAllConcatenatedWordsInADict(new String[]{"cat","cats","catsdogcats","dog","dogcatsdog","hippopotamuses","rat","ratcatdogcat"});
+        // System.out.println(res.size());
+        // for(String word : res) System.out.println(word);
+        // String temp = "JAI";
+        // System.out.println(temp.substring(0,1));
     }
 }
