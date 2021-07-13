@@ -903,7 +903,8 @@ class dp_faang
         }
         return dp[n];
     }
-    //geeks for geeks count numbers containing 4 Check Dp Solution On geeks for geeks
+    // geeks for geeks count numbers containing 4 Check Dp Solution On geeks for geeks
+    // DO THIS WHEN YOU ARE DONE WITH PERMUTATIONS COMBINATIONS AND COUNTING
     public static int countNumberswith4(int n) 
     {
         int result = 0;
@@ -927,7 +928,8 @@ class dp_faang
     }
     // geeks for geeks Count of strings that can be formed using a, b and c under given constraints 
     // dp memoisation solution 3D Dp not passing on geeks for geeks giving stack OverFlow
-    // check for the combination solution
+    // check for the combination solution when you are familier with permutations and combinations
+    // screen shot in Dry Run 
     public static int countStrUtil(int[][][] dp, int n,int bCount, int cCount)
     {
  
@@ -971,6 +973,100 @@ class dp_faang
         }
         return countStrUtil(dp, (int)n,1,2);
     }
+    // GEELKS FOR GEEKS COUNT OF SUB ARRAYS , MAX ELEMENT STRICTLY GREATER THAN K
+    public long countSubarray(int arr[], int n, int k) 
+    {
+        long totalSum = 0;
+        long val = -1;
+        long sum = 0;
+        for(int i = 0;i<n;i++)
+        {
+            totalSum += i+1;
+            if(arr[i]<=k) sum += (i-val);
+            else val = i;
+        }
+        return totalSum - sum;
+    }
+    // dp[0] = 0;
+
+    // dp[1] = dp[0] + 1;
+
+    // dp[2] = dp[0] + 1;
+
+    // dp[3] = dp[1] +1;
+
+    // dp[4] = dp[0] + 1;
+
+    // dp[5] = dp[1] + 1;
+
+    // dp[6] = dp[2] + 1;
+
+    // dp[7] = dp[3] + 1;
+
+    // dp[8] = dp[0] + 1;
+    // ...
+
+    // This is the function we get, now we need find the other pattern for the function to get the general function. After we analyze the above function, we can get
+    // dp[0] = 0;
+
+    // dp[1] = dp[1-1] + 1;
+
+    // dp[2] = dp[2-2] + 1;
+
+    // dp[3] = dp[3-2] +1;
+
+    // dp[4] = dp[4-4] + 1;
+
+    // dp[5] = dp[5-4] + 1;
+
+    // dp[6] = dp[6-4] + 1;
+
+    // dp[7] = dp[7-4] + 1;
+
+    // dp[8] = dp[8-8] + 1;
+    // ..
+
+    // Obviously, we can find the pattern for above example, so now we get the general function
+
+    // dp[index] = dp[index - offset] + 1;
+    // LEETCODE 338 COUNTING BITS DP IMPORTANT
+    public int[] countBits(int num) 
+    {
+        int result[] = new int[num + 1];
+        int offset = 1;
+        for (int index = 1; index < num + 1; ++index){
+            if (offset * 2 == index){
+                offset *= 2;
+            }
+            result[index] = result[index - offset] + 1;
+        }
+        return result;
+    }
+    // Leetcode Count The Repetetions Leetcode Brute Force Solution 
+    public static int getMaxRepetitions(String s1, int n1, String s2, int n2)
+    {
+        char[] ch1 = s1.toCharArray();
+        char[] ch2 = s2.toCharArray();
+        int len1 = ch1.length, len2=ch2.length;
+        int i=0, j=0, k=0, h=0;
+        while(k < n1){ 
+            if (ch1[i]==ch2[j])
+            {
+                j++;
+                if (j==len2){
+                    j=0;
+                    h++;
+                }
+            }
+            i++;
+            if(i==len1){
+                i=0;
+                k++;
+            }
+        }
+        return h/n2;
+    }
+    
     public static void main(String[] args) 
     {
         // int[] arr1 = new int[]{1, 15, 51, 45, 33,100, 12, 18, 9};
