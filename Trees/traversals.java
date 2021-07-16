@@ -510,6 +510,118 @@ class traversals
         }
         return ans;
     }
+    public static TreeNode findRightMost(TreeNode curr , TreeNode root)
+    {
+        if(curr == null) return null;
+        while(curr.right!=null && curr.right != root)
+        {
+            curr = curr.right;
+        }
+        return curr;
+    }
+    // Morris Inorder Traversal
+    // Important TestCase -> [2,3,null,1]
+    public static List<Integer> MorrisInorderTraversal(TreeNode root)
+    {
+        List<Integer> list = new ArrayList<>();
+        while(root!=null)
+        {
+            TreeNode check = findRightMost(root.left,root);
+            if(root.left == null)
+            {
+                list.add(root.val);
+                root = root.right;
+            }
+            else if(check.right == root)
+            { 
+                list.add(root.val);
+                root = root.right;
+                check.right = null;
+            }
+            else
+            {
+                TreeNode rightMost = findRightMost(root.left,root);
+                if(rightMost!=null) rightMost.right = root;
+                root = root.left;
+            }
+        }
+        return list;
+    }
 
+    // Morris Preorder Traversal
+    public static List<Integer> MorrisPreorderTraversal(TreeNode root)
+    {
+        List<Integer> list = new ArrayList<>();
+        while(root!=null)
+        {
+            TreeNode check = findRightMost(root.left,root);
+            if(root.left == null)
+            {
+                list.add(root.val);
+                root = root.right;
+            }
+            else if(check.right == root)
+            { 
+                //list.add(root.val);
+                root = root.right;
+                check.right = null;
+            }
+            else
+            {
+                list.add(root.val);
+                TreeNode rightMost = findRightMost(root.left,root);
+                if(rightMost!=null) rightMost.right = root;
+                root = root.left;
+            }
+        }
+        return list;
+    }
 
+    // PRE POST IN ORDER TRAVERSALS USING ONE STACK (NEW TECHNIQUE)
+    public static class pair
+    {
+        TreeNode node = null;
+        boolean left = false;
+        boolean right = false;
+        boolean self = false;
+        pair(){
+
+        }
+        pair(TreeNode node)
+        {
+            this.node = node;
+        }
+    }
+
+    // Inorder Traversal
+    // by changing the positions of if else we can do this for pre and post order
+    public static List<Integer> inorderTraversal(TreeNode root)
+    {
+        List<Integer> ans = new ArrayList<>();
+        LinkedList<pair> stack = new LinkedList<>();
+        stack.addLast(new pair(root));
+        while(stack.size()!=0 && root!=null)
+        {
+            pair temp = stack.getLast();
+            if(temp.left == false)
+            {
+                temp.left = true;
+                if(temp.node.left != null) stack.addLast(new pair(temp.node.left));
+            }
+            else if(temp.self == false)
+            {
+                temp.self = true;
+                ans.add(temp.node.val);
+            }
+            else if(temp.right == false)
+            {
+                temp.right = true;
+                if(temp.node.right != null) stack.addLast(new pair(temp.node.right));
+            }
+            else stack.removeLast();
+        }
+        return ans;
+    }
+
+    
 }
