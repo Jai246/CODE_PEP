@@ -8,7 +8,7 @@ class BinarySearchTrees
         TreeNode left = null;
         TreeNode right = null;
         TreeNode(int data){
-
+            this.val = data;
         }
         TreeNode(int data , TreeNode left , TreeNode right)
         {

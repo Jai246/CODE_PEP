@@ -155,13 +155,12 @@ class traversals
         TreeNode node = null;
         int Hidx = 0;
         verticalPair(){
+
         }
-        verticalPair(TreeNode node , int Hidx , int Vidx)
+        verticalPair(TreeNode node , int Hidx)
         {
             this.node = node;
             this.Hidx = Hidx;
-        }
-        public verticalPair(traversals.TreeNode left, int i) {
         }
     }
     public static void width(TreeNode root , int hl , int[] ans)
@@ -180,7 +179,7 @@ class traversals
         width(root,0,a);
         int width = (a[1] - a[0]) + 1;
 
-        queue.addLast(new verticalPair(root,-a[0],1));
+        queue.addLast(new verticalPair(root,-a[0]));
         @SuppressWarnings("unchecked")
         ArrayList<int[]>[] map = new ArrayList[width+1];
         while(queue.size()!=0)
@@ -623,5 +622,91 @@ class traversals
         return ans;
     }
 
-    
+
+    // top view of a binary tree
+    public static ArrayList<Integer> topView(TreeNode root)
+    {
+        ArrayList<Integer> ans = new ArrayList<>();
+        HashMap<Integer,Integer> map  = new HashMap<>();
+        LinkedList<verticalPair> queue = new LinkedList<>();
+        queue.addLast(new verticalPair(root,0));
+        int min = 0;
+        int max = 0;
+        while(queue.size()!=0)
+        {
+            verticalPair temp = queue.removeFirst();
+            if(!map.containsKey(temp.Hidx))
+            {
+                map.put(temp.Hidx,temp.node.val);
+            }
+            if(temp.node.left!=null)
+            {
+                queue.addLast(new verticalPair(temp.node.left,temp.Hidx-1));
+                min = Math.min(min, temp.Hidx-1);
+            }
+            if(temp.node.right!=null)
+            {
+                queue.addLast(new verticalPair(temp.node.right,temp.Hidx+1));
+                max = Math.max(max, temp.Hidx+1);
+            }
+            
+        }
+        while(min<=max)
+        {
+            ans.add(map.get(min++));
+        }
+        return ans;
+    }
+
+    public static class spiralPair
+    {
+        TreeNode node = null;
+        int toggle = 0;
+        spiralPair(){
+
+        }
+        spiralPair(TreeNode root , int toggle)
+        {
+            this.node = root;
+            this.toggle = toggle;
+        }
+    }
+
+    // LEETCODE ZIGZAG TRAVERSAL USING ONE QUEUE
+    // 0 -> RemoveLast/AddFirst(Right - Left)
+    // 1 -> RemoveFirst/AddLast(Left - Right) 
+    public static List<List<Integer>> zigzagLevelOrder(TreeNode root)
+    {
+        List<List<Integer>> ans = new ArrayList<>();
+        if(root == null) return ans;
+        LinkedList<spiralPair> queue = new LinkedList<>();
+        int toggle = 1;
+        queue.add(new spiralPair(root,1));
+
+        while(queue.size()!=0)
+        {
+            int size = queue.size();
+            List<Integer> tempAns = new ArrayList<>();
+            while(size-->0)
+            {
+                if(toggle == 0)
+                {
+                    spiralPair temp1 = queue.removeLast();
+                    tempAns.add(temp1.node.val);
+                    if(temp1.node.right != null) queue.addFirst(new spiralPair(temp1.node.right,1));
+                    if(temp1.node.left != null) queue.addFirst(new spiralPair(temp1.node.left,1));
+                }
+                if(toggle == 1)
+                {
+                    spiralPair temp2 = queue.removeFirst();
+                    tempAns.add(temp2.node.val);
+                    if(temp2.node.left != null) queue.addLast(new spiralPair(temp2.node.left,0));
+                    if(temp2.node.right != null) queue.addLast(new spiralPair(temp2.node.right,0));
+                }
+            }
+            toggle = (toggle+1)%2;
+            ans.add(tempAns);
+        }
+        return ans;
+    }
 }

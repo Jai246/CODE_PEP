@@ -252,6 +252,23 @@ public class GTrees
         return tail;
     }
 
-    
-
+    // diametre of a generic tree
+    public static int diameter(TreeNode root , int[]dia)
+    {
+        if(root.child.size() == 0) return 0;
+        int height1 = -1;
+        int height2 = -1;
+        for(TreeNode node : root.child)
+        {
+            int height = diameter(node, dia);
+            if(height > height1)
+            {
+                height2 = height1;
+                height1 = height;
+            }
+            else if(height > height2) height2 = height;
+        }
+        dia[0] = Math.max(dia[0] , height1+height2+2);
+        return Math.max(height1,height2) + 1;
+    }
 }
