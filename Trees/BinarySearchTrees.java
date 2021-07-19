@@ -251,6 +251,84 @@ class BinarySearchTrees
         }
     }
 
+    // LEETCODE 653
+    public void incMeLeft(TreeNode root , LinkedList<TreeNode> lst)
+    {
+        while(root!=null)
+        {
+            lst.addLast(root);
+            root = root.left;
+        }
+    }
+    public void incMeRight(TreeNode root , LinkedList<TreeNode> rst)
+    {
+        while(root!=null){
+            rst.addLast(root);
+            root = root.right;
+        }
+    }
+    public int top(LinkedList<TreeNode> list){
+        return (list.get(list.size()-1)).val;
+    }
+    public boolean findTarget(TreeNode root, int k) 
+    {
+        LinkedList<TreeNode> lst = new LinkedList<>();
+        LinkedList<TreeNode> rst = new LinkedList<>();
+        incMeLeft(root,lst);
+        incMeRight(root,rst);
+        while(top(rst) > top(lst))
+        {
+            if(top(lst) + top(rst) == k) return true;
+            else if(top(lst) + top(rst) < k){
+                TreeNode temp = lst.removeLast();
+                incMeLeft(temp.right,lst);
+            }
+            else{
+                TreeNode temp = rst.removeLast();
+                incMeRight(temp.left,rst);
+            }
+        }
+        return false;
+    }
+
+    // Kth SMALLEST ELEMENT
+    
+    public TreeNode rightMostNode(TreeNode node,TreeNode curr){
+        while(node.right != null && node.right != curr ){
+            node = node.right;
+        }
+        return node;
+    }
+     public int kthSmallest(TreeNode root, int k) {
+        TreeNode curr = root;
+        while (curr != null) {
+            TreeNode next = curr.left;
+
+            if (next == null) {
+                if (k == 1)
+                    return curr.val;
+                k--;
+                curr = curr.right;
+
+            } else {
+                TreeNode rightMost = rightMostNode(next, curr);
+                if (rightMost.right == null) { // thread create
+                    rightMost.right = curr;
+                    curr = curr.left;
+                } else { // thread break
+                    rightMost.right = null;
+                    if (k == 1)
+                        return curr.val;
+                    k--;
+                    curr = curr.right;
+
+                }
+            }
+        }
+
+        return -1;
+    }
+
     
     public static void main(String[] args) 
     {

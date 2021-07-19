@@ -1,7 +1,7 @@
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 class BinaryTrees
 {
@@ -312,5 +312,88 @@ class BinaryTrees
         if(!isValidBST2(root.right)) return false;
         return true;
     }
+
+    // BINARY TREES CAMERAS
+    // 0 -> CAMERA NAHI HEI ZAROORAT BHI NAHI HEI
+    // 1 -> CAMERA HEI ZAROORAT NAHI HEI
+    // -1 -> CAMERA NAHI HEI ZAROORAT HEI
+    public int minCameraCover(TreeNode root) 
+    {
+        int [] count = new int[1];
+        int ans  = minCameraCover_(root,count);
+        return ans == -1 ? count[0] + 1 : count[0]; // IMPORTANT FOR ANY SWEWED TREE 
+        // OF EVEN SIZE SINCE IT WILL RETURN -1 BUT STILL WE NEED A CAMERA FOR THE ROOT
+        // NODE
+    }
+    public int minCameraCover_(TreeNode root , int[] count) 
+    {
+        if(root == null) return 0;
+        int lans = minCameraCover_(root.left,count);
+        int rans = minCameraCover_(root.right,count);
+        if(lans == -1 || rans == -1)
+        {
+            count[0]++;
+            return 1;
+        }
+        if(lans == 1 || rans ==1 )
+        {
+            return 0;
+        }
+        return -1;
+    }
+
+    // LEETCODE 337 HOUSE ROBBER 3
+    // JUST RETURN THE VALUE OF (MY) AND (MY CHILD) VIDEO IN DRU RUN
+    public int rob(TreeNode root) 
+    {
+        int[] ans = rob_(root);
+        return Math.max(ans[0] , ans[1]);
+    }
+    public int[] rob_(TreeNode root) 
+    {
+        if(root == null) return new int[2];
+        int[] myAns = new int[2];
+        int[] lans = rob_(root.left);
+        int[] rans = rob_(root.right);
+        myAns[0] = root.val + lans[1] + rans[1];
+        myAns[1] = Math.max(lans[0],lans[1]) + Math.max(rans[0],rans[1]);
+        return myAns;
+    }
+
+    // LEETCODE 662 
+    public class pair {
+        TreeNode node = null;
+        long w = 0;
+        pair(TreeNode node, long w) {
+            this.node = node;
+            this.w = w;
+        }
+    }
+    public int widthOfBinaryTree(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        LinkedList<pair> que = new LinkedList<>();
+        que.addLast(new pair(root, 1));
+        int ans = 0;
+        while (que.size() != 0) {
+            int size = que.size();
+            long fi = que.getFirst().w;
+            long li = que.getFirst().w;
+            while (size-- > 0) {
+                pair p = que.removeFirst();
+                TreeNode node = p.node;
+                long w = p.w;
+                li = w;
+                if (node.left != null)
+                    que.addLast(new pair(node.left, 2 * w));
+                if (node.right != null)
+                    que.addLast(new pair(node.right, 2 * w + 1));
+            }
+            ans = Math.max(ans, (int) (li - fi + 1));
+        }
+        return ans;
+    }
+
 
 }
