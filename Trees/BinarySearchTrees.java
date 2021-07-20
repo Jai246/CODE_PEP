@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 class BinarySearchTrees
@@ -252,6 +253,8 @@ class BinarySearchTrees
     }
 
     // LEETCODE 653
+    // TWO SUM 4
+    // SOLUTION USING TWO STACKS
     public void incMeLeft(TreeNode root , LinkedList<TreeNode> lst)
     {
         while(root!=null)
@@ -291,8 +294,8 @@ class BinarySearchTrees
         return false;
     }
 
-    // Kth SMALLEST ELEMENT
-    
+    // LEETCODE 230
+    // Kth SMALLEST ELEMENT USING MORRIS TRAVERSAL
     public TreeNode rightMostNode(TreeNode node,TreeNode curr){
         while(node.right != null && node.right != curr ){
             node = node.right;
@@ -303,7 +306,6 @@ class BinarySearchTrees
         TreeNode curr = root;
         while (curr != null) {
             TreeNode next = curr.left;
-
             if (next == null) {
                 if (k == 1)
                     return curr.val;
@@ -321,15 +323,146 @@ class BinarySearchTrees
                         return curr.val;
                     k--;
                     curr = curr.right;
-
                 }
             }
         }
-
         return -1;
     }
 
+    // LEETCODE 1372 LONGEST ZIGZAG PATH IN A BINARY TREE
+
+    public static class zigZagPair
+    {
+        int leftMax = -1;
+        int rightMax = -1;
+        zigZagPair(int leftMax , int rightMax){
+            this.leftMax = leftMax;
+            this.rightMax = rightMax;
+        }
+    }
+    public int longestZigZag(TreeNode root) 
+    {
+        int[] ans = new int[]{-1};
+        calculatePath(root, ans);
+        return ans[0];
+    }
+    public static zigZagPair calculatePath(TreeNode root, int[] ans)
+    {
+        if(root == null) return new zigZagPair(-1,-1);
+        zigZagPair left = calculatePath(root.left,ans);
+        zigZagPair right = calculatePath(root.right,ans);
+        zigZagPair temp = new zigZagPair(left.rightMax+1,right.leftMax+1);
+        ans[0] = Math.max(ans[0] , Math.max(temp.rightMax,temp.leftMax));
+        return temp;
+    }
+
+    // LEETCODE 99 RECOVER A BINARY TREE
+
+    public static TreeNode a = null;
+    public static TreeNode b = null;
+    public static TreeNode prev = null;
     
+    public void recoverTree(TreeNode root) 
+    {
+        recoverTree_(root);
+        int temp = a.val;
+        a.val = b.val;
+        b.val = temp;
+        return;
+    }
+    
+    public static void recoverTree_(TreeNode root)
+    {
+        if(root == null) return;
+        recoverTree_(root.left);
+        if(prev!=null && prev.val > root.val)
+        {
+            b = root;
+            if(a == null) a = prev;
+        }
+        prev = root;
+        recoverTree_(root.right);
+        return;
+    }
+
+    // public TreeNode a = null;
+    // public TreeNode b = null;
+    // public TreeNode prev = null;
+    
+    // public void recoverTree(TreeNode root) 
+    // {
+    //     recoverTree_(root);
+    //     int temp = a.val;
+    //     a.val = b.val;
+    //     b.val = temp;
+    //     return;
+    // }
+    
+    // public boolean recoverTree_(TreeNode root)
+    // {
+    //     if(root == null) return true;
+    //     if(!recoverTree_(root.left)) return false;
+    //     if(prev!=null && prev.val > root.val)
+    //     {
+    //         b = root;
+    //         if(a == null) a = prev;
+    //         else return false;
+    //     }
+    //     prev = root;
+    //     if(!recoverTree_(root.right)) return false;
+    //     return true;
+    // }
+
+    // SERIALIZE AND DESERIALIZE A BINARY SEARCH TREE
+    // ITS SAME AS TREE FROM PREORDER
+    // LEETCODE 297
+    int idx = 0;
+    public TreeNode createTree(int[] arr) {
+        if (idx == arr.length || arr[idx] == -1001) {
+            idx++;
+            return null;
+        }
+        TreeNode node = new TreeNode(arr[idx++]);
+        node.left = createTree(arr);
+        node.right = createTree(arr);
+
+        return node;
+    }
+    public void serializeTree(TreeNode node, ArrayList<Integer> arr) 
+    {
+        if (node == null) {
+            arr.add(-1001);
+            return;
+        }
+        arr.add(node.val);
+        serializeTree(node.left, arr);
+        serializeTree(node.right, arr);
+    }
+    public String serialize(TreeNode root) 
+    {
+        ArrayList<Integer> ans = new ArrayList<>();
+        serializeTree(root,ans);
+        String res = "";
+        for(int i = 0;i<ans.size();i++)
+        {
+            if(i > 0) res = res + "," + ans.get(i);
+            else res +=  ans.get(i);
+        }
+        System.out.println(res);
+        return res;
+    }
+    public TreeNode deserialize(String data) 
+    {
+        String[] arr = data.split(",");
+        int[] finalArr = new int[arr.length];
+        int i = 0;
+        for(String ele : arr)
+        {
+            finalArr[i++] = Integer.parseInt(ele);
+        }
+        return createTree(finalArr);
+    }
+
     public static void main(String[] args) 
     {
         int[] arr = new int[]{1,2,3,4,5,6,7,8,9,10,11,22,33,44,55,66,77,88,99};

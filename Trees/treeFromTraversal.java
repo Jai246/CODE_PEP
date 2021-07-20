@@ -160,19 +160,17 @@ class treeFromTraversal
         TreeNode left = createdoublyLL(root.left, D);
         if(left  == null)
         {
-            D.right = new TreeNode(root.val);
+            D.right = root;
             D.right.left = D;
-            left = D.right;
         }
         else if(left != null)
         {
-            left.right = new TreeNode(root.val);
+            left.right = root;
             left.right.left = left;
-            left = left.right;
         }
-        TreeNode right = createdoublyLL(root.right, left);
+        TreeNode right = createdoublyLL(root.right, root);
         if(right != null) return right;
-        return left;
+        return root;
     }
     
     //  TREE TO DOUBLY LINKED LIST MORE EASIER VERSION USING GLOBAL VARIABLES
