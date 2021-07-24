@@ -1,3 +1,4 @@
+import java.util.HashMap;
 class ll
 {
       public static class ListNode
@@ -402,4 +403,201 @@ class ll
         return head.next;
     }
 
+    // LEETCODE 138 HASHMAP APPROACH FOR COPY LIST WITH RANDOM POINTER
+    public static class Node{
+        int val = 0;
+        Node next = null;
+        Node random = null;
+        Node(int val)
+        {
+            this.val = val;
+        }
+    }
+    public Node copyRandomList(Node head) 
+    {
+        if(head == null) return null;
+        Node curr = head;
+        HashMap<Node,Node> map = new HashMap<>();
+        while(curr!=null)
+        {
+            if(!map.containsKey(curr))
+            {
+                map.put(curr,new Node(curr.val));
+            }
+            if(curr.next!=null)
+            {
+                if(!map.containsKey(curr.next))
+                {
+                    map.put(curr.next , new Node(curr.next.val));
+                }
+                map.get(curr).next = map.get(curr.next);
+            }
+            if(curr.random!=null)
+            {
+                if(!map.containsKey(curr.random))
+                {
+                    map.put(curr.random , new Node(curr.random.val));
+                }
+                map.get(curr).random = map.get(curr.random);
+            }
+            curr = curr.next;
+        }
+        return map.get(head);
+    }
+
+    // COPY LIST WITH RANDOM POINTER APPROACH 2 WITHOUT HASHMAP
+    public static void  createAttachedCopy(Node head)
+    {
+        while(head!=null)
+        {
+            Node forw = head.next;
+            head.next = new Node(head.val);
+            head = forw;
+        }
+    }
+    public static void extractCopyNode(Node newHead , Node head)
+    {
+        Node curr = newHead;
+        while(head!=null)
+        {
+            curr.next = head.next;
+            curr = curr.next;
+            head = curr.next;
+        }
+    }
+    public Node copyRandomList_2(Node head)
+    {
+        Node temp = new Node(-1);
+        temp.next = head;
+        createAttachedCopy(head);
+        while(head!=null)
+        {
+            Node random = head.random;
+            head.next.random = random.next;
+            head = head.next.next; 
+        }
+        return temp.next;
+    } 
+
+    // IMPLEMENTATION OF LRU CACHE
+    // MAKE VIDEO FOR REMEMBERING THE IMPORTANT POINTS FOR LRU CACHE
+    public class LRUNode
+    {
+        int val = 0;
+        int key = 0;
+        LRUNode next = null;
+        LRUNode prev = null;
+        LRUNode(int key , int val)
+        {
+            this.val = val;
+            this.key = key;
+        }
+    }
+    public HashMap<Integer , LRUNode> map = null;
+    public LRUNode head = null;
+    public LRUNode tail = null;
+    public int Maxcapacity = 0;
+    public void removeFirst()
+    {
+        if(head == null) return;
+        else if(map.size() == 1){
+            map.remove(head.key);
+            head = null;
+            tail = null;
+        }
+        else{
+            LRUNode temp = head.next;
+            map.remove(head.key);
+            head.next = null;
+            temp.prev = null;
+            head = temp;
+        }
+    }
+    public void addLast(LRUNode node)
+    {
+        if(head == null && tail == null)
+        {
+            head = node;
+            tail = node;
+            map.put(node.key,node);
+        }
+        else
+        {
+            map.put(node.key,node);
+            tail.next = node;
+            node.prev = tail;
+            tail = node;
+        }
+        
+    }
+    public void reArrange(int key)
+    {
+        if(map.size() == 1) return;
+        LRUNode node = map.get(key);
+        LRUNode prev = node.prev;
+        LRUNode forw = node.next;
+        if(forw == null)
+        {
+            return;    
+        }
+        else if(prev == null)
+        {
+            node.next = null;
+            forw.prev = null;
+            head = forw;
+            addLast(node);
+        }
+        else
+        {
+            prev.next = null;
+            node.prev = null;
+            forw.prev = null;
+            node.next = null;
+            prev.next = forw;
+            forw.prev = prev;
+            addLast(node);
+        }
+    }
+    // LRUCache(int capacity) // this is the constructor for the class lru cache
+    // {
+    //     Maxcapacity = capacity;
+    //     map = new HashMap<>(); 
+    // }
+    
+    public int get(int key) 
+    {
+        if(map.containsKey(key))
+        {
+            reArrange(key);
+            return map.get(key).val;
+        }
+        return -1;
+    }
+    
+    public void put(int key, int val) 
+    {
+        LRUNode node = new LRUNode(key, val);
+        if(map.containsKey(key))
+        {
+            LRUNode temp = map.get(key);
+            temp.val = val;
+            reArrange(key);
+        }
+        else
+        {
+            addLast(node);
+            Maxcapacity--;
+            if(Maxcapacity < 0)
+            {
+                removeFirst();
+                Maxcapacity++;
+            }
+        }
+    }
+
+
+    public static void main(String[] args) {
+
+
+    }
 }
