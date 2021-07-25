@@ -445,40 +445,7 @@ class ll
         return map.get(head);
     }
 
-    // COPY LIST WITH RANDOM POINTER APPROACH 2 WITHOUT HASHMAP
-    public static void  createAttachedCopy(Node head)
-    {
-        while(head!=null)
-        {
-            Node forw = head.next;
-            head.next = new Node(head.val);
-            head = forw;
-        }
-    }
-    public static void extractCopyNode(Node newHead , Node head)
-    {
-        Node curr = newHead;
-        while(head!=null)
-        {
-            curr.next = head.next;
-            curr = curr.next;
-            head = curr.next;
-        }
-    }
-    public Node copyRandomList_2(Node head)
-    {
-        Node temp = new Node(-1);
-        temp.next = head;
-        createAttachedCopy(head);
-        while(head!=null)
-        {
-            Node random = head.random;
-            head.next.random = random.next;
-            head = head.next.next; 
-        }
-        return temp.next;
-    } 
-
+    
     // IMPLEMENTATION OF LRU CACHE
     // MAKE VIDEO FOR REMEMBERING THE IMPORTANT POINTS FOR LRU CACHE
     public class LRUNode
@@ -595,9 +562,81 @@ class ll
         }
     }
 
-
-    public static void main(String[] args) {
-
-
+    // COPY LIST WITH RANDOM POINTER APPROACH 2 WITHOUT HASHMAP
+    public static Node headP1 = null;
+    public static Node headP2 = null;
+    public static void  createAttachedCopy(Node head)
+    {
+        while(head!=null)
+        {
+            Node forw = head.next;
+            head.next = new Node(head.val);
+            head.next.next = forw;
+            head = forw;
+        }
+    }
+    public static void extractCopyNode()
+    {
+        Node curr1 = headP1;
+        Node curr2 = headP2;
+        while(curr1!=null && curr2!=null)
+        {
+            curr1.next = curr2.next;
+            curr1 = curr1.next;
+            if(curr1!=null && curr2!=null) curr2.next = curr1.next;
+            curr2 = curr2.next;
+        }
+    }
+    public Node copyRandomList_2(Node head)
+    {
+        if(head == null) return head;
+        headP2 = head;
+        headP1 = head;
+        createAttachedCopy(head);
+        while(head!=null)
+        {
+            Node random = head.random;
+            if(random!=null) head.next.random = random.next;
+            head = head.next.next; 
+        }
+        headP2 = headP2.next;
+        extractCopyNode();
+        Node e = headP1;
+        while(e!=null)
+        {
+            System.out.print(e.val + " ");
+            e = e.next;
+        }
+        return headP2;
+    }
+    // SEGREGATE ODD AND EVEN
+    public static ListNode divide(int N,ListNode head)
+    {
+        ListNode dummyOdd = new ListNode(-1);
+        ListNode dummyEven = new ListNode(-1);
+        ListNode odd = dummyOdd;
+        ListNode even = dummyEven;
+        ListNode curr = head;
+        while (curr != null) 
+        {
+            if (curr.val % 2 != 0) 
+            {
+                odd.next = curr;
+                odd = odd.next;
+            } 
+            else 
+            {
+                even.next = curr;
+                even = even.next;
+            }
+            curr = curr.next;
+        }
+        even.next = dummyOdd.next;
+        odd.next = null;
+        return dummyEven.next;
+    }
+    public static void main(String[] args)
+    {
+        
     }
 }
