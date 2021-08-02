@@ -411,7 +411,112 @@ class extraFaang
         int right = calculateMaxPro(root.right,sum,max);
         max[0] = Math.max(max[0],Math.max((sum-left)*(long)left,(sum-right)*(long)right));
         return root.val+left+right;
-    }   
+    }
 
-    
+    // LEETCODE 129 SUM ROOT TO LEAF NUMBERS
+    public int sumNumbers(TreeNode root) 
+    {
+        int[]sum = new int[]{0};
+        sumNumbers(root,0,sum);
+        return sum[0];
+    }
+    public void sumNumbers(TreeNode root , int ans , int[]sum)
+    {
+        if(root == null) return;
+        if(root.left == null && root.right == null)
+        {
+            int val = ((ans*10) + root.val);
+            sum[0] += val;
+            return;
+        }
+        sumNumbers(root.left,((ans*10) + root.val),sum);
+        sumNumbers(root.right,((ans*10) + root.val),sum);
+    }
+
+    // SUM OF DISTANCES LEETCODE NOT PASSING GIVING TLE SOLVE THIS AFTER LEARNING DP ON TREES
+    // 64 / 73 test cases passed.
+    public void calculateSum(ArrayList<Integer>[] graph , int n ,int s, int[]sum , boolean[] vis)
+    {
+        for(Integer ele : graph[n])
+        {
+            if(!vis[ele])
+            {
+                sum[ele] += s;
+                vis[ele] = true;
+                calculateSum(graph,ele,s+1,sum,vis);
+            }
+        }
+    }
+    public int[] sumOfDistancesInTree(int n, int[][] edges) 
+    {
+        @SuppressWarnings("unchecked")
+        ArrayList<Integer>[] graph = new ArrayList[n];
+        for(int i=0;i<n;i++) graph[i] = new ArrayList<>();
+        for(int[] e : edges)
+        {
+            int u = e[0];
+            int v = e[1];
+            graph[u].add(v);
+            graph[v].add(u);
+        }
+        int[] ans = new int[n];
+        int[] sum = new int[n];
+        boolean[] vis = new boolean[n];
+        for(int i = 0;i<n;i++)
+        {
+            vis[i] = true;
+            calculateSum(graph,i,1,sum,vis);
+            int temp = 0;
+            for(int h = 0;h<n;h++)
+            {
+                temp += sum[h];
+                sum[h] = 0;
+                vis[h] = false;
+            }
+            ans[i] = temp;
+        }
+        return ans;
+    }
+    // PRINT ALL K SUM PATHS VERY IMPORTANT 
+    // IN PATH SUM 3 LEETCODE PRINT ALL PATHS WHICH HAS K SUM
+    public void printPath(ArrayList<Integer> path , int i)
+    {
+        for(int j = i;j<path.size();j++)
+        {
+            System.out.print(path.get(j) + " ");
+        }
+        System.out.println();
+    }
+    public void printKPath(TreeNode root , int target , ArrayList<Integer> path)
+    {
+        if(root == null) return;
+        path.add(root.val);
+        printKPath(root.left, target, path);
+        printKPath(root.right, target, path);
+        int f = 0;
+        for(int i = path.size()-1;i>=0;i--) // traversing from the last
+        {
+            f += path.get(i);
+            if(f == target) printPath(path,i);
+        }
+        path.remove(path.size()-1);
+    }
+
+    // DISTRIBUTE COINS IN  A BINARY TREEE
+    // VERY IMPORTANT QUESTION
+    int ans;
+    public int distributeCoins(TreeNode root) 
+    {
+        ans = 0;
+        dfs(root);
+        return ans;
+    }
+    public int dfs(TreeNode node) 
+    {
+        if (node == null) return 0;
+        int L = dfs(node.left);
+        int R = dfs(node.right);
+        ans += Math.abs(L) + Math.abs(R);
+        return node.val + L + R - 1;
+    }
 }
