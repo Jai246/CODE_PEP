@@ -519,4 +519,63 @@ class extraFaang
         ans += Math.abs(L) + Math.abs(R);
         return node.val + L + R - 1;
     }
+
+    // MAXIMUM DIFFERENCE BW NODE AND ITS ANCESTOR
+    // IMPORTANT QUESTION TO REMEMBER
+    // TOP DOWN APPROACH OF RECURSION IS APPLICABLE
+    // ON LEETCODE WE NEED TO TAKE THE ABSOLUTE DIFFERENCE VALUE
+    // IMPORTANT TESTCASE
+
+    public static int maxAncestorDiff(TreeNode root) 
+    {
+        if (root == null) 
+        {
+            return 0;
+        }
+        int[]result = new int[1];
+        helper(root, root.val, root.val , result);
+        return result[0];
+    }
+
+    public static void helper(TreeNode node, int curMax, int curMin , int[]result) 
+    {
+        if (node == null) 
+        {
+            return;
+        }
+        int possibleResult = Math.max(Math.abs(curMax - node.val), Math.abs(curMin - node.val));
+        result[0] = Math.max(result[0], possibleResult);
+        curMax = Math.max(curMax, node.val);
+        curMin = Math.min(curMin, node.val);
+        helper(node.left, curMax, curMin , result);
+        helper(node.right, curMax, curMin , result);
+        return;
+    }
+
+    //GEEKS FOR GEEKS BOTTOM UP APPROACH COZ WE DO NOT NEED TO DEAL WITH ABSOLUTE VALUE
+    public int maxDiff(Node root) 
+    {
+        int[] ans = new int[1];
+        ans[0] = -(int)1e9;
+        calculate(root,ans);
+        return ans[0];
+    }
+    public int calculate(Node root , int[]ans)
+    {
+        if(root == null) return -(int)1e9;
+        int left = calculate(root.left,ans);
+        int right = calculate(root.right,ans);
+        if(left == -(int)1e9 && right == -(int)1e9) return root.data;
+        else if(left == -(int)1e9 || right == -(int)1e9)
+        {
+            ans[0]=(left== -(int)1e9)?Math.max(ans[0],root.data-right):Math.max(ans[0],root.data-left);
+            return (left == -(int)1e9) ? Math.min(root.data , right) : Math.min(root.data , left);
+        }
+        else ans[0] = Math.max(ans[0] , Math.max(root.data-left,root.data-right));
+        
+        return Math.min(left,Math.min(right,root.data));
+    }
+    
+    // SUM DIFFERENCES ACCEPTED SOLUTION
+    
 }

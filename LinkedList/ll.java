@@ -1,4 +1,6 @@
 import java.util.HashMap;
+import java.util.List;
+
 class ll
 {
       public static class ListNode
@@ -40,7 +42,7 @@ class ll
     }
 
     // REVERSE A LINKED LIST
-    public ListNode reverseList(ListNode head) 
+    public static ListNode reverseList(ListNode head) 
     {
         if(head == null || head.next == null) return head;
         ListNode prev = null;
@@ -256,7 +258,7 @@ class ll
         return temp1;
         
     }
-    public int length(ListNode head)
+    public static int length(ListNode head)
     {
         int len = 0;
         ListNode temp = head;
@@ -635,6 +637,216 @@ class ll
         odd.next = null;
         return dummyEven.next;
     }
+
+    // UNFOLD A LINKEDLIST
+    public static ListNode UnfoldLL(ListNode head)
+    {
+        ListNode nHead = new ListNode(-1);
+        ListNode temp = head.next;
+        ListNode prev = head;
+        ListNode Nprev = nHead;
+        while(temp!=null)
+        {
+            Nprev.next = temp;
+            Nprev = Nprev.next;
+            prev.next = temp.next;
+            if(temp.next!=null) prev = temp.next;
+            temp.next = null;
+            temp = prev.next;
+        }
+        nHead = nHead.next;
+        nHead = reverseList(nHead);
+        prev.next = nHead;
+        return head;
+    }
+
+    // SEGREGATE ODD EVEN NODES LEETCODE 328
+    public ListNode oddEvenList(ListNode head) 
+    {
+        ListNode even = new ListNode(-1);
+        ListNode odd = new ListNode(-1);
+
+        ListNode e = even;
+        ListNode o = odd;
+
+        while(head != null)
+        {
+            if(head.val%2 == 0)
+            {
+                ListNode forw = head.next;
+                e.next = head;
+                head.next = null;
+                e = e.next;
+                head = forw;
+            }
+            else
+            {
+                ListNode forw = head.next;
+                o.next = head;
+                head.next = null;
+                o = o.next;
+                head = forw;
+            }
+        }
+
+        odd = odd.next;
+        even = even.next;
+        o.next = even;
+        return odd;
+    }
+
+    // ADDITION OF TWO LINKEDLISTS WITHOUT EXTRA SPACE LEETCODE 
+    public static ListNode  addTwoNumbers(ListNode l1 , ListNode l2)
+    {
+        ListNode ans = new ListNode(-1);
+        ListNode a = ans;
+        ListNode head1 = reverseList(l1);
+        ListNode head2 = reverseList(l2);
+        ListNode c1 = head1;
+        ListNode c2 = head2;
+        int carry = 0;
+        while(c1!=null||c2!=null)
+        {
+            if(c1!=null && c2!=null)
+            {
+                int sum = carry + c1.val + c2.val;
+                int val = sum % 10;
+                carry = sum / 10;
+                a.next = new ListNode(val);
+                a = a.next;
+                c1 = c1.next;
+                c2 = c2.next;
+            }
+            else if(c1 != null && c2 == null)
+            {
+                int sum = c1.val + carry;
+                int val = sum % 10;
+                carry = sum / 10;
+                a.next = new ListNode(val);
+                a = a.next;
+                c1 = c1.next;
+            }
+            else if(c1 == null && c2!=null)
+            {
+                int sum = c2.val + carry;
+                int val = sum % 10;
+                carry = sum / 10;
+                a.next = new ListNode(val);
+                a = a.next;
+                c2 = c2.next;
+            }
+        }
+        if(carry == 1) a.next = new ListNode(carry);
+        return reverseList(ans.next);
+    }
+
+    // ADDITION OF TWO LINKED LISTS WITH EXTRA SPACE (RECURSION STACK) WITHOUT REVERSING APPROACH
+    public ListNode ans = new ListNode(-1);
+    public ListNode  addTwoNumbers_2(ListNode l1 , ListNode l2)
+    {
+        int carry = addRec(l1,length(l1),l2,length(l2));
+        if(carry == 1)
+        {
+            ListNode temp = new ListNode(1);
+            temp.next = ans;
+            ans = temp;
+        }
+        return ans;
+    }
+    
+    
+    public int addRec(ListNode l1 ,int pos1 ,  ListNode l2 ,int pos2)
+    {
+        if(l1 == null && l2 == null) return 0;
+        if(pos1 > pos2)
+        {
+            int carry = addRec(l1.next, pos1-1, l2, pos2);
+            int sum = carry + l1.val;
+            int val = sum%10;
+            System.out.println(val);
+            if(ans.val == -1)
+            {
+                ans = new ListNode(val);
+                return sum/10;
+            }
+            else
+            {
+                ListNode temp = new ListNode(val);
+                temp.next = ans;
+                ans = temp;
+                return sum/10;
+            }
+        }
+        else if(pos2 > pos1)
+        {
+            int carry = addRec(l1, pos1, l2.next, pos2-1);
+            int sum = carry + l2.val;
+            int val = sum%10;
+            System.out.println(val);
+            if(ans.val == -1)
+            {
+                ans = new ListNode(val);
+                return sum/10;
+            }
+            else
+            {
+                ListNode temp = new ListNode(val);
+                temp.next = ans;
+                ans = temp;
+                return sum/10;
+            }
+        }
+        else if(pos1 == pos2)
+        {
+            int carry = addRec(l1.next, pos1-1, l2.next, pos2-1);
+            int sum = carry + l1.val + l2.val;
+            int val = sum%10;
+            System.out.println(val);
+            if(ans.val == -1)
+            {
+                ans = new ListNode(val);
+                return sum/10;
+            }
+            else
+            {
+                ListNode temp = new ListNode(val);
+                temp.next = ans;
+                ans = temp;
+                return sum/10;
+            }
+        }
+        return 0;
+    }
+
+    // SUBTRACT TWO LINKED LISTS NO EXTRA SPACE SUBMITTED ON PEPCODING PORTAL
+    public static ListNode subtractTwoNumbers(ListNode l1, ListNode l2)
+    {
+        if(l1 == null) return l2;
+        if(l2 == null) return l1;
+        ListNode ans = new ListNode(-1);
+        ListNode itr = ans;
+        l1 = reverseList(l1);
+        l2 = reverseList(l2);
+        ListNode c1 = l1 , c2 = l2;
+        int borrow = 0;
+        while(c1!=null)
+        {
+            int diff = borrow + c1.val - (c2!=null ? c2.val : 0);
+            if(diff < 0){
+                borrow = -1;
+                diff+=10;
+            }
+            else borrow = 0;
+            itr.next = new ListNode(diff);
+            itr = itr.next;
+            c1 = c1.next;
+            if(c2!=null) c2 = c2.next;
+        }
+        ans =  reverseList(ans.next);
+        while(ans!=null && ans.val == 0) ans = ans.next;
+        return (ans == null) ? new ListNode(0) : ans;
+    }
+    
     public static void main(String[] args)
     {
         

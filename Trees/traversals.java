@@ -148,6 +148,7 @@ class traversals
         }
         return ans;
     }
+    
     // WE CAN EASILY DO THIS USING HASHMAP CHECK NOTES
     // VERTICAL ORDER TRAVERSAL 2 USING WIDTH FUNCTION
     public static class verticalPair
