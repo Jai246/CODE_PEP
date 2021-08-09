@@ -1,6 +1,4 @@
 import java.util.HashMap;
-import java.util.List;
-
 class ll
 {
       public static class ListNode
@@ -819,6 +817,7 @@ class ll
     }
 
     // SUBTRACT TWO LINKED LISTS NO EXTRA SPACE SUBMITTED ON PEPCODING PORTAL
+    // IMPORTANT
     public static ListNode subtractTwoNumbers(ListNode l1, ListNode l2)
     {
         if(l1 == null) return l2;
@@ -846,6 +845,578 @@ class ll
         while(ans!=null && ans.val == 0) ans = ans.next;
         return (ans == null) ? new ListNode(0) : ans;
     }
+    
+    // MULTIPLY TWO LINKEDLISTS SUBMITTED ON PEPCODING PORTAL
+    // IMPORTANT
+    public static ListNode addTwoLL(ListNode l1 , ListNode l2)
+    {
+        if(l2 == null) return l1;
+        ListNode dummy = new ListNode(-1);
+        ListNode temp = dummy;
+        ListNode c1 = l1;
+        ListNode c2 = l2;
+        int carry = 0;
+        while(c1!=null || c2!=null || carry!=0)
+        {
+            int sum = carry + ((c1!=null) ? c1.val : 0) + ((c2!=null) ? c2.val : 0);
+            carry = sum/10;
+            temp.next = new ListNode(sum%10);
+            temp = temp.next;
+            if(c1!=null) c1 = c1.next;
+            if(c2!=null) c2 = c2.next;
+        }
+        return dummy.next;
+    }
+    
+    
+    public static ListNode multiplyWithDigit(ListNode head , int digit)
+    {
+        ListNode dummy = new ListNode(-1);
+        ListNode ans = dummy;
+        int carry = 0;
+        while(head != null || carry!=0) // here we are handeling the last carry case as well
+        {
+            int sum = carry + ((head!=null) ?  head.val : 0) * digit;
+            carry = sum/10;
+            ans.next = new ListNode(sum%10);
+            ans = ans.next;
+            if(head!=null) head = head.next;
+        }
+        return dummy.next;
+    }
+    
+    
+    public static ListNode multiplyHelperListNode(ListNode l1 , ListNode l2)
+    {
+        int count = 1;
+        ListNode ans = multiplyWithDigit(l1, l2.val);
+        l2 = l2.next;
+        while(l2!=null)
+        {
+            ListNode multiply = multiplyWithDigit(l1, l2.val);
+            l2 = l2.next;
+            int val = 0;
+            while(val < count)
+            {
+                ListNode temp = new ListNode(0);
+                temp.next = multiply;
+                multiply = temp;
+                val++;
+            }
+            count++;
+            ans = addTwoLL(multiply,ans);
+        }
+        return reverseList(ans);
+    }
+    
+    
+    public static ListNode multiplyTwoLL(ListNode l1, ListNode l2) 
+    {
+        l1 = reverseList(l1);
+        l2 = reverseList(l2);
+        return multiplyHelperListNode(l1, l2);
+    }
+
+    // LEETCODE 83 REMOVE DUPLICATES FORM SORTED LIST
+    public ListNode deleteDuplicates(ListNode head) 
+    {
+        if(head == null || head.next == null) return head;
+        ListNode ptr = head.next;
+        ListNode prev = head;
+        while(ptr!=null)
+        {
+            if(prev.val!=ptr.val)
+            {
+                prev = ptr;
+                ptr = ptr.next;
+            }
+            else
+            {
+                ListNode forw = ptr.next;
+                prev.next = forw;
+                ptr.next = null;
+                ptr = forw;
+            }
+        }
+        return head;
+    }
+
+    // LEETCODE 82 REMOVE DUPLICATES || VERY IMPORTANT 
+    public ListNode deleteDuplicates_(ListNode head) 
+    {
+        if(head == null || head.next == null) return head;
+        ListNode dummy = new ListNode(-1);
+        ListNode a = dummy;
+        ListNode prev = head;
+        ListNode ptr = head.next;
+        while(ptr!=null)
+        {
+            if(prev.val == ptr.val)
+            {
+                ListNode temp = null;
+                while(ptr!=null && prev.val == ptr.val)
+                {
+                    temp = ptr;
+                    ptr = ptr.next;
+                }
+                a.next = ptr;
+                prev = ptr;
+                if(ptr!=null) ptr = ptr.next;
+            }
+            else
+            {
+                a.next = prev;
+                a = a.next;
+                a.next = null;
+                prev = ptr;
+                if(ptr!=null) ptr = ptr.next;
+            }
+            
+        }
+        a.next = prev;
+        return dummy.next;
+    } 
+
+    // LEETCODE 86 PARTITION LIST
+    public ListNode partition(ListNode head, int x) 
+    {
+        if(head == null || head.next == null) return head;
+        ListNode dummy1 = new ListNode(-1);
+        ListNode a1 = dummy1;
+        ListNode dummy2 = new ListNode(-1);
+        ListNode a2 = dummy2;
+        ListNode ptr = head;
+        while(ptr!=null)
+        {
+            if(ptr.val < x)
+            {
+                ListNode forw = ptr.next;
+                a1.next = ptr;
+                a1 = a1.next;
+                a1.next = null;
+                ptr = forw;
+            }
+            else
+            {
+                ListNode forw = ptr.next;
+                a2.next = ptr;
+                a2 = a2.next;
+                a2.next = null;
+                ptr = forw;
+            }
+        }
+        a1.next = dummy2.next;
+        return dummy1.next;
+    }
+
+    // LEETCODE 1721 SWAPPING TWO NODES IN A LINKED LIST
+    // IMPORTANT QUESTION
+    // IMPORTANT TESTCASES
+    // [100,90]
+    // 2
+    
+    // [100,90,100]
+    // 3
+    public ListNode swapNodes(ListNode head, int k) 
+    {
+        if(head == null) return head;
+        int length = length(head);
+
+        // HANDLE WHEN K == LENGTH JUST SWAP FIRST ANS LAST NODE
+
+        if(k == length)
+        {
+            ListNode ptr = head;
+            while(ptr.next!=null) ptr = ptr.next;
+            int val = ptr.val;
+            ptr.val = head.val;
+            head.val = val;
+            return head;
+        }
+        ListNode ptr = head;
+        ListNode prev = null;
+        int count = 1;
+        ListNode temp = null;
+        while(ptr!=null)
+        {
+            //IMPORTANT TESTCASE
+            // [1,2,3,4,5,6,7,8,9]
+            // K = 6
+            if(temp == null &&(count == k || count == length-k+1)) temp = ptr;
+            else if(temp!=null && (length - count + 1 == k || count == k))
+            {
+                int val = temp.val;
+                temp.val = ptr.val;
+                ptr.val = val;
+                break;
+            }
+            prev = ptr;
+            ptr = ptr.next;
+            count++;
+        }
+        return head;
+    }
+
+    //LEETCODE 725 SPLIT LINKEDLISTS IN PARTS IMPORTANT QUESTION
+    public ListNode[] splitListToParts(ListNode head, int k) 
+    {
+        if(head == null) return new ListNode[k];
+        int length = length(head);
+        ListNode[] arr = new ListNode[k];
+        int i = 0;
+        if(length<=k)
+        {
+            ListNode temp = head;
+            while(temp!=null)
+            {
+                ListNode forw = temp.next;
+                arr[i++] = temp;
+                temp.next = null;
+                temp = forw;
+            }
+            return arr;
+        }
+        while(head!= null && length>0)
+        {
+            int div = length/k;
+            int mod = length%k;
+            k--; 
+            int count = div + ((mod > 0) ? 1 : 0);
+            length = length - count;
+            ListNode temp = head;
+            ListNode prev = null;
+            while(count > 0)
+            {
+                prev = temp;
+                temp = temp.next;
+                count--;
+            }
+            arr[i++] = head;
+            head = prev.next;
+            prev.next = null;
+        }
+        return arr;
+    }
+
+    // GFG LINKED LIST THAT IS SORTED ALTERNATINGLY
+    public ListNode sort(ListNode head)
+   {
+       if(head == null || head.next == null) return head;
+        ListNode h2 = new ListNode(-1);
+        ListNode b = h2;
+        ListNode h1 = new ListNode(-1);
+        ListNode a = h1;
+        int count = 0;
+        while(head!=null)
+        {
+            ListNode forw = head.next;
+            if(count%2 == 0)
+            {
+                a.next = head;
+                head.next = null;
+                head = forw;
+                a = a.next;
+            }
+            else
+            {
+                b.next = head;
+                head.next = null;
+                head = forw;
+                b = b.next;
+            }
+            count++;
+        }
+        h1 = h1.next;
+        h2 = h2.next;
+        
+        if(h1.val >= a.val) // reverse
+        {
+            ListNode temp1 = h1;
+            h1 = reverseList(h1);
+            a = temp1;
+        }
+        if(h2.val >= b.val) // reverse
+        {
+            ListNode temp1 = h2;
+            h2 = reverseList(h2);
+            b = temp1;
+        }
+        
+        return mergeTwoLists(h1, h2);
+   }
+
+   // MERGE LISTS ALTERNATINGLY GFG
+   // PROBLEM WITH THE QUESTION ON THE SITE
+   public void mergeAlt(Node head1, Node head2)
+    {
+        Node dummy = new Node(-1);
+        Node a = dummy;
+        int count = 0;
+        while(head1!=null && head2!=null)
+        {
+            if(count%2==0)
+            {
+                a.next = head1;
+                head1 = head1.next;
+            }
+            else
+            {
+                a.next = head2;
+                head2 = head2.next;
+            }
+            a.next.next = null;
+            a = a.next;
+            count++;
+        }
+        a.next = head1; // one of them will be null at the end
+        a.next = head2;
+        dummy = dummy.next;
+        while(dummy!=null)
+        {
+            System.out.print(dummy.val + " ");
+            dummy = dummy.next;
+        }
+    }
+    // Split Singly Linked List Alternatingly 
+    // ERROR ON GFG
+    public void alternatingSplitList(Node head)
+    {
+        Node dummy1 = new Node(-1);
+        Node a = dummy1;
+        Node dummy2 = new Node(-1);
+        Node b = dummy2;
+        int count = 0;
+        
+        while(head!=null)
+        {
+            if(count%2 == 0)
+            {
+                a.next = head;
+                head = head.next;
+                a = a.next;
+                a.next = null;
+            }
+            else
+            {
+                b.next = head;
+                head = head.next;
+                b = b.next;
+                b.next = null;
+            }
+            count++;
+        }
+        dummy1 = dummy1.next;
+        dummy2 = dummy2.next;
+        while(dummy1!=null)
+        {
+            System.out.print(dummy1.val + " ");
+            dummy1 = dummy1.next;
+        }
+        System.out.println();
+        while(dummy2!=null)
+        {
+            System.out.print(dummy2.val + " ");
+            dummy2 = dummy2.next;
+        }
+    }
+
+    // split a circular linked list
+    public void splitList(circular_LinkedList list)
+    {
+        Node head = list.head;
+        list.head1 = head;
+        Node slow = head;
+        Node fast = head.next;
+        
+        while ( fast != head && fast.next != head ){
+        fast = fast.next.next;
+        slow = slow.next;
+        }
+        list.head2 = slow.next;
+        slow.next = list.head1;
+        Node curr = list.head2;
+        
+        while(curr.next != head) 
+        {
+            curr = curr.next;
+        }
+        curr.next = list.head2;
+    }
+
+    // DELETE MID GEEKS FOR GEEKS FOR GEEKS
+    public static Node deleteMid(Node head) 
+    {
+        if(head == null || head.next == null) return null;
+        Node slow = head;
+        Node fast = head;
+        Node temp = null;
+
+        while(fast!=null && fast.next!=null)
+        {
+            temp = slow;
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        temp.next = slow.next;
+        slow.next = null;
+        return head;
+    }
+
+    // Delete nodes having greater value on right
+    // Important questions on geeks for geeksforgeeks
+    // simply reverse the linkedlist and every time find greater elements;
+    // plz note that last element is always getting included
+    public Node compute(Node head)
+    {
+        if(head == null) return head;
+        head = reverseList(head);
+        int min = -1;
+        Node temp = new Node(-1);
+        Node a = temp;
+        while(head!=null)
+        {
+            if(head.data >= min)
+            {
+                Node forw = head.next;
+                min = head.data;
+                a.next = head;
+                head.next = null;
+                head = forw;
+                a = a.next;
+            }
+            else
+            {
+                Node forw = head.next;
+                head.next = null;
+                head = forw;
+            }
+        }
+        return reverseList(temp.next);
+    }
+    
+    // DELETION AND REVERSE IN A CIRCULAR LINKED LIST
+    public static Node deleteNode(Node head,int d)
+    {
+        if(head == null || (head.next == head && head.data == d)) return null;
+        Node check = head;
+        Node prev = null;
+        while(head.next!=check)// we will never be deleting first and last element
+        {// IF SO THEN WE CAN USE THE BELOW LISTED METHODE
+            if(head.data == d)
+            {
+                prev.next = head.next;
+                head.next = null;
+                head = prev.next;
+                break;
+            }
+            prev = head;
+            head = head.next;
+        }
+        //return reverse(check);
+        return check;
+    }
+
+    public static Node reverse(Node head)
+    {
+        if(head == null || head.next == head) return head;
+        Node check = head;
+        Node prev = null;
+        Node forw = null;
+        while(forw!=check)
+        {
+            forw = head.next;
+            head.next = prev;
+            prev = head;
+            if(forw!=check) head = forw;
+        }
+        check.next = head;
+        return prev;
+    }
+
+
+    // geeksforgeeks Delete N nodes after M nodes of a linked list 
+    static void linkdelete(Node head, int M, int N)
+    {
+        Node temp = head;
+        while(temp!=null)
+        {
+            temp = deleteNM(temp,M,N);
+        }
+    }
+    static Node deleteNM(Node head,int M,int N)
+    {
+       if(head == null) return head;
+        Node temp = head;
+        Node prev = null;
+        while(temp!=null && M-- > 0)
+        {
+            prev = temp;
+            temp = temp.next;
+        }
+        Node prev2 = null;
+        while(temp!=null && N > 0)
+        {
+            prev2 = temp;
+            temp = temp.next;
+            N--;
+        }
+        prev.next = temp;
+        if(prev2!=null) prev2.next = null;
+        // doing this because second while loop will not work in the below testcase
+        // 6 1
+        // 1 2 3 4 5 6
+        return temp;
+    }
+
+    // Geeks For Geeks 
+    // Delete without head pointer 
+    public void deleteNode(Node del)
+    {
+        if(del == null) return;
+        del.data = del.next.data;
+        if(del.next.next!=null)
+        {
+            Node forw = del.next;
+            del.next = del.next.next;
+            forw.next = null;
+        }
+        else del.next = null;
+    }
+
+    // DELETE NODE IN A DOUBLY LINKED LIST FOR THE GIVEN POSITIONS
+    Node deleteNodeDoubly(Node head,int x)
+    {
+        if(head == null || (head.next == null && head.data == x)) return null;
+        if(x == 1)
+        {
+            Node forw = head.next;
+            head.next = null;
+            forw.prev = null;
+            head = forw;
+            return head;
+        }
+        Node temp = head;
+        int pos = 1;
+        while(temp!=null)
+        {
+            if(pos++ == x)
+            {
+                Node prev = temp.prev;
+                Node forw = temp.next;
+                
+                prev.next = null;
+                if(forw!=null) forw.prev = null;
+                temp.prev = null;
+                temp.next = null;
+                prev.next = forw;
+                if(forw!=null) forw.prev = prev;
+                break;
+            }
+            temp = temp.next;
+        }
+        return head;
+    }
+
     
     public static void main(String[] args)
     {
