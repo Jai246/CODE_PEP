@@ -55,21 +55,21 @@ class graphsAlgos1
     public static void removeEdge(int u , int v)
     {
         int idx1 = findEdge(u,v);
-        int idx2= findEdge(v, u);
+        int idx2 = findEdge(v,u);
         graph[u].remove(idx1);
         graph[v].remove(idx2);
     }
 
     public static void removeVtx(int u)
     {
-        for(int i = graph[u].size()-1;i>=0;i--)
+        for(int i = graph[u].size()-1;i>=0;i--) // to save the shifting time
         {
             int v = graph[u].get(i).v;
             removeEdge(u, v);
         }
     }
     public static boolean hasPath(int start , int dest , boolean[]vis)
-    {
+    { // taking visited array so that it dosent make an infinite loop
         if(start == dest)
         {
             return true;

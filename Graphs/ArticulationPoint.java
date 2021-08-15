@@ -91,7 +91,7 @@ class ArticulationPoint
                 }
                 low[src] = Math.min(low[src],low[nbr.v]);
             }
-            else if(nbr.v!=par) // Important We Are Comparing With Source Ka Parent
+            else if(nbr.v!=par) // important
             {
                 low[src] = Math.min(low[src] , dis[nbr.v]);
             }

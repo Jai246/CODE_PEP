@@ -1417,7 +1417,310 @@ class ll
         return head;
     }
 
+    // GEEKS FOR GEEKS Doubly linked list Insertion at given position
+    public void addNode(Node head, int pos, int data)
+	{
+	    Node temp = head;
+	    while(pos-- > 0)
+	    {
+	        temp = temp.next;
+	    }
+	    if(temp.next == null)
+	    {
+	        Node n = new Node(data);
+	        temp.next = n;
+	        n.prev = temp;
+	    }
+	    else
+	    {
+	        Node n = new Node(data);
+	        Node next = temp.next;
+	        n.next = next;
+	        next.prev = n;
+	        temp.next = n;
+	        n.prev = temp;
+	    }
+	}
+
+    // MERGE SORT ON DOUBLY LINKED LIST
+    public static Node mergeTwoSorted(Node head1 , Node head2)
+    {
+        if(head1 == null && head2 == null) return null;
+        Node dummy = new Node(-1);
+        Node a = dummy;
+        while(head1!=null && head2!=null)
+        {
+            if(head1.data < head2.data)
+            {
+                a.next = head1;
+                head2.prev = null;
+                head1.prev = a;
+                head1 = head1.next;
+                a = a.next;
+            }
+            else
+            {
+                a.next = head2;
+                head1.prev = null;
+                head2.prev = a;
+                head2 = head2.next;
+                a = a.next;
+            }
+        }
+        if(head1!=null)
+        {
+            a.next = head1;
+            head1.prev = a;
+        }
+        else if(head2!=null)
+        {
+            a.next = head2;
+            head2.prev = a;
+        }
+        dummy.next.prev = null;
+        return dummy.next;
+    }
+    public static Node sort(Node head)
+    {
+        if(head.next == null) return head;
+        Node mid = mid(head);
+        Node head2 = mid.next;
+        head2.prev = null;
+        mid.next = null;
+        head = sort(head);
+        head2 = sort(head2);
+        return mergeTwoSorted(head,head2);
+    }
+    public static Node sortDoubly(Node head)
+    {
+        if(head == null) return null;
+        return sort(head);
+    }
+
+    // Insert in Middle of Linked List 
+    public Node insertInMid(Node head, int data)
+    {
+        if(head == null) return new Node(data);
+        if(head.next == null)
+        {
+            head.next = new Node(data);
+            return head;
+        }
+        Node mid = mid(head);
+        Node temp = new Node(data);
+        temp.next = mid.next;
+        mid.next = temp;
+        return head;
+    }
+
+    // Sorted insert for circular linked list
+    // IMPORTANT
+    public static Node sortedInsert(Node head,int data)
+    {
+        if(head == null) return new Node(data);
+        if(data < head.data)
+        {
+            Node temp = head.next;
+            while(temp!=head)
+            {
+                if(temp.next == head) break; // doing this to stop temp on tha last node so that i can point the new node
+                temp = temp.next;
+            }
+            Node Ndata = new Node(data);
+            Ndata.next = head;
+            head = Ndata;
+            temp.next = head;
+            return head;
+        }
+        Node check = head;
+        Node prev = new Node(-1);
+        while(prev.next!=check && head.data<=data)
+        {
+            prev = head;
+            head = head.next;
+        }
+        Node temp = new Node(data);
+        temp.next = head;
+        prev.next = temp;
+        return check;
+    } 
+
+
+    // Remove duplicate element from sorted Linked List 
+    public Node removeDuplicates(Node head)
+    {
+        if(head == null || head.next == null) return head;
+        Node prev = head;
+        Node temp = head.next;
+        while(temp!=null)
+        {
+            if(prev.data == temp.data)
+            {
+                prev.next = temp.next;
+                temp.next = null;
+                temp = prev.next;
+            }
+            else
+            {
+                prev = temp;
+                temp = temp.next;
+            }
+        }
+        return head;
+    }
     
+
+    // LFU CACHE
+    public class ListNode
+    {
+        int val = 0;
+        int count = 1;
+        ListNode prev = null;
+        ListNode next = null;
+        ListNode keyPtr = null;
+        ListNode(int val)
+        {
+            this.val = val;
+        }
+    }
+    public int maxCapacity = 0;
+    public int capacity = 0;
+    public int minCount = 1;
+    HashMap<Integer,ListNode> tailMap;
+    HashMap<Integer,ListNode> countMap;
+    HashMap<Integer,ListNode> keyMap;
+    
+    public LFUCache(int capacity) 
+    {
+        countMap = new HashMap<>();
+        keyMap = new HashMap<>();
+        tailMap = new HashMap<>();
+        this.capacity = capacity;
+        this.maxCapacity = capacity;
+    }
+    
+    
+    public void relocate(int key)
+    {
+        ListNode ret = keyMap.get(key).next;
+        if(ret.next == null)
+        {
+            ListNode retTail = tailMap.get(ret.count);
+            if(retTail!=null) retTail.next = ret.prev;
+        }
+        else
+        {
+            ListNode retTail = tailMap.get(ret.count);
+            if(retTail!=null) retTail.next = ret.next;
+        }
+        
+        ListNode prev = ret.prev;
+        System.out.println(ret.prev.val);
+        ListNode forw = ret.next;
+        prev.next = forw;
+        if(forw!=null) forw.prev = prev;
+        ret.next = null;
+        ret.prev = null;
+        
+
+        int newCount = ret.count+1;
+        
+        if(!countMap.containsKey(newCount)) countMap.put(newCount , new ListNode(-1));
+        
+        if(!tailMap.containsKey(newCount))
+        {
+            ListNode t = new ListNode(-1);
+            t.next = countMap.get(newCount);
+            tailMap.put(newCount , t);
+        }
+                
+        if(countMap.containsKey(ret.count) && countMap.get(ret.count).next == null)
+        {
+            countMap.remove(ret.count);
+            tailMap.remove(ret.count);
+            if(countMap.containsKey(minCount+1)) minCount++;
+        }
+        
+        
+        ret.count = newCount;
+        ListNode tail = tailMap.get(newCount);
+        ListNode lastNode = tail.next;
+        lastNode.next = ret;
+        ret.prev = lastNode;
+        tail.next = ret;
+    }
+
+    
+    public int get(int key) 
+    {
+        if(!keyMap.containsKey(key)) return -1;
+        
+        ListNode ret = keyMap.get(key).next;
+        int retVal = ret.val;
+        relocate(key);                
+        return retVal;
+    }
+    
+    public void put(int key, int value) 
+    {
+        if(maxCapacity > 0)
+        {
+            if(capacity == 0 && !keyMap.containsKey(key))
+                {                
+                    ListNode firstNode = countMap.get(minCount);
+
+                    ListNode rem = firstNode.next;
+                    int remKey = rem.keyPtr.count;
+                    ListNode forw = rem.next;
+
+                    firstNode.next = forw;
+                    if(forw!=null) forw.prev = firstNode;
+                    rem.prev = null;
+                    rem.next = null;
+                    keyMap.remove(remKey);
+                    if(countMap.get(minCount).next == null)
+                    {
+                        countMap.remove(minCount);
+                        tailMap.remove(minCount);
+                    }
+                    capacity++;
+                }
+
+                if(keyMap.containsKey(key))
+                {
+                    ListNode ptr = keyMap.get(key).next;
+                    ptr.val = value;
+                    relocate(key);
+                    return;
+                }
+
+                ListNode N = new ListNode(value);
+                ListNode KM = new ListNode(-1);
+                KM.count = key;
+                KM.next = N;
+                N.keyPtr = KM;
+                keyMap.put(key,KM);
+
+                if(!countMap.containsKey(1))
+                {
+                    countMap.put(1,new ListNode(-1));
+                }
+                if(!tailMap.containsKey(1))
+                {
+                    ListNode tail = new ListNode(-1);
+                    tail.next = countMap.get(1);
+                    tailMap.put(1,tail);
+                }
+                ListNode tail = tailMap.get(1);
+                ListNode lastNode =  tail.next;
+
+                lastNode.next = N;
+                N.prev = lastNode;
+                tail.next = N;
+                capacity--;
+                minCount = 1;
+        }
+    }
     public static void main(String[] args)
     {
         
