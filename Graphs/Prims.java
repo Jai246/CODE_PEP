@@ -91,10 +91,7 @@ class Prims
     }
     public static void PrimsAlgo1(ArrayList<edge>[] graph)
     {
-        PriorityQueue<primsPair> queue = new PriorityQueue<>((a,b) -> 
-        {
-            return a.w - b.w;
-        });
+        PriorityQueue<primsPair> queue = new PriorityQueue<>((a,b) ->{return a.w - b.w;});
         boolean[] vis = new boolean[N];
         queue.add(new primsPair(0,-1,0));
         while(queue.size()!=0)

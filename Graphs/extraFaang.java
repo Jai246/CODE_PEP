@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -123,7 +124,7 @@ class extraFaang
     }
 
     // LEETCODE 542 01 MATRIX DP SOLUTION ITERATING TWO TIMES
-    // Iterate over the matrix from top to bottom-left to right
+    // Iterate over the matrix from top to bottom AND left to right
     // do the back iteration from bottom to top-right to left
     // WE CAN DO THIS USING MULTI POINT BFS APPROACH AS DISCUSSED IN AS FAR FROM LAND ANS POSSIBLE
     // GO THROUGH THAT CODE AS WELL
@@ -226,7 +227,9 @@ class extraFaang
         stack.addLast(src);
     }
 
-    public static void main(String args[] ) throws Exception 
+   // A Walk to Remember HAKER HakerEarth
+
+    public static void mainWalk(String args[] ) throws Exception 
     {
         Scanner sc = new Scanner(System.in);
         String[] arr = sc.nextLine().split(" ");
@@ -471,6 +474,49 @@ class extraFaang
         return new int[]{count,sum};
     }
 
+    // JOBSEQUENCING UNIONFIND SOLUTION O(NLOGN);;
+
+    // public int findPar(int u , int[]par)
+    // {
+    //     return par[u] = (par[u] == u) ? u : findPar(par[u],par);
+    // }
+    int[] JobScheduling(Job arr[], int n)
+    {
+        Arrays.sort(arr,(a,b)->{
+            return b.deadline-a.deadline;
+        });
+        int maxDeadLine = arr[0].deadline;
+        int[] par = new int[maxDeadLine+1];
+        boolean[] ans = new boolean[maxDeadLine+1];
+        Arrays.sort(arr,(a,b)->{
+            return b.profit-a.profit;
+        });
+
+        for(int i = 0;i<=maxDeadLine;i++) par[i] = i;
+        int sum = 0; 
+        int count = 0;
+        for(int i = 0;i<arr.length;i++)
+        {
+            int deadline = arr[i].deadline;
+            int profit = arr[i].profit;
+            
+            int parCurr = findPar(deadline,par);
+            
+            if(!ans[parCurr])
+            {
+                sum+=profit;
+                count++;
+                ans[parCurr] = true;
+                if(parCurr>1)
+                {
+                    int prevPar = findPar(parCurr-1,par);
+                    par[parCurr] = prevPar;
+                }
+            }
+        }
+        return new int[]{count,sum};
+    }
+
     // DR STRANGE NOT SUBMITTING ON GEEKS FOR GEEKS
     static int[] dis;
     static int[] low;
@@ -563,7 +609,7 @@ class extraFaang
         for(int i=0;i<n;++i)
             if(graph[i].size()>0)
             {
-                node = i;	//Found a node to start DFS
+                node = i;	//Found a node to start DFS WHO SE DEGREE > 0
                 break;
             }
         if(node == -1)	//No start node was found-->No edges are present in graph
@@ -880,7 +926,7 @@ class extraFaang
 
     // FIND THE MAXIMUM FLOW GEEKS FOR GEEKS FORD FULKERSON ALGORITHM
     
-    // NOTE THAT THE GRAPF WE NEED TO MAKE IS UNDIRECTED
+    // NOTE THAT THE GRAPH WE NEED TO MAKE IS UNDIRECTED
 
     // Note: Multiple edges can exist between two nodes.
     // Eg: (1 2 3) (1 2 4).
@@ -1163,4 +1209,177 @@ class extraFaang
         }
         return count;
     }
+
+    // NOT MUCH IMPORTANT
+    // // MAXIMUM BIPARTITE MATCHING GEEKS FOR GEEKS
+    // // FOR DETAILED EXPLAINATION CHECK MAX BIPARTITE MATCHING FILE
+    // public boolean dfs(int[]assigned, boolean[]seen, int candidate, int jobs, int applicants, int[][]G){
+
+    //     for(int i=0; i<jobs;i++){
+            
+    //         if(G[i][candidate]==1  && seen[i]==false ){
+    //             seen[i] = true;
+    //             if(assigned[i]==-1 || dfs(assigned, seen, assigned[i], jobs, applicants, G)){
+    //                 assigned[i] = candidate;
+    //                 return true;
+    //             }
+    //         }
+    //     }
+    //     return false;
+    // }
+
+    // public int maximumMatch(int[][] G)
+    // {
+    //     int jobs= G.length;
+    //     int applicant= G[0].length;
+    //     int[]assigned  = new int[jobs];
+    //     Arrays.fill(assigned, -1);
+    //     int count = 0;
+    //     for(int i=0; i<applicant;i++)
+    //     {
+    //         boolean[]seen = new boolean[jobs];
+    //         if(dfs(assigned, seen, i, jobs, applicant, G)) count++;
+    //     }
+    //     return count;
+    // }
+
+    // ALIEN DICTONARY
+    // TOPOSORT USING KHANS ALGO
+    // USING HASHSET TO REMOVE DUPLICACY
+    public static String alienOrder(String[] words) {
+        HashMap<Character, HashSet<Character>> map = new HashMap<Character, HashSet<Character>>();
+        HashMap<Character, Integer> degree = new HashMap<Character, Integer>();
+        String result = "";
+        if (words == null || words.length == 0)
+          return result;
+        for (String s : words) {
+          for (char c : s.toCharArray()) {
+            degree.put(c, 0);
+          }
+        }
+        for (int i = 0; i < words.length - 1; i++) {
+          boolean flag = false;
+          String cur = words[i];
+          String next = words[i + 1];
+          int length = Math.min(cur.length(), next.length());
+          for (int j = 0; j < length; j++) {
+            char c1 = cur.charAt(j);
+            char c2 = next.charAt(j);
+            if (c1 != c2) {
+              HashSet<Character> set = new HashSet<Character>();
+              if (map.containsKey(c1))
+                set = map.get(c1);
+              if (!set.contains(c2)) {
+                set.add(c2);
+                map.put(c1, set);
+                degree.put(c2, degree.get(c2) + 1);
+              }
+              flag = true;
+              break;
+            }
+          }
+    
+          if (flag == false && next.length() < cur.length()) {
+            return "";
+          }
+        }
+        LinkedList<Character> q = new LinkedList<Character>();
+        for (char c : degree.keySet()) {
+          if (degree.get(c) == 0)
+            q.addLast(c);
+        }
+        while (!q.isEmpty()) {
+          char c = q.removeFirst();
+          result += c;
+          if (map.containsKey(c)) {
+            for (char c2 : map.get(c)) {
+              degree.put(c2, degree.get(c2) - 1);
+              if (degree.get(c2) == 0)
+                q.addLast(c2);
+            }
+          }
+        }
+    
+        if (result.length() != degree.size()) {
+          return "";
+        }
+        return result;
+      }
+
+    // REDUNDANT CONNETCIONS 2
+
+    public int[] parent;
+    public int[] rank;
+
+    public int[] findRedundantDirectedConnection(int[][] edges) {
+        int n = edges.length;
+        int[] indegree = new int[n + 1];
+        Arrays.fill(indegree, -1);
+        int bl1 = -1;
+        int bl2 = -1;
+        for (int i = 0; i < edges.length; i++) {
+            int[] edge = edges[i];
+            int u = edge[0];
+            int v = edge[1];
+
+            if (indegree[v] == -1) {
+                indegree[v] = i;
+            } else {
+                bl1 = i;
+                bl2 = indegree[v];
+            }
+        }
+        parent = new int[n + 1];
+        rank = new int[n + 1];
+        for (int i = 1; i < parent.length; i++) {
+            parent[i] = i;
+            rank[i] = 1;
+        }
+        for (int i = 0; i < edges.length; i++) {
+            if (bl1 == i) {
+                continue; // ignoring that edge which we have removed
+            }
+            int[] edge = edges[i];
+            int u = edge[0];
+            int v = edge[1];
+            boolean flag = union(u, v); // return true only when parents are same
+            if (flag == true) {
+                if (bl1 == -1) {
+                return edge;
+                } else {
+                return edges[bl2];
+                }
+            }
+        }
+        return edges[bl1];
+    }
+
+    public int find(int x) {
+        if (parent[x] == x) {
+          return x;
+        }
+        int temp = find(parent[x]);
+        parent[x] = temp;
+        return temp;
+      }
+    
+      public boolean union(int x, int y) {
+        int lx = find(x);
+        int ly = find(y);
+    
+        if (lx == ly) {
+          return true;
+        }
+    
+        if (rank[lx] > rank[ly]) {
+          parent[ly] = lx;
+        } else if (rank[lx] < rank[ly]) {
+          parent[lx] = ly;
+        } else {
+          parent[lx] = ly;
+          rank[ly]++;
+        }
+    
+        return false;
+      }
 }
