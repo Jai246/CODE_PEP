@@ -371,7 +371,7 @@ class dp_faang
         for(int k = i;k<j;k++) total+=arr[k];
         return total;
     }
-    // LEETCODE CAPACITY TO SHIOP PACKAGES WITHEN D DAYS BINARY SEARCH
+    // LEETCODE CAPACITY TO SHIP PACKAGES WITHEN D DAYS BINARY SEARCH
     public static boolean check(int val , int[] weights , int days)
     {
         int sum = 0;

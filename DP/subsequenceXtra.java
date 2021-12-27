@@ -98,27 +98,26 @@ class subsequenceXtra
 		int[][] dp = new int[str.length()][str.length()];
 		
 		for(int g = 0; g < dp.length; g++) {
-			for(int i = 0, j = g; j < dp[0].length; i++, j++) {
+			for(int i = 0, j = g; j < dp[0].length; i++, j++) 
+            {
 				if(g == 0)
 					dp[i][j] = 1;
 				else if(g == 1)
 					dp[i][j] = 2;
-				else {
-					if(str.charAt(i) == str.charAt(j)) {
+				else 
+                {
+					if(str.charAt(i) == str.charAt(j)) 
+                    {
 						int n = next[i];
 						int p = pre[j];
-						
-						if(n > p)
-							dp[i][j] = ((2 * dp[i+1][j-1]) + 2) % mod;
-						else if(n == p)
-							dp[i][j] = ((2 * dp[i+1][j-1]) + 1) % mod;
-						else
-							dp[i][j] = ((2 * dp[i+1][j-1]) - dp[n+1][p-1]) % mod;
-					}else
-						dp[i][j] = (dp[i+1][j] + dp[i][j-1] - dp[i+1][j-1]) % mod;
+						// nothing in between
+						if(n > p) dp[i][j] = ((2 * dp[i+1][j-1]) + 2) % mod;
+						else if(n == p) dp[i][j] = ((2 * dp[i+1][j-1]) + 1) % mod;
+						else dp[i][j] = ((2 * dp[i+1][j-1]) - dp[n+1][p-1]) % mod;
+					}
+                    else dp[i][j] = (dp[i+1][j] + dp[i][j-1] - dp[i+1][j-1]) % mod;
 				}
-                if(dp[i][j] < 0)
-                    dp[i][j] += mod;
+                if(dp[i][j] < 0) dp[i][j] += mod;
 			}
 		}
 		return dp[0][dp[0].length - 1] % mod;
@@ -178,6 +177,46 @@ class subsequenceXtra
         return (count);
     }
     
+
+    // minimum insertions to make a string palindrome 
+    // LEETCODE
+    public int minInsertions(String s) 
+    {
+        int[][]dp = new int[s.length()][s.length()];
+        
+        for(int gap = 0;gap<s.length();gap++)
+        {
+            for(int j = gap,i = 0;j<s.length();j++,i++)
+            {
+                if(gap == 0)
+                {
+                    dp[i][j] = 1;
+                    continue;
+                }
+                else if(gap == 1)
+                {
+                    if(s.charAt(i) == s.charAt(j))
+                    {
+                        dp[i][j] = 2;
+                    }else{
+                        dp[i][j] = 1;
+                    }
+                    continue;
+                }
+                
+                if(s.charAt(i) == s.charAt(j))
+                {
+                    dp[i][j] = dp[i+1][j-1] + 2;
+                }
+                else
+                {
+                    dp[i][j] = Math.max(dp[i+1][j],dp[i][j-1]);
+                }
+            }
+        }
+        
+        return s.length() - dp[0][s.length()-1];
+    }
     
 
 }

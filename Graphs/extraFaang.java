@@ -1382,4 +1382,80 @@ class extraFaang
     
         return false;
       }
+
+
+    // 2115. Find All Possible Recipes from Given Supplies
+    // Indegree Should Be calculated Afterwards Take Care of this
+    // kahns algo solution 
+    public List<String> findAllRecipes(String[] recipes, List<List<String>> ingredients, String[] supplies)
+    {
+        HashSet<String> supp = new HashSet<>();
+        for(String ele : supplies) supp.add(ele);
+        
+        HashSet<String> reci = new HashSet<>();
+        for(String ele : recipes) reci.add(ele);
+        
+        ArrayList<String> ans = new ArrayList<>();
+        HashMap<String , ArrayList<String>> map = new HashMap<>();
+        HashMap<String,Integer> indegree = new HashMap<>();
+        LinkedList<String> queue = new LinkedList<>();
+        for(int i = 0;i<recipes.length;i++)
+        {
+            String rec = recipes[i];
+            indegree.put(rec,0);
+            List<String> ing = ingredients.get(i);
+            for(String ele : ing)
+            {
+                indegree.put(ele,0);
+                if(!map.containsKey(ele)) map.put(ele , new ArrayList<>());
+                map.get(ele).add(rec);
+            }
+        }
+        
+        
+        for(String ele : map.keySet())
+        {
+            ArrayList<String> neigh = map.get(ele);
+            
+            for(String e : neigh)
+            {
+                indegree.put(e , indegree.get(e) + 1);   
+            }
+        }
+        
+        for(String ele : indegree.keySet())
+        {
+            if(indegree.get(ele) == 0) queue.add(ele);
+        }
+        
+        
+        // System.out.println(indegree.toString());
+
+        
+        while(queue.size() > 0)
+        {
+            int size = queue.size();
+            while(size-- > 0)
+            {
+                String ele = queue.removeFirst();
+                ArrayList<String> neighbours = map.get(ele);
+                
+                if(neighbours!=null && supp.contains(ele))
+                {
+                    for(String e : neighbours)
+                    {
+                        indegree.put(e,indegree.get(e)-1);
+                        if(indegree.get(e) == 0)
+                        {
+                            queue.addLast(e);
+                            if(reci.contains(e)) ans.add(e);
+                            supp.add(e);
+                        }
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
 }

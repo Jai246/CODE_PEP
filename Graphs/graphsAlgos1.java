@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 class graphsAlgos1
 {
-    static int N = 7;
+    static int N = 10;
     public static class edge
     {
         int v = 0;
@@ -360,13 +360,20 @@ class graphsAlgos1
             graph[i] = new ArrayList<>();
 
             addEdge(0, 1, 10);
-            addEdge(0, 3, 10);
-            addEdge(1, 2, 10);
-            addEdge(2, 3, 40);
-            addEdge(3, 4, 2);
-            addEdge(4, 5, 2);
-            addEdge(4, 6, 8);
-            addEdge(5, 6, 3);
+            addEdge(0, 2, 10);
+            addEdge(0, 5, 10);
+            addEdge(1, 3, 40);
+            addEdge(1, 8, 2);
+            addEdge(2, 6, 2);
+            addEdge(2, 7, 8);
+            addEdge(3, 4, 3);
+            addEdge(3, 7, 3);
+            addEdge(6, 4, 3);
+            addEdge(6, 8, 3);
+            addEdge(7, 9, 3);
+            addEdge(5, 4, 3);
+            addEdge(5, 9, 3);
+            addEdge(8, 9, 3);
             
     }
 
@@ -395,6 +402,8 @@ class graphsAlgos1
         //BFS_ShortestPath(0, vis);
         //BFS_PrintShortestPath(0, vis);
         //BFS_GCC();
-        isBipartite();
+        // isBipartite();
+
+        hamiltonian(0, 0, 0, vis, "");
     }
 }

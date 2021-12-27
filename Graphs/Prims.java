@@ -78,8 +78,7 @@ class Prims
         int v = 0;
         int par = -1;
         int w = 0;
-        primsPair()
-        {
+        primsPair(){
             
         }
         primsPair(int v , int par , int w)
@@ -89,6 +88,7 @@ class Prims
             this.w = w;
         }
     }
+
     public static void PrimsAlgo1(ArrayList<edge>[] graph)
     {
         PriorityQueue<primsPair> queue = new PriorityQueue<>((a,b) ->{return a.w - b.w;});
@@ -129,9 +129,8 @@ class Prims
                     dis[e.v] = e.w;
                 }
             }
-        
         }
-            display(MST);
+        display(MST);
     }
     public static void PrimsMainFun()
     {
@@ -140,8 +139,7 @@ class Prims
         Arrays.fill(dis,(int)1e9);
         int[]par = new int[N];
         Arrays.fill(par,-1);
-        for(int i = 0;i<N;i++)
-        {
+        for(int i = 0;i<N;i++){
             if(!vis[i]) PrimsAlgo2(graph,vis,par,dis);
         }
     }

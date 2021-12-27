@@ -78,12 +78,9 @@ class Dijkstra
         int v = 0;
         int par = -1;
         int wsf = 0;
-        DijkstraPair()
-        {
-            
+        DijkstraPair(){
         }
-        DijkstraPair(int v , int par , int w)
-        {
+        DijkstraPair(int v , int par , int w){
             this.v = v;
             this.par = par;
             this.wsf = w;

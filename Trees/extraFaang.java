@@ -144,6 +144,22 @@ class extraFaang
 
         return;
     }
+    // invert tree leetcode 226. Invert Binary Tree
+
+    public TreeNode invert(TreeNode root)
+    {
+        if(root == null) return null;
+        TreeNode left = invert(root.left);
+        TreeNode right = invert(root.right);
+        TreeNode temp = left;
+        root.left = right;
+        root.right = temp;
+        return root;
+    }
+    public TreeNode invertTree(TreeNode root) 
+    {
+        return invert(root);
+    }
     
     // CONVERT TREE TO A DOUBLY LINKED LIST
     public Node bTreeToClist(Node root)

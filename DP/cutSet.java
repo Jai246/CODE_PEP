@@ -391,6 +391,70 @@ class cutSet
         return palindromePartition_(str, k, 0, dp, minChangeDP);
     }
 
+    // 241. Different Ways to Add Parentheses
+
+    public List<Integer> diffWaysToCompute(String expression) 
+    {
+        return calculate(expression,0,expression.length()-1);
+    }
+    
+    public List<Integer> calculate(String exp , int si , int ei)
+    {
+        if((ei == si) || (ei == si+1))
+        {
+            List<Integer> temp = new ArrayList<>();
+            String p = exp.substring(si,ei+1);
+            int val = Integer.parseInt(p);
+            temp.add(val);
+            return temp;
+        }
+        
+        List<Integer> ret = new ArrayList<>();
+        
+        for(int cut = si+1;cut<ei;cut++)
+        {
+            char op = exp.charAt(cut);
+            if(op == '*' || op == '+' || op == '-')
+            {
+                List<Integer> left = calculate(exp,si,cut-1);
+                List<Integer> right = calculate(exp,cut+1,ei);
+                                
+                if(op == '*')
+                {
+                    for(int ele : left)
+                    {
+                        for(int ele2 : right)
+                        {
+                            ret.add(ele * ele2);
+                        }
+                    }
+                }
+                else if(op == '+')
+                {
+                    for(int ele : left)
+                    {
+                        for(int ele2 : right)
+                        {
+                            ret.add(ele + ele2);
+                        }
+                    }
+                }
+                else if(op == '-')
+                {
+                    for(int ele : left)
+                    {
+                        for(int ele2 : right)
+                        {
+                            ret.add(ele - ele2);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return ret;
+    }
+
     public static void main(String[] args)
     {
         //mcm();

@@ -296,7 +296,7 @@ class BinaryTrees
         if(root.left == null && root.right == null) return new minMax(root.val,root.val);
         minMax lh = isValidBST_(root.left);
         minMax rh = isValidBST_(root.right);
-        if(root.val > lh.max && root.val < rh.min)  return new minMax(Math.min(lh.min,Math.max(rh.min,root.val)) ,Math.max(lh.max,Math.max(rh.max,root.val)));
+        if(root.val > lh.max && root.val < rh.min)  return new minMax(Math.min(lh.min,Math.min(rh.min,root.val)) ,Math.max(lh.max,Math.max(rh.max,root.val)));
         return new minMax(-(long)1e11 , (long)1e11);
     }
 
