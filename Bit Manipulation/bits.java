@@ -839,5 +839,235 @@ class Bits
         return count;
     }
 
+    // Copy Set Bits In A Range
+    public void copySet(int a , int b , int left , int right)
+    {
+        int m1 = 1;
+        m1 = (m1 << (right - left + 1));
+        m1 = m1 - 1;
+        m1 = (m1 << (left-1));
+
+        int res = a & m1;
+        res = b | res;
+
+        System.out.println(res);
+    }
+
+    // 231. Power of Two
+
+    public boolean isPowerOfTwo(int n) 
+    {
+        long val = (long)n;
+        if(val == 0) return false;
+        return ((val & (val-1)) == 0) ? true : false;    
+    }
+
+    // Power of 4
+
+    public boolean isPowerOfFour(int num) 
+    {
+        return num > 0 && (num&(num-1)) == 0 && (num & 0x55555555) > 0; 
+    }
+
+    // Swap all odd and even bits 
+
+    public static int swapBits(int n) 
+    {
+        int m1 = 0b01010101010101010101010101010101;
+        int m2 = 0b10101010101010101010101010101010;
+        
+        int r1 = n&m2;
+        int r2 = n&m1;
+        
+        r1 = r1 >> 1;
+        r2 = r2 << 1;
+        
+        return r1 | r2;
+    }
+
+    // Bit Difference GFG
+
+    public static int countBits(int N, long A[])
+    {
+        int mod = (int)1e9 + 7;
+        long ans = 0;
+        long mask = 1;
+        for(int i = 0;i<64;i++)
+        {
+            long count = 0;
+            for(long ele : A)
+            {
+                if((ele & mask) == mask) count++;
+            }
+            mask = mask << 1;
+            ans += ((count) * ((N - count)) * 2) % mod ;
+            if(ans >= mod) ans -= mod ; // Discussion se dekha tha ye line 
+            // pata nahi ku chal raha hei code isko likhkar
+        }
+        return (int)ans ;
+    }
+
+    // Count Total Set Bits GFG
+
+    public static int countSetBits(int n)
+    {
+        if(n == 0) return 0;
+        int x = largestPowerOfTwo(n);
+        int totalCountBitsPower2 = x * ((1<<(x - 1))); // x * 2^(x-1)
+        int nextComponent = n - (1<<x) + 1;
+        int rest = n - (1<<x);
+        int ans = totalCountBitsPower2 + nextComponent + countSetBits(rest);
+        return ans;
+    }
+
+    public static int largestPowerOfTwo(int n)
+    {
+        int x = 0;
+        while((1<<x) <= n) x++;
+        return x - 1;
+    }
     
+    // Min Xor Pairs
+    // Important Question nlogn Approach
+
+    public static void solution(int[] arr) 
+    {
+        Arrays.sort(arr);
+        ArrayList<String> list = new ArrayList<>();
+        int min = (int)1e9;
+        for(int i = 1;i<arr.length;i++)
+        {
+            int val = arr[i]^arr[i-1];
+            if(val < min)
+            {
+                min = val;
+                list = new ArrayList<>();
+                list.add(arr[i-1] + ", " + arr[i]);
+            }
+            else if(min == val)
+            {
+                list.add(arr[i-1] + ", " + arr[i]);
+            }
+        }
+
+        for(String ele : list)
+        {
+            System.out.println(ele);
+        }        
+    }
+
+    // Nth Palindromic Binary
+
+    public static int reverse(int n)
+    {
+        int res = 0;
+        while(n>0)
+        {
+            res = res | (n & 1);
+            n = n >> 1;
+            res = res << 1;
+        }
+        // System.out.println(res >> 1);
+        return res >> 1;
+    }
+
+
+    public static int NthPalindromicBinary(int n) 
+    {
+        int len = 0;
+        int c = 1;
+
+        while(len < n){
+            len += (1 << (c-1)/2);
+            c++;
+        }
+        c--;
+        // len -= c; this will not work for odd length
+        len -= (1 << (c-1)/2);
+        // System.out.println(len);
+        
+
+        int set = n - len - 1;
+
+        int ans = 1 << (c-1);
+        ans |= (set << (c/2));
+        // ans |= reverse(ans >> (c/2)); // both will work 
+        ans |= reverse(ans);
+
+        return ans;
+    }
+
+    // 1310. XOR Queries of a Subarray
+
+    public int[] xorQueries(int[] A, int[][] queries) 
+    {
+        int[] res = new int[queries.length], q;
+        for (int i = 1; i < A.length; ++i) A[i] ^= A[i - 1];
+        for (int i = 0; i < queries.length; ++i) 
+        {
+            q = queries[i];
+            res[i] = q[0] > 0 ? A[q[0] - 1] ^ A[q[1]] : A[q[1]];
+        }
+        return res;
+    }
+
+    // 1318. Minimum Flips to Make a OR b Equal to c
+
+    public int minFlips(int a, int b, int c) 
+    {
+        int count = 0;
+        int mask = 1;
+        boolean x = false;
+        boolean y = false;
+        boolean z = false;
+        for(int i = 0;i<32;i++)
+        {
+            x = ((mask & a) > 0) ? true : false;
+            y = ((mask & b) > 0) ? true : false;
+            z = ((mask & c) > 0) ? true : false;
+            
+            if(z)
+            {
+                if(x == false && y == false) count++;
+            }
+            else
+            {
+                if(x == true && y == true) count += 2;
+                else if(x == true && y == false) count++;
+                else if(x == false && y == true) count++;
+            }
+            mask = mask * 2;
+        }
+        return count;
+    }
+
+    // 1542. Find Longest Awesome Substring
+    // code 1 not passing on leetcode giving tle
+
+    public int longestAwesome(String s) 
+    {
+        int ans = 1;
+        int[] dp = new int[s.length()+1];
+        dp[0] = 0;
+        for(int i = 1;i<=s.length();i++)
+        {
+            int val = Integer.parseInt((s.charAt(i-1)+""));
+            dp[i] = dp[i-1]^(1 << val);
+        }
+        
+        for(int len = 2;len <= s.length();len++)
+        {
+            for(int i = 1;i+len<=dp.length;i++)
+            {
+                int j = i+len-1;
+                int res = dp[j]^dp[i-1];
+                // checking is power of 2 as in this case only onw bit is onn
+                if((res&(res-1)) == 0 || res == 0) ans = Math.max(len,ans);
+            }
+        }
+        return ans;
+    }
+
+    
+
 }

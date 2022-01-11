@@ -4,7 +4,7 @@ public class pepListYt
 
     // unbounded knapsack
 
-    // class itemComparator implements Comparator<Item>
+    // class itemComparator implements Comparable<Item>
     // {
     //     @Override
     //     public int compare(Item a , Item b)
@@ -18,6 +18,8 @@ public class pepListYt
     //         return 0;
     //     }
     // }
+
+    // to implement the above comparator we should use Collections.sort(arr, new itemComparator());
     double fractionalKnapsack(int W, Item arr[], int n) 
     {
         // Arrays.sort(arr ,new itemComparator());
