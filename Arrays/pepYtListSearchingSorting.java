@@ -93,26 +93,6 @@ public class pepYtListSearchingSorting
 
     // Search in 2D Matrix 
     // Using Binary Search
-
-    public boolean searchMatrix(int[][] matrix, int target) 
-    {
-        if(matrix.length == 0) return false;
-        int n = matrix.length;
-        int m = matrix[0].length;
-        int i = 0;
-        int j = m*n;
-        
-        while(i<j)
-        {
-            int mid = (i+j)/2;
-            if(matrix[mid/m][mid%m] == target) return true;
-            else if(matrix[mid/m][mid%m] > target) j = mid;
-            else i = mid + 1;
-        }
-        
-        return false;
-    }
-
     // 74. Search a 2D Matrix
 
     public boolean searchMatrix(int[][] matrix, int target)
@@ -288,6 +268,27 @@ public class pepYtListSearchingSorting
    }
 
    // Inversion Count
+   // n2 solution
+   // 1 space
+   public static int findInversionCount(int[] arr)
+    {
+        int inversionCount = 0;
+ 
+        for (int i = 0; i < arr.length - 1; i++)
+        {
+            for (int j = i + 1; j < arr.length; j++)
+            {
+                if (arr[i] > arr[j]) {
+                    inversionCount++;
+                }
+            }
+        }
+ 
+        return inversionCount;
+    }
+
+    // nlogn solution
+    // n space
 
    public static long InversionAcrossArray(long[] arr, int l, int r, int mid, long[] sortedArray)
     {
@@ -308,10 +309,7 @@ public class pepYtListSearchingSorting
             sortedArray[k++] = arr[lsi++];
         while (rsi <= rei)
             sortedArray[k++] = arr[rsi++];
-
-        // for (k = 0; k < sortedArray.length; k++)
-        // arr[k + l] = sortedArray[k];
-
+        
         k = 0;
         for (int i = l; i <= r; i++)
             arr[i] = sortedArray[k++];
@@ -330,7 +328,8 @@ public class pepYtListSearchingSorting
         return (ICL + ICR + InversionAcrossArray(arr, si, ei, mid, sortedArray));
     }
 
-    public static long inversionCount(long arr[], long N) {
+    public static long inversionCount(long arr[], long N) 
+    {
         if (N == 0)
             return 0;
         int n = (int)N;
@@ -399,7 +398,6 @@ public class pepYtListSearchingSorting
         {
             int temp = sum + s - n*A[n-i];
             sum = temp;
-            // System.out.println(sum);
             ans = Math.max(ans,sum);
         }
         return ans;
@@ -475,11 +473,12 @@ public class pepYtListSearchingSorting
             }
             else if(nums[mid] >= nums[i])
             {
-                if(nums[mid] < min)
-                {
-                    min = nums[mid];
-                    idx = mid;
-                }
+                // In this part arr[mid] will never be the minimum
+                // if(nums[mid] < min)
+                // {
+                //     min = nums[mid];
+                //     idx = mid;
+                // }
                 i = mid + 1;
             }
         }
@@ -487,7 +486,7 @@ public class pepYtListSearchingSorting
     }
 
 
-    // 4. Median of Two Sorted Arrays
+    // 4. Median Of two sorted arrays
 
     public double findMedianSortedArrays(int[] nums1, int[] nums2) 
     {
@@ -500,10 +499,14 @@ public class pepYtListSearchingSorting
         {
             int partX =  (low+high)/2;
             int partY =  (x+y+1)/2 - partX;
+
+
             int xLeft = partX == 0 ? Integer.MIN_VALUE : nums1[partX-1];
             int xRight = partX == x ? Integer.MAX_VALUE : nums1[partX];
             int yLeft = partY == 0 ? Integer.MIN_VALUE : nums2[partY-1];
             int yRight = partY == y ? Integer.MAX_VALUE : nums2[partY];
+
+
             if(xLeft<=yRight && yLeft<=xRight)
             {
                if((x+y)%2==0)
@@ -607,7 +610,7 @@ public class pepYtListSearchingSorting
        long ans=Long.MAX_VALUE;
        while(i<=n-m)
        {
-           int j=(int)(i+m-1);
+           int j=(int)(i+m-1); 
            ans=Math.min(ans,a.get(j)-a.get(i));
            i++;
        }
@@ -1033,7 +1036,6 @@ public class pepYtListSearchingSorting
     public int findRadius(int[] houses, int[] heaters) 
     {
         Arrays.sort(heaters);
-        Arrays.sort(houses);
         long max = -(long)1e11;
         for(int ele : houses){
             long rightVal = ceil(heaters,ele);
@@ -1129,7 +1131,7 @@ public class pepYtListSearchingSorting
                 peri = Math.max(peri,nums[i]+nums[i-1]+nums[i-2]);
             }
         }
-        return (peri == -(int)1e9) ? 0 : peri;\
+        return (peri == -(int)1e9) ? 0 : peri;
     }
 
     // Leaders in an array 
@@ -1200,8 +1202,8 @@ public class pepYtListSearchingSorting
     }
 
 
-    // Toppers of Class 
-    // Code copies from peepcoding Portal
+    // Toppers of Class
+    // Code copied from peepcoding Portal
 
     public static class Pair implements Comparable<Pair> {
     int marks;
@@ -1212,7 +1214,8 @@ public class pepYtListSearchingSorting
       this.idx = idx;
     }
 
-    public int compareTo(Pair o) {
+    public int compareTo(Pair o) 
+    {
       if (this.marks != o.marks) {
         return this.marks - o.marks;
       }
@@ -1375,7 +1378,7 @@ public class pepYtListSearchingSorting
     {
         List<Integer> ans = new ArrayList<>();
 
-        for (int valueToSort = A.length; valueToSort > 0; valueToSort--) 
+        for (int valueToSort = A.length; valueToSort > 0; valueToSort--)
         {
             
             int index = find(A, valueToSort);
@@ -1448,6 +1451,36 @@ public class pepYtListSearchingSorting
 
         int[] peek = pq.peek();
         return new int[]{a[peek[0]], a[peek[1]]};
+    }
+
+    // 295. Find Median from Data Stream
+    // Very Important Problem;
+
+
+    public PriorityQueue<Integer> left;
+    public PriorityQueue<Integer> right;
+    public int size = 0;
+    public MedianFinder() 
+    {
+        left = new PriorityQueue<>((a,b)->{return b-a;});
+        right = new PriorityQueue<>();
+    }
+    
+    public void addNum(int num) 
+    {
+        size++;
+        if(left.size() > 0 && num > left.peek()) right.add(num);
+        else left.add(num);
+        int sizeLeft = left.size();
+        int sizeRight = right.size();   
+        if(size%2 == 0 && sizeLeft > sizeRight) right.add(left.remove());
+        else if(sizeLeft < sizeRight) left.add(right.remove());
+        
+    }
+    public double findMedian() 
+    {
+        if(size%2 == 0) return (left.peek() + right.peek())/2.0;
+        else return left.peek()*1.0;
     }
 
     

@@ -1383,5 +1383,23 @@ public class pepListYt
         for (int i = 9; i >= 0; --i) sb.append(Character.toString('0' + i).repeat(ds[i]));
         // here repeat() is basically appending the values in string without using a loop inside
         return sb.length() > 0 && sb.charAt(0) == '0' ? "0" : sb.toString();
-    }    
+    } 
+
+
+    // SUM IN IMMUTABLE 2D ARRAY LEETCODE
+    public int[][]ans;
+    public NumMatrix(int[][] matrix) 
+    {
+        ans = new int[matrix.length+1][matrix[0].length+1];
+        for(int i = 1;i<=matrix.length;i++){
+            for(int j = 1;j<=matrix[0].length;j++){
+                ans[i][j] = ans[i-1][j] + ans[i][j-1] + matrix[i-1][j-1] - ans[i-1][j-1];
+            }
+        }
+    }
+    
+    public int sumRegion(int row1, int col1, int row2, int col2) 
+    {
+        return ans[row2 + 1][col2 + 1] - ans[row1][col2 + 1] - ans[row2 + 1][col1] + ans[row1][col1];
+    }
 }
