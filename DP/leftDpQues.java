@@ -1212,5 +1212,1079 @@ class leftDpQues
         return gMax;
     }
 
+    // 898. Bitwise ORs of Subarrays
+
+    // This Solution Not Passing
+    // TLE
+    public int subarrayBitwiseORs(int[] arr) 
+    {
+        HashMap<Integer,Integer> map = new HashMap<>();
+        HashSet<Integer> set = new HashSet<>();
+        for(int i = 0;i<arr.length;i++){
+            map.put(i,arr[i]);
+            set.add(arr[i]);
+        }
+        
+        for(int i = 1;i<arr.length;i++)
+        {
+            HashMap<Integer,Integer> temp = new HashMap<>();
+            for(int j = i;j<arr.length;j++)
+            {
+                int ele = arr[j];
+                temp.put(j,map.get(j-1)|arr[j]);
+                set.add(temp.get(j));
+            }
+            map = temp;
+        }
+        return set.size();
+    }
+
+
+    // Important Solution
+
+    // [1]
+    // [1,2][2]
+    // [1,2,3][2,3][3]
+    // [1,2,3,4][2,3,4][3,4][4]
+
+    public int subarrayBitwiseORs(int[] arr) 
+    {
+        HashSet<Integer>set = new HashSet<>();
+        HashSet<Integer>ans = new HashSet<>();
+        set.add(0);
+        for(int ele : arr)
+        {
+            HashSet<Integer> temp = new HashSet<>();
+            temp.add(ele);
+            ans.add(ele);
+            for(int e : set)
+            {
+                int val = ele|e;
+                ans.add(val);
+                temp.add(val);
+            }
+            set = temp;
+        }
+        return ans.size();
+    }
+
+
+    // 978. Longest Turbulent Subarray
+    // Handeling for the comtinous duplicates is important
+    public int maxTurbulenceSize(int[] arr)
+    {
+        if(arr.length == 1) return 1;
+        int count = 1;
+        int max = 1;
+        int toggle = -1;
+        
+        int i = 1;
+        while(i < arr.length && arr[i] == arr[i-1] ) i++;
+        if(i < arr.length && arr[i] > arr[i-1]) 
+        {
+            toggle = 1;
+            count = 2;
+            max = 2;
+        }
+        else if(i < arr.length && arr[i] < arr[i-1])
+        {
+            toggle = 0;
+            count = 2;
+            max = 2;    
+        }
+        
+        if(arr.length == 2 && toggle == -1) return 1;
+        else if(arr.length == 2 && toggle!=-1) return 2;
+        
+        i++;
+        
+        for(;i<arr.length;i++)
+        {
+            int prev = arr[i-1];
+            int curr = arr[i];
+            
+            if(curr == prev)
+            {
+                max = Math.max(max,count);
+                while(i < arr.length && arr[i] == arr[i-1] ) i++;
+        
+                if(i < arr.length && arr[i] > arr[i-1]) {
+                    toggle = 1;
+                    count = 2;
+                }
+                else if(i < arr.length && arr[i] < arr[i-1]) {
+                    toggle = 0;
+                    count = 2;
+                }
+                continue;
+            }
+            
+            if(toggle == 0)
+            {    
+                if(curr > prev) {
+                    count++;
+                    max = Math.max(max,count);
+                    toggle = 1;
+                }
+                else if(prev > curr){
+                    toggle = 0;
+                    count = 2;
+                }
+            }
+            else if(toggle == 1)
+            {    
+                if(curr < prev) {
+                    count++;
+                    max = Math.max(max,count);
+                    toggle = 0;
+                }
+                else if(prev < curr){
+                    toggle = 1;
+                    count = 2;
+                }
+            }
+        }
+        return max;
+    }
+
+    // 1186. Maximum Subarray Sum with One Deletion
+    // Important Solution
+
+    public int maximumSum(int[] arr) 
+    {
+        int n = arr.length;
+        int oneDelete = 0, noDelete = arr[0], max = arr[0];
+        for (int i = 1; i < n; i++) 
+        {
+            oneDelete = Math.max(oneDelete + arr[i], noDelete);
+            noDelete = Math.max(noDelete + arr[i], arr[i]);
+            max = Math.max(max, Math.max(oneDelete, noDelete));
+        }
+        return max;
+    }
+
+
+    // 368. Largest Divisible Subset
+
+    // Sort And Apply LIS
+
+    public List<Integer> largestDivisibleSubset(int[] nums) 
+    {
+        int n = nums.length;
+        int[] count = new int[n];
+        int[] pre = new int[n]; // Parent Array
+        Arrays.sort(nums);
+        int max = 0, index = -1;
+        for (int i = 0; i < n; i++) {
+            count[i] = 1;
+            pre[i] = -1;
+            for (int j = i - 1; j >= 0; j--) {
+                if (nums[i] % nums[j] == 0) {
+                    if (1 + count[j] > count[i]) {
+                        count[i] = count[j] + 1;
+                        pre[i] = j;
+                    }
+                }
+            }
+            if (count[i] > max) {
+                max = count[i];
+                index = i;
+            }
+        }
+        List<Integer> res = new ArrayList<>();
+        while (index != -1) {
+            res.add(nums[index]);
+            index = pre[index];
+        }
+        return res;
+    }
+
+
+    // 873. Length of Longest Fibonacci Subsequence
+
+    public int lenLongestFibSubseq(int[] arr)
+    {
+        HashMap<Integer,Integer> map = new HashMap<>();
+        for(int i = 0;i<arr.length;i++) map.put(arr[i],i);
+        int[]max = new int[]{2};
+        
+        for(int i = 0;i<arr.length;i++){
+            for(int j = i+1;j<arr.length-1;j++){
+                int sum = arr[i] + arr[j];
+                if(map.containsKey(sum)) if(map.get(sum)>j) findLen(map,arr[j],max,sum,3);
+            }
+        }
+        return (max[0] > 2) ? max[0] : 0;
+    }
     
+    public void findLen(HashMap<Integer,Integer> map,int prev, int[]max , int sum , int len)
+    {
+        if(map.containsKey(sum + prev)) findLen(map,sum,max,sum+prev,len+1);
+        else max[0] = Math.max(max[0],len);
+    }
+
+    // 960. Delete Columns to Make Sorted III
+    // Simple LIS Solution
+
+    public int minDeletionSize(String[] A) 
+    {
+        int m = A.length, n = A[0].length(), res = n - 1, k;
+        int[] dp = new int[n];
+        Arrays.fill(dp, 1);
+        for (int j = 0; j < n; ++j) 
+        {
+            for (int i = 0; i < j; ++i) 
+            {
+                for (k = 0; k < m; ++k) 
+                {
+                    if (A[k].charAt(i) > A[k].charAt(j)) break;
+                }
+                if (k == m && dp[i] + 1 > dp[j]) dp[j] = dp[i] + 1;
+            }
+            res = Math.min(res, n - dp[j]);
+        }
+        return res;
+    }
+    
+    // 1671. Minimum Number of Removals to Make Mountain Array
+    // Simple LIS Solution
+
+    public int minimumMountainRemovals(int[] nums) 
+    {
+        int n=nums.length;
+        int []left=new int [n]; 
+        int []right=new int [n];
+        Arrays.fill(left,1);
+        Arrays.fill(right,1);
+
+        for(int i=1;i<n;i++)
+        {
+            for(int j=0;j<i;j++)
+            {
+                if(nums[j]<nums[i]&&left[i]<left[j]+1) left[i]=left[j]+1;
+            }
+        }
+        
+        for(int i=n-2;i>=0;i--)
+        {
+            for(int j=n-1;j>i;j--)
+            {
+                if(nums[j]<nums[i]&&right[i]<right[j]+1) right[i]=right[j]+1;
+            }
+        }
+        
+        int max=0;
+        for(int i=1;i<n-1;i++) 
+        {
+            if(right[i]>1&&left[i]>1) max=Math.max(max,left[i]+right[i]-1);
+        }
+        
+        return n-max;
+    }
+
+
+    // 174. Dungeon Game
+    // Important Problem
+    public int calculateMinimumHP(int[][] dungeon) 
+    {
+        int n=dungeon.length;
+        int m=dungeon[0].length;
+        
+        int [][] dp=new int[n][m];
+        dp[n-1][m-1]=dungeon[n-1][m-1]>0?0:dungeon[n-1][m-1];
+        
+        for(int i=m-2;i>=0;i--) dp[n-1][i]=dungeon[n-1][i]+dp[n-1][i+1]>0?0:dungeon[n-1][i]+dp[n-1][i+1];
+        for(int i=n-2;i>=0;i--) dp[i][m-1]=dungeon[i][m-1]+dp[i+1][m-1]>0?0:dungeon[i][m-1]+dp[i+1][m-1];
+        
+        for(int i=n-2;i>=0;i--)
+        {
+            for(int j=m-2;j>=0;j--)
+            {
+              int temp=dungeon[i][j];
+              if(Math.abs(dp[i+1][j])<Math.abs(dp[i][j+1])) temp+=dp[i+1][j];
+              else temp+=dp[i][j+1];
+              dp[i][j]=temp>0?0:temp;
+            }
+        }
+        
+        for(int[] ele : dp) System.out.println(Arrays.toString(ele));
+        
+       return Math.abs(dp[0][0])+1;
+    }
+
+    // 62. Unique Paths
+
+    public int uniquePaths(int m, int n) 
+    {
+        int[][] dp = new int[m][n];
+        for(int i = 0;i<m;i++) dp[i][n-1] = 1;
+        for(int j = 0;j<n;j++) dp[m-1][j] = 1;
+        for(int i = m-2;i>=0;i--) for(int j = n-2;j>=0;j--) dp[i][j] = dp[i+1][j] + dp[i][j+1];
+        return dp[0][0];
+    }
+
+
+    // 63. Unique Paths II
+
+    public int uniquePathsWithObstacles(int[][] arr) 
+    {
+        int m = arr.length;
+        int n = arr[0].length;
+        int[][] dp = new int[arr.length][arr[0].length];
+        if(arr[m-1][n-1] == 1 || arr[0][0] == 1) return 0;
+        dp[m-1][n-1] = 1;
+        for(int i = m-2;i>=0;i--) {
+            if(arr[i][n-1] == 1) continue;
+            dp[i][n-1] = dp[i+1][n-1];
+        }
+        for(int j = n-2;j>=0;j--) {
+            if(arr[m-1][j] == 1) continue;
+            dp[m-1][j] = dp[m-1][j+1];
+        }
+        for(int i = m-2;i>=0;i--) 
+        {
+            for(int j = n-2;j>=0;j--) 
+            {
+                if(arr[i][j] == 1) continue;
+                dp[i][j] = dp[i+1][j] + dp[i][j+1];
+            }
+        }
+        
+        // for(int[] ele : dp) System.out.println(Arrays.toString(ele));
+        return dp[0][0];
+    }
+
+
+    // 64. Minimum Path Sum
+
+    public int minPathSum(int[][] grid) 
+    {
+        int m = grid.length;
+        int n = grid[0].length;
+        int[][] dp = new int[m][n];
+        dp[m-1][n-1] = grid[m-1][n-1];
+        for(int i = m-2;i>=0;i--) dp[i][n-1] = dp[i+1][n-1] + grid[i][n-1];
+        for(int j = n-2;j>=0;j--) dp[m-1][j] = dp[m-1][j+1] + grid[m-1][j];
+        for(int i = m-2;i>=0;i--) {
+            for(int j = n-2;j>=0;j--) {
+                dp[i][j] = Math.min(dp[i+1][j] , dp[i][j+1]) + grid[i][j];
+            }
+        }
+        return dp[0][0];
+    }
+
+
+    // 1594. Maximum Non Negative Product in a Matrix
+    // Store MinMax pair at every location
+    public class Pair{
+        long min=Integer.MAX_VALUE,max=Integer.MIN_VALUE;
+        Pair(){
+            
+        }
+        Pair(long min,long max){
+            this.min=min;
+            this.max=max;
+        }
+    }
+    public int maxProductPath(int[][] grid) 
+    {
+        Pair[][] dp=new Pair[grid.length][grid[0].length];
+        for(int r=grid.length-1;r>=0;r--)
+        {
+            for(int c=grid[0].length-1;c>=0;c--)
+            {
+                if(r==grid.length-1 && c==grid[0].length-1)
+                {
+                    dp[r][c]=new Pair(grid[r][c],grid[r][c]);
+                }
+                else
+                {
+                    Pair hor=(c==grid[0].length-1)?new Pair():dp[r][c+1];
+                    Pair ver=(r==grid.length-1)?new Pair():dp[r+1][c];
+                    long min,max;
+                    if(grid[r][c]>=0)
+                    {
+                         max=Math.max(hor.max,ver.max);
+                         min=Math.min(hor.min,ver.min);
+                    }
+                    else
+                    {
+                         min=Math.max(hor.max,ver.max);
+                         max=Math.min(hor.min,ver.min);
+                    }
+                    dp[r][c]=new Pair(min*grid[r][c],max*grid[r][c]);
+                }
+            }
+        }
+        int mod=(int)1e9 +7;
+        return dp[0][0].max<0?-1:(int)(dp[0][0].max%mod);
+    }
+
+    // 303. Range Sum Query - Immutable
+
+    public int[]dp;
+    public NumArray(int[] nums) 
+    {
+        dp = new int[nums.length+1];
+        for(int i = 1;i<dp.length;i++)
+        {
+            dp[i] = dp[i-1] + nums[i-1];
+        }
+    }
+    
+    public int sumRange(int left, int right) 
+    {
+        return dp[right+1] - dp[left];
+    }
+
+
+    // 862. Shortest Subarray with Sum at Least K
+
+    // [84,-37,32,40,95]
+    // 167
+    // Important problem and intuition
+    public int shortestSubarray(int[] A, int K)
+    {
+        int N = A.length;
+        long[] P = new long[N+1];
+        for (int i = 0; i < N; ++i) P[i+1] = P[i] + (long) A[i];
+        int ans = N+1;
+        
+        Deque<Integer> monoq = new LinkedList();
+
+        for (int y = 0; y < P.length; ++y) 
+        {
+            while (!monoq.isEmpty() && P[y] <= P[monoq.getLast()]) monoq.removeLast();
+            while (!monoq.isEmpty() && P[y] >= P[monoq.getFirst()] + K) ans = Math.min(ans, y - monoq.removeFirst());
+            monoq.addLast(y);
+        }
+        return ans < N+1 ? ans : -1;
+    }
+
+
+    // Maximum Sum Submatrix Kadanes 2d
+
+    public int maxSubArray(int[] nums) 
+    {
+        int gMax = -(int)1e9;
+        int lSum = 0;
+        for(int ele : nums)
+        {
+            lSum = lSum + ele;
+            gMax = Math.max(lSum,gMax);
+            if(lSum < 0) lSum = 0;
+        }
+        return gMax;
+    }
+    
+    public int maxSumSubmatrix(int[][] matrix) 
+    {
+        int max = -(int)1e9;
+        int n = matrix.length;
+        int m = matrix[0].length;
+        
+        int[] dp = new int[n];
+        
+        for(int i = 0;i<m;i++)
+        {
+            for(int y = i;y<m;y++)
+            {
+                for(int x = 0;x<n;x++)
+                {
+                    dp[x]+=matrix[x][y];
+                    int res = maxSubArray(dp);
+                    max = Math.max(max,res);
+                }
+            }
+        }
+        return (max!=-(int)1e9) ? max : -1;
+    }
+
+
+    // 363. Max Sum of Rectangle No Larger Than K
+    // O(n^4) Solution
+
+    public int maxSumSubmatrix(int[][] matrix, int k) 
+    {
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) return 0;
+        int rows = matrix.length, cols = matrix[0].length;
+        int[][] areas = new int[rows][cols];
+        
+        for (int r = 0; r < rows; r++) 
+        {
+            for (int c = 0; c < cols; c++) 
+            {
+                int area = matrix[r][c];
+                if (r-1 >= 0) area += areas[r-1][c];
+                if (c-1 >= 0) area += areas[r][c-1];
+                if (r-1 >= 0 && c-1 >= 0) area -= areas[r-1][c-1];
+                areas[r][c] = area;
+            }
+        }
+        
+        int max = Integer.MIN_VALUE;
+        for (int r1 = 0; r1 < rows; r1++) 
+        {
+            for (int c1 = 0; c1 < cols; c1++) 
+            {
+                for (int r2 = r1; r2 < rows; r2++) 
+                {
+                    for (int c2 = c1; c2 < cols; c2++) 
+                    {
+                        int area = areas[r2][c2];
+                        if (r1-1 >= 0) area -= areas[r1-1][c2];
+                        if (c1-1 >= 0) area -= areas[r2][c1-1];
+                        if (r1-1 >= 0 && c1 -1 >= 0) area += areas[r1-1][c1-1];
+                        if (area <= k) max = Math.max(max, area);
+                    }
+                }
+            }
+        }
+        return max;
+    }
+
+    // Optimized Version
+
+    // Firstly, let solve this sub problem Max Sum of Subarray No Larger Than K, which is "Given an array of N integers, find the maximum sum of subarray which is no larger than K".
+    // Iterating index i from left to right.
+    // Calculate prefixSum so far, let name it right
+    // Try to find the left prefixSum so that right - left <= k => left >= right - k.
+    // We can use TreeSet (implemented as BST), and use ceiling(x) to find the least key greater than or equal to the given x. So left = bst.ceiling(right-k).
+    // If we found a valid left, then we update the answer by ans = max(ans, right - left).
+    // Then we try all possible pairs of (r1, r2) of rows in the matrix, where 0 <= r1 <= r2 < m. Make an array of n integer, where arr[c] = sum(matrix[r1][c]...matrix[r2][c]), then solve that sub problem.
+
+    public int maxSumSubmatrix(int[][] matrix, int k) { // Like Kadens 2d
+        int m = matrix.length, n = matrix[0].length;
+        int ans = Integer.MIN_VALUE;
+        for (int r1 = 0; r1 < m; ++r1) {
+            int[] arr = new int[n]; // arr[i] is sum(matrix[r1][c]...matrix[r2][c])
+            for (int r2 = r1; r2 < m; ++r2) {
+                for (int c = 0; c < n; ++c) arr[c] += matrix[r2][c];
+                ans = Math.max(ans, maxSumSubArray(arr, n, k));
+            }
+        }
+        return ans;
+    }
+    int maxSumSubArray(int[] arr, int n, int k) { // O(N * logN)
+        TreeSet<Integer> bst = new TreeSet<>();
+        bst.add(0);
+        int ans = Integer.MIN_VALUE;
+        for (int i = 0, right = 0; i < n; ++i) {
+            right += arr[i];
+            Integer left = bst.ceiling(right - k); // right - left <= k -> left >= right - k
+            if (left != null) {
+                ans = Math.max(ans, right - left);
+            }
+            bst.add(right);
+        }
+        return ans;
+    }
+
+
+    // 1074. Number of Submatrices That Sum to Target
+
+    public static int subarraySum(int[] nums, int k) 
+    {
+        int sum = 0;
+        int count = 0;
+        HashMap<Integer,Integer> map = new HashMap<>();
+        map.put(0,1);
+        for(int ele : nums)
+        {
+            sum += ele;
+            if(map.containsKey(sum - k)) count+=map.get(sum-k);
+            if(!map.containsKey(sum)) map.put(sum,1);
+            else if(map.containsKey(sum)) map.put(sum , map.get(sum)+1);
+        }
+        return count;
+    }
+    // leetcode 1074
+    public static int numSubmatrixSumTarget(int M[][] , int tar) 
+    {
+        int []arr = new int[M[0].length];
+        int count = 0;
+        for(int k = 0;k<M.length;k++)
+        {
+            for(int i = k;i<M.length;i++)
+            {
+                for(int j = 0;j<M[0].length;j++)
+                {
+                    arr[j] += M[i][j];
+                }
+                count += subarraySum(arr,tar);
+            }
+            Arrays.fill(arr,0);
+        }
+        return count;
+    }
+
+
+    // 764. Largest Plus Sign
+
+    public class coord{
+        int u;
+        int d;
+        int l;
+        int r;
+        coord(){
+            
+        }
+        coord(int u , int d , int l , int r){
+            this.u = u;
+            this.d = d;
+            this.l = l;
+            this.r = r;
+        }
+    }
+    public int orderOfLargestPlusSign(int n, int[][] mines) 
+    {
+        HashSet<Integer> set = new HashSet<>();
+        int max = 0;
+        boolean isOrderOne = false;
+        for(int[] ele:mines){
+            int a = ele[0];
+            int b = ele[1];
+            set.add(a*n + b);
+        }
+        coord[][]dp = new coord[n][n];
+        
+        for(int i = 0;i<=n-1;i++)
+        {
+            for(int j = 0;j<=n-1;j++)
+            {
+                dp[i][j] = new coord();
+                if(i == 0 || j == 0 || i == n-1 || j == n-1) continue;
+                
+                if(!set.contains(i*n + j))
+                {
+                    int u = 0;
+                    int l = 0;
+                    if(!set.contains((i-1)*n+ j))
+                    {
+                        coord up = dp[i-1][j];
+                        u = up.u+1;
+                    }
+                    if(!set.contains(i*n+ (j-1)))
+                    {
+                        coord left = dp[i][j-1];
+                        l = left.l + 1;
+                    }
+                    
+                    dp[i][j] = new coord(u,0,l,0);
+                }
+            }
+        }
+        
+        for(int i = n-1;i>=0;i--)
+        {
+            for(int j = n-1;j>=0;j--)
+            {
+                if(!set.contains(i*n +j)) isOrderOne = true;
+                
+                if(i == 0 || j == 0 || i == n-1 || j == n-1) continue;
+                
+                if(!set.contains(i*n +j))
+                {
+                    int d = 0;
+                    int r = 0;
+                    if(!set.contains((i+1)*n+j))
+                    {
+                        coord down = dp[i+1][j];
+                        d = down.d+1;
+                    }
+                    if(!set.contains(i*n+ (j+1)))
+                    {
+                        coord right = dp[i][j+1];
+                        r = right.r + 1;
+                    }
+                    
+                    dp[i][j].d = d;
+                    dp[i][j].r = r;
+                    
+                    coord t = dp[i][j];
+                    max = Math.max(max , Math.min(t.u,Math.min(t.d,Math.min(t.l,t.r))));
+                }
+            }
+        }
+        if(max == 0 && !isOrderOne) return 0;
+        if(max == 0 && isOrderOne) return 1;
+        return max+1;
+    }
+
+    // 1277. Count Square Submatrices with All Ones
+    // Not the most optimal one
+
+    public int countSquares(int[][] matrix) 
+    {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int[][] dp = matrix;
+        int count = 0;
+        
+        for(int i=0;i<m;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                if(matrix[i][j] == 1) count += 1;
+            }
+        }
+        
+        for(int k=1;k<m;k++)
+        {
+            int[][] temp = new int[m][n];
+            for(int i=k;i<m;i++)
+            {
+                for(int j=k;j<n;j++)
+                {
+                    if(dp[i-1][j-1] == 1 && dp[i-1][j] == 1 && dp[i][j-1] == 1 && matrix[i][j] == 1)
+                    {
+                        temp[i][j] = 1;
+                        count+=1;
+                    }
+                }
+            }
+            dp = temp;
+        }
+        return count;
+    }
+
+
+    /// 1139. Largest 1-Bordered Square
+
+    public class pair
+    {
+        int d;
+        int r;
+        pair(){
+        }
+        pair(int d , int r){
+            this.d = d;
+            this.r = r;
+        }
+    }
+    
+    public int largest1BorderedSquare(int[][] matrix) 
+    {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int max = 0;
+        boolean isOne = false;
+        pair[][] dp = new pair[m][n];
+        
+        for(int i = m-1;i>=0;i--)
+        {
+            for(int j = n-1;j>=0;j--)
+            {
+                dp[i][j] = new pair();
+                if(matrix[i][j] == 0) continue;
+                if(j+1 < n) dp[i][j].r = dp[i][j+1].r+1;
+                if(i+1 < m) dp[i][j].d = dp[i+1][j].d+1;
+            }
+        }
+        
+        for(int i = 0;i<m;i++)
+        {
+            for(int j = 0;j<n;j++)
+            {
+                if(matrix[i][j] == 0) continue;
+                isOne = true;
+                pair t = dp[i][j];
+                for(int k = Math.min(t.d,t.r);k>0;k--)
+                {
+                    pair t1 = dp[i][j+k];
+                    pair t2 = dp[i+k][j];                    
+                    if(matrix[i][j+k]!=0 && matrix[i+k][j]!=0 && matrix[i+k][j+k] !=0)
+                    {
+                        if(t1.d>=k && t2.r>=k) max = Math.max(max,k);
+                    }
+                }
+            }
+        }
+        
+        if(max == 0 && isOne) return 1;
+        if(max == 0 && !isOne) return 0;
+        
+        return (max+1)*(max+1);
+    }
+
+
+    // 1314. Matrix Block Sum
+
+    public int[][]ans;
+    
+    public void NumMatrix(int[][] matrix) 
+    {
+        ans = new int[matrix.length+1][matrix[0].length+1];
+        for(int i = 1;i<=matrix.length;i++){
+            for(int j = 1;j<=matrix[0].length;j++){
+                ans[i][j] = ans[i-1][j] + ans[i][j-1] + matrix[i-1][j-1] - ans[i-1][j-1];
+            }
+        }
+    }
+    
+    public int sumRegion(int row1, int col1, int row2, int col2) 
+    {
+        return ans[row2 + 1][col2 + 1] - ans[row1][col2 + 1] - ans[row2 + 1][col1] + ans[row1][col1];
+    }
+    
+    public int[][] matrixBlockSum(int[][] mat, int k)
+    {
+        NumMatrix(mat);
+        int[][] dp = new int[mat.length][mat[0].length];
+        
+        for(int i=0;i<mat.length;i++)
+        {
+            for(int j = 0;j<mat[0].length;j++)
+            {
+                int r1 = Math.max(0,i-k);
+                int r2 = Math.min(mat.length-1,i+k);
+                
+                int c1 = Math.max(0,j-k);
+                int c2 = Math.min(mat[0].length-1,j+k);
+                
+                dp[i][j] = sumRegion(r1,c1,r2,c2);
+            }
+        }
+        return dp;
+    }
+
+
+    // 1423. Maximum Points You Can Obtain from Cards
+
+    public int maxScore(int[] arr, int k) 
+    {
+        int i = 0;
+        int j = arr.length-1;
+        int sum = 0;
+        int max = 0;
+        while(i<k)
+        {
+            sum+=arr[i];
+            i++;
+        }
+        i--;
+        max = sum;
+        while(j >= arr.length-k)
+        {
+            sum  = sum - arr[i] + arr[j];
+            max = Math.max(max,sum);
+            i--;
+            j--;
+        }
+        return max;
+    }
+
+    // 1504. Count Submatrices With All Ones
+    // Important Approach
+
+    public int numSubmat(int[][] mat) 
+    {
+        int[][] dp = new int[mat.length][mat[0].length];
+        
+        for(int i = 0;i<mat.length;i++)
+        {
+            int count = 0;
+            for(int j = mat[0].length-1;j>=0;j--)
+            {
+                if(mat[i][j] == 1)
+                {
+                    count++;
+                    dp[i][j] = count;
+                }
+                else
+                {
+                    count = 0;
+                }
+            }
+        }
+                
+        int ans = 0;
+        
+        for(int i = 0;i<mat.length;i++)
+        {
+            for(int j = 0;j<mat[0].length;j++)
+            {
+                int min = (int)1e9;
+                for(int k = i;k<mat.length;k++)
+                {
+                    ans += Math.min(min , dp[k][j]);
+                    min = Math.min(min , dp[k][j]);
+                }
+            }
+        }
+        return ans;
+    }
+
+
+    // 1664. Ways to Make a Fair Array
+
+    // Important And Simple Solution Copied From Discusion
+    // Much Much Better than the previous one I wrote
+
+    public int waysToMakeFair(int[] nums) 
+    {
+        int res = 0;
+        int n =nums.length;
+        int righteven = 0, rightodd = 0;
+        
+        for(int i=0; i<n; ++i) 
+        {
+            if(i%2 == 0) righteven += nums[i];
+            else rightodd += nums[i];
+        }
+        
+        int lefteven = 0, leftodd = 0;
+        for(int i=0; i<n; ++i) 
+        {
+            
+            if(i%2 == 0) righteven -= nums[i];
+            else rightodd -= nums[i];
+            
+            if(lefteven + rightodd == leftodd + righteven) res++;
+            
+            if(i%2== 0) lefteven += nums[i];
+            else leftodd += nums[i];
+        }
+        
+        return res;
+    }
+
+
+    // 523. Continuous Subarray Sum
+    // Very Important Ratne Wala Solution
+    // Remainder wali kahani
+    // https://www.youtube.com/watch?v=OKcrLfR-8mE
+    public boolean checkSubarraySum(int[] nums, int k) 
+    {
+        int psum=0;
+        HashMap<Integer,Integer> hm=new HashMap<>();
+        hm.put(0,-1);
+        for(int i=0;i<nums.length;i++)
+        {
+            psum+=nums[i];
+            int rem=psum%k;
+            if(hm.containsKey(rem))
+            {
+                if(i-hm.get(rem)>=2)
+                return true;
+            }
+            else
+            {
+                hm.put(rem,i);
+            }
+        }
+        return false;
+    }
+
+    //1477. Find Two Non-overlapping Sub-arrays Each With Target Sum
+
+    public int minSumOfLengths(int[] arr, int target) 
+    {
+        int[] dp1 = new int[arr.length];
+        int[] dp2 = new int[arr.length];
+        Arrays.fill(dp1,(int)1e9);
+        Arrays.fill(dp2,(int)1e9);
+        
+        int sum1 = 0;
+        int i1 = 0;
+        int j1 = 0;
+        int min1 = (int)1e9;
+        while(j1<arr.length)
+        {
+            sum1+=arr[j1];
+            if(sum1 == target) 
+            {
+                dp1[j1] = Math.min(min1,j1-i1+1);
+                min1 = Math.min(min1,j1-i1+1);
+            }
+            else dp1[j1] = min1;
+            
+            while(sum1 >= target && i1 < j1)
+            {
+                sum1 -= arr[i1++];
+                if(sum1 == target)
+                {
+                    dp1[j1] = Math.min(min1,j1-i1+1);
+                    min1 = Math.min(min1,j1-i1+1);
+                }
+            }
+            j1++;
+        }
+        
+        
+        int sum2 = 0;
+        int i2 = arr.length-1;
+        int j2 = arr.length-1;
+        int min2 = (int)1e9;
+        while(j2>=0)
+        {
+            sum2+=arr[j2];
+            if(sum2 == target) 
+            {
+                dp2[j2] = Math.min(min2,i2-j2+1);
+                min2 = Math.min(min2,i2-j2+1);
+            }
+            else dp2[j2] = min2;
+            
+            while(sum2 >= target && i2 > j2)
+            {
+                sum2 -= arr[i2--];
+                if(sum2 == target)
+                {
+                    dp2[j2] = Math.min(min2,i2-j2+1);
+                    min2 = Math.min(min2,i2-j2+1);
+                }
+            }
+            j2--;
+        }
+        
+        int ans = (int)1e9;
+        
+        for(int i = 0;i<dp1.length;i++)
+        {
+            int val1 = dp1[i];
+            int val2 = (i+1 < dp1.length) ? dp2[i+1] : (int)1e9;
+            
+            if(val1 == (int)1e9 || val2 == (int)1e9) continue;
+            ans = Math.min(ans,val1+val2);
+        }
+        
+        
+        if(ans == (int)1e9) return -1;
+        return ans;
+    }
+
+
+
+    // 1546. Maximum Number of Non-Overlapping Subarrays With Sum Equals Target
+
+    public int maxNonOverlapping(int[] nums, int target) 
+    {
+        int[] dp = new int[nums.length];
+        HashMap<Integer,Integer> map = new HashMap<>();
+        
+        map.put(0,-1);
+        
+        int sum = 0;
+        
+        for(int i =0;i<nums.length;i++)
+        {
+            sum += nums[i];
+            if(map.containsKey(sum-target))
+            {
+                if(map.get(sum-target) == -1) dp[i] = Math.max((i-1 >= 0) ? dp[i-1] : -(int)1e9 , 1);
+                else dp[i] = Math.max((i-1 >= 0) ? dp[i-1] : -(int)1e9 ,dp[map.get(sum-target)] + 1);
+            }
+            else 
+            {
+                if(i-1 >=0) dp[i] = dp[i-1];
+            }
+            
+            map.put(sum,i);
+        }
+        // System.out.println(Arrays.toString(dp));
+        return dp[nums.length-1];
+    }
+
+
 }
