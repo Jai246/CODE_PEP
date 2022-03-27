@@ -556,7 +556,7 @@ class leftDpQues
     // Important Dp Question
     // k = 2 [10,9,3,2] 30 max
     // k = 4 [1,4,1,5,7,3,6,1,9,9,3] 83 max
-
+    // Ratlo/SamajhLo is code koo Aache See
     public int maxSumAfterPartitioning(int[] A, int K) 
     {
         int N = A.length, dp[] = new int[N + 1];
@@ -786,7 +786,12 @@ class leftDpQues
                             for(int n = 0;n<=needs[5];n++)
                             {
                                 dp[i][j][k][l][m][n] = (i*price[0]) +(j*price[1]) +(k*price[2]) +(l*price[3]) +(m*price[4]) +(n*price[5]); 
-                            }
+                                // if we do this as well in the next loop then we might end up getting answer as 0 becauese we have to take min
+                                // of dp[i][j][k][l][m][n] and (i*price[0]) +(j*price[1]) +(k*price[2]) +(l*price[3]) +(m*price[4]) +(n*price[5])
+                                // But the min of them will always be 0 as int [] is initialize with 0 , the another idea is to first initialize dp with
+                                // (int)1e9 but then it is better to initialize it with (i*price[0]) +(j*price[1]) +(k*price[2]) +(l*price[3]) +(m*price[4]) +(n*price[5])
+
+                             }
                         }
                     }
                 }
@@ -1270,7 +1275,7 @@ class leftDpQues
 
 
     // 978. Longest Turbulent Subarray
-    // Handeling for the comtinous duplicates is important
+    // Handeling for the continous duplicates is important
     public int maxTurbulenceSize(int[] arr)
     {
         if(arr.length == 1) return 1;
@@ -1758,13 +1763,18 @@ class leftDpQues
         int ans = Integer.MIN_VALUE;
         for (int r1 = 0; r1 < m; ++r1) {
             int[] arr = new int[n]; // arr[i] is sum(matrix[r1][c]...matrix[r2][c])
-            for (int r2 = r1; r2 < m; ++r2) {
-                for (int c = 0; c < n; ++c) arr[c] += matrix[r2][c];
+            for (int r2 = r1; r2 < m; ++r2) 
+            {
+                for (int c = 0; c < n; ++c)
+                {
+                    arr[c] += matrix[r2][c];
+                } 
                 ans = Math.max(ans, maxSumSubArray(arr, n, k));
             }
         }
         return ans;
     }
+    
     int maxSumSubArray(int[] arr, int n, int k) { // O(N * logN)
         TreeSet<Integer> bst = new TreeSet<>();
         bst.add(0);
