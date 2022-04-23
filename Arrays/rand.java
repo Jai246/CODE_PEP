@@ -6,13 +6,13 @@ class rand
 {
     // the number of runs
     // for the test data generated
-    static int requiredNumbers = 150;
+    static int requiredNumbers = 30;
  
     // miminum range of random numbers
     static int lowerBound = 1;
  
     // maximum range of random numbers
-    static int upperBound = 100;
+    static int upperBound = 30;
  
     // Driver Code
     public static void main (String[] args) throws IOException

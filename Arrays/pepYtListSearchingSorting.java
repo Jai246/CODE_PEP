@@ -151,67 +151,32 @@ public class pepYtListSearchingSorting
     }
 
     // 658. Find K Closest Elements
-
-    public int searchIdx(int[] arr , int x)
-    {
-        if(x <= arr[0]) return 0;
-        if(x >= arr[arr.length-1]) return arr.length-1;
-        int possibleMid = 0;
-        int possibleIdx = 0;
-        int i = 0;
-        int j = arr.length-1;
-        
-        while(i < j)
-        {
-            int mid = (i + j)/2;
-            if(arr[mid] == possibleMid && possibleIdx == mid)
-            {
-                break;
-            }
-            if(arr[mid] <= x)
-            {
-                i = mid;
-                possibleMid = arr[mid];
-                possibleIdx = mid;
-            }
-            else j = mid-1;
-        }
-        return i;
-    }
+    // Important bs to find closest element <=
     public List<Integer> findClosestElements(int[] arr, int k, int x) 
     {
-        List<Integer> ans = new ArrayList<>();
-        int idx = searchIdx(arr,x);
-        int i = idx;
-        int j = idx + 1;
-        while(i >= 0 && j < arr.length && k > 0){
-            int diff1 = x-arr[i];
-            int diff2 = arr[j]-x;
-            
-            if(diff1 <= diff2)
+        int n = arr.length;
+        int l = 0, r = n - 1, pos = 0;
+        while(l <= r) 
+        {
+            int m = l + (r - l) / 2;
+            if(arr[m] <= x) 
             {
-                ans.add(0,arr[i--]);
-                k--;
+                pos = m;
+                l = m + 1;
             }
-            else{
-                ans.add(arr[j++]);
-                k--;
-            }
+            else r = m - 1; 
         }
         
-        if(k > 0)
+        l = (pos - k < 0) ? 0 : pos - k;
+        r = (pos + k >= n) ? n - 1 : pos + k;
+        while(r - l + 1 != k) 
         {
-            while(i >= 0 && k > 0)
-            {
-                ans.add(0,arr[i--]);
-                k--;
-            }
-            while(j < arr.length && k > 0)
-            {
-                ans.add(arr[j++]);
-                k--;
-            }
+            if(Math.abs(arr[l] - x) > Math.abs(arr[r] - x)) l++;
+            else r--;
         }
+        
+        List<Integer> ans = new ArrayList<>();
+        for(int i = l; i <= r; i++)  ans.add(arr[i]);
         return ans;
     }
 
@@ -297,34 +262,30 @@ public class pepYtListSearchingSorting
 
         int k = 0;
         long count = 0;
-        while (lsi <= lei && rsi <= rei) {
-            if (arr[lsi] > arr[rsi]) {
+        while (lsi <= lei && rsi <= rei) 
+        {
+            if (arr[lsi] > arr[rsi]) 
+            {
                 count += (lei - lsi + 1);
                 sortedArray[k++] = arr[rsi++];
-            } else
-                sortedArray[k++] = arr[lsi++];
+            } 
+            else sortedArray[k++] = arr[lsi++];
         }
 
-        while (lsi <= lei)
-            sortedArray[k++] = arr[lsi++];
-        while (rsi <= rei)
-            sortedArray[k++] = arr[rsi++];
+        while (lsi <= lei) sortedArray[k++] = arr[lsi++];
+        while (rsi <= rei) sortedArray[k++] = arr[rsi++];
         
         k = 0;
-        for (int i = l; i <= r; i++)
-            arr[i] = sortedArray[k++];
-
+        for (int i = l; i <= r; i++) arr[i] = sortedArray[k++];
         return count;
     }
 
-    public static long inversionCount(long[] arr, int si, int ei, long[] sortedArray) {
-        if (si >= ei)
-            return 0;
-
+    public static long inversionCount(long[] arr, int si, int ei, long[] sortedArray)
+    {
+        if (si >= ei) return 0;
         int mid = (si + ei) / 2;
         long ICL = inversionCount(arr, si, mid, sortedArray); // IC : Inversion Count, L = left , R = Right
         long ICR = inversionCount(arr, mid + 1, ei, sortedArray);
-
         return (ICL + ICR + InversionAcrossArray(arr, si, ei, mid, sortedArray));
     }
 
@@ -343,40 +304,30 @@ public class pepYtListSearchingSorting
     {
         if(arr.length == 0) return new int[]{-1,-1};
         int[] res = new int[2];
-        res[0] = first(arr,target,0,arr.length-1);
-        res[1] = last(arr,target,0,arr.length-1);
+        res[0] = first(arr,target,-1,arr.length-1);
+        res[1] = last(arr,target,0,arr.length);
         return res;
     }
     public static int first(int[] arr , int tar , int si , int ei)
     {
-        while(si >= 0 && ei < arr.length && si <= ei)
+        while(ei-si > 1)
         {
             int mid = (ei+si)/2;
-            if(arr[mid] == tar)
-            {
-                if(mid-1 >= 0 && arr[mid-1] == tar) ei = mid-1;
-                else return mid;
-            }
-            else if(arr[mid] < tar) si = mid+1;
-            else ei = mid-1;
+            if(arr[mid] >= tar) ei = mid;
+            else si = mid;
         }
-        
+        if(arr[ei] == tar) return ei;
         return -1;
     }
     public static int last(int[] arr , int tar , int si , int ei)
     {
-        while(si >= 0 && ei < arr.length && si <= ei)
+        while(ei-si > 1)
         {
             int mid = (ei+si)/2;
-            if(arr[mid] == tar)
-            {
-                if(mid + 1 <= arr.length-1 && arr[mid+1] == tar) si = mid+1;
-                else return mid;                
-            }
-            else if(arr[mid] < tar) si = mid+1;
-            else ei = mid-1;
+            if(arr[mid] <= tar) si = mid;
+            else ei = mid;
         }
-        
+        if(arr[si] == tar) return si;
         return -1;
     }
 
@@ -487,45 +438,33 @@ public class pepYtListSearchingSorting
 
 
     // 4. Median Of two sorted arrays
-
+    // Here I Just Made the median in case of odd length right oriented
+    // Now no need to take card of (x+y+1)/2 condition.
     public double findMedianSortedArrays(int[] nums1, int[] nums2) 
     {
         if(nums1.length > nums2.length) return findMedianSortedArrays(nums2,nums1);
         int x = nums1.length;
         int y = nums2.length;
-        int low = 0;
+        int low = 0; // Code is running with both -1 and 0
+
         int high = x;
+        // we can't take high = x-1 because consider this case
+
         while(low<=high)
         {
             int partX =  (low+high)/2;
-            int partY =  (x+y+1)/2 - partX;
-
-
+            int partY =  (x+y)/2 - partX;
             int xLeft = partX == 0 ? Integer.MIN_VALUE : nums1[partX-1];
             int xRight = partX == x ? Integer.MAX_VALUE : nums1[partX];
             int yLeft = partY == 0 ? Integer.MIN_VALUE : nums2[partY-1];
             int yRight = partY == y ? Integer.MAX_VALUE : nums2[partY];
-
-
             if(xLeft<=yRight && yLeft<=xRight)
             {
-               if((x+y)%2==0)
-               {
-                   return ((double)Math.max(xLeft,yLeft) + Math.min(xRight,yRight))/2;
-               }
-               else
-               {
-                   return Math.max(xLeft,yLeft);
-               } 
+               if((x+y)%2==0) return ((double)Math.max(xLeft,yLeft) + Math.min(xRight,yRight))/2;
+               else return Math.min(xRight,yRight);
             }
-            else if(xLeft>yRight)
-            {
-                high = partX -1;
-            }
-            else
-            {
-                low = partX+1;
-            }
+            else if(xLeft>yRight) high = partX -1;
+            else low = partX+1;
         }
         return 0.0;
     }
@@ -897,22 +836,20 @@ public class pepYtListSearchingSorting
 
 
     // Find Transition Point 
-
+    // Just Find FirstIndex of one
     int transitionPoint(int arr[], int n) 
     {
-        int tar = 0;
-        int i = 0;
-        int j = arr.length;
-        while(i < j)
+        int tar = 1;
+        int si = -1;
+        int ei = n-1;
+        while(ei-si > 1)
         {
-            int mid = (i+j)/2;
-            if(arr[mid] <= tar)
-            {
-                i = mid + 1;
-            }
-            else j = mid;
+            int mid = (ei+si)/2;
+            if(arr[mid] >= tar) ei = mid;
+            else si = mid;
         }
-        return (i == n) ? -1 : i;
+        if(arr[ei] == tar) return ei;
+        return -1;
     }
 
     // 278. First Bad Version
@@ -953,13 +890,15 @@ public class pepYtListSearchingSorting
     }
 
 
-    // Find the element that appears once in sorted array 
+    // Find the element that appears once in sorted array
     // O(log N) Time Complexity
-
-    public int findOnce(int arr[], int n){
+    // Do DryRun
+    public int findOnce(int arr[], int n)
+    {
         int i = 0;
         int j = n-1;
-        while(i < j){
+        while(i < j)
+        {
             int mid = (i+j)/2;
             if(mid > 0 && arr[mid] == arr[mid-1] && (mid-i+1)%2 == 0) i = mid + 1;
             else if(mid + 1 < arr.length && arr[mid] == arr[mid + 1] && (mid+2)%2==0) i = mid + 2;
@@ -1203,7 +1142,7 @@ public class pepYtListSearchingSorting
 
 
     // Toppers of Class
-    // Code copied from peepcoding Portal
+    // Code copied from pepcoding Portal
 
     public static class Pair implements Comparable<Pair> {
     int marks;
@@ -1455,7 +1394,8 @@ public class pepYtListSearchingSorting
 
     // 295. Find Median from Data Stream
     // Very Important Problem;
-
+    // Basically Pehle Top Check Karke Priority Queue Ke accordingly left mei yaa right mei daaldo
+    // Ooske Baad Balance Kardo Dono Priority Queues koo
 
     public PriorityQueue<Integer> left;
     public PriorityQueue<Integer> right;
@@ -1482,6 +1422,4 @@ public class pepYtListSearchingSorting
         if(size%2 == 0) return (left.peek() + right.peek())/2.0;
         else return left.peek()*1.0;
     }
-
-    
 }

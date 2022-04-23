@@ -296,16 +296,15 @@ class stack
 
     public int scoreOfParentheses(String S) {
         int ans = 0, bal = 0;
-        for (int i = 0; i < S.length(); ++i) {
-            if (S.charAt(i) == '(') {
-                bal++;
-            } else {
+        for (int i = 0; i < S.length(); ++i) 
+        {
+            if (S.charAt(i) == '(') bal++;
+            else 
+            {
                 bal--;
-                if (S.charAt(i-1) == '(')
-                    ans += 1 << bal;
+                if (S.charAt(i-1) == '(') ans += 1 << bal;
             }
         }
-
         return ans;
     }
 
@@ -644,7 +643,7 @@ class stack
     // do dryrun this code
 
 
-    public static int calculate(String s) 
+    public static int calculate(String s)
     {
         int len = s.length(), sign = 1, result = 0;
         Stack<Integer> stack = new Stack<Integer>();
@@ -680,6 +679,7 @@ class stack
     // With Stack Solution Copied From Leetcode
     // Dryrun On this
     //Previous operation kee basis par chalenge in
+    // This doesnot have '(' and ')' 
     public int calculate(String s) 
     {
         int len = s.length();
@@ -703,9 +703,7 @@ class stack
             }
         }
         int result = 0;
-
         while (!stack.isEmpty()) result += stack.pop();
-
         return result;
     }
 
@@ -761,7 +759,7 @@ class stack
 
 
     // Basic Calculator |||
-
+    // Non Working Code
 
     public static int calculate(String s) 
     {
@@ -983,7 +981,7 @@ class stack
 
     // 1381. Design a Stack With Increment Operation
     // Important Solution
-
+    // Range Query type operations
     int n;
     int[] inc;
     Stack<Integer> stack;
@@ -1000,10 +998,8 @@ class stack
 
     public int pop() {
         int i = stack.size() - 1;
-        if (i < 0)
-            return -1;
-        if (i > 0)
-            inc[i - 1] += inc[i];
+        if (i < 0) return -1;
+        if (i > 0) inc[i - 1] += inc[i];
         int res = stack.pop() + inc[i];
         inc[i] = 0;
         return res;

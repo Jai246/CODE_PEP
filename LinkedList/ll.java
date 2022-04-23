@@ -170,6 +170,7 @@ class ll
         if(head == null || head.next == null) return head;
         ListNode mid = middleNode(head);
         ListNode nHead = mid.next;
+        mid.next = null;
         return mergeTwoLists(sortList(head),sortList(nHead));               
     }
 
@@ -278,7 +279,7 @@ class ll
         }
         temp.next = headB;
         ListNode ans = detectCycle(headA);
-        temp.next = null;
+        temp.next = null; // Undoing the effect we added to linked list
         return ans;
     }
 
@@ -370,7 +371,24 @@ class ll
     }
 
     // REVERSE LINKEDLIST 2
-    public ListNode reverseBetween(ListNode head, int left, int right) 
+
+    public static ListNode tHead = null;
+    public static ListNode tTail = null;
+    
+    
+    public static void addFirst(ListNode head)
+    {
+        if(tHead == null){
+            tHead = head;
+            tTail = head;
+        }
+        else{
+            head.next = tHead;
+            tHead = head;
+        }
+    }
+
+    public ListNode reverseBetween(ListNode head, int left, int right)
     {
         if(head == null || left == right || head.next == null) return head;
         ListNode curr = head;
@@ -404,7 +422,9 @@ class ll
     }
 
     // LEETCODE 138 HASHMAP APPROACH FOR COPY LIST WITH RANDOM POINTER
-    public static class Node{
+
+    public static class Node
+    {
         int val = 0;
         Node next = null;
         Node random = null;
@@ -424,6 +444,7 @@ class ll
             {
                 map.put(curr,new Node(curr.val));
             }
+
             if(curr.next!=null)
             {
                 if(!map.containsKey(curr.next))
@@ -432,6 +453,7 @@ class ll
                 }
                 map.get(curr).next = map.get(curr.next);
             }
+
             if(curr.random!=null)
             {
                 if(!map.containsKey(curr.random))
@@ -448,6 +470,7 @@ class ll
     
     // IMPLEMENTATION OF LRU CACHE
     // MAKE VIDEO FOR REMEMBERING THE IMPORTANT POINTS FOR LRU CACHE
+    // VERY SIMPLE IMPLEMENTATION USING TWO DUMMY NODES
     public class LRUNode
     {
         int val = 0;
@@ -463,103 +486,79 @@ class ll
     public HashMap<Integer , LRUNode> map = null;
     public LRUNode head = null;
     public LRUNode tail = null;
-    public int Maxcapacity = 0;
-    public void removeFirst()
+    public int maxCapacity = 0;
+    
+    public LRUCache(int capacity) 
     {
-        if(head == null) return;
-        else if(map.size() == 1){
-            map.remove(head.key);
-            head = null;
-            tail = null;
-        }
-        else{
-            LRUNode temp = head.next;
-            map.remove(head.key);
-            head.next = null;
-            temp.prev = null;
-            head = temp;
-        }
+        maxCapacity = capacity;
+        map = new HashMap<>();
+        head = new LRUNode(-1,-1);
+        tail = new LRUNode(-1,-1);
+        head.next = tail;
+        tail.prev = head;
     }
-    public void addLast(LRUNode node)
-    {
-        if(head == null && tail == null)
-        {
-            head = node;
-            tail = node;
-            map.put(node.key,node);
-        }
-        else
-        {
-            map.put(node.key,node);
-            tail.next = node;
-            node.prev = tail;
-            tail = node;
-        }
-        
-    }
-    public void reArrange(int key)
-    {
-        if(map.size() == 1) return;
-        LRUNode node = map.get(key);
-        LRUNode prev = node.prev;
-        LRUNode forw = node.next;
-        if(forw == null)
-        {
-            return;    
-        }
-        else if(prev == null)
-        {
-            node.next = null;
-            forw.prev = null;
-            head = forw;
-            addLast(node);
-        }
-        else
-        {
-            prev.next = null;
-            node.prev = null;
-            forw.prev = null;
-            node.next = null;
-            prev.next = forw;
-            forw.prev = prev;
-            addLast(node);
-        }
-    }
-    // LRUCache(int capacity) // this is the constructor for the class lru cache
-    // {
-    //     Maxcapacity = capacity;
-    //     map = new HashMap<>(); 
-    // }
     
     public int get(int key) 
     {
-        if(map.containsKey(key))
-        {
-            reArrange(key);
-            return map.get(key).val;
-        }
-        return -1;
+        if(!map.containsKey(key)) return -1;
+        
+        LRUNode temp = map.get(key);
+        LRUNode prev = temp.prev;
+        LRUNode next = temp.next;
+        temp.next = null;
+        temp.prev = null;
+        prev.next = next;
+        next.prev = prev;
+        
+        relocate(temp);
+        
+        return temp.val;
     }
     
-    public void put(int key, int val) 
+    public void put(int key, int value)
     {
-        LRUNode node = new LRUNode(key, val);
-        if(map.containsKey(key))
+        LRUNode temp = null;
+        if(!map.containsKey(key))
         {
-            LRUNode temp = map.get(key);
-            temp.val = val;
-            reArrange(key);
+            temp = new LRUNode(key,value);
+            map.put(key,temp);
+            
+            if(maxCapacity == 0)
+            {
+                LRUNode prev = head;
+                LRUNode next = head.next.next;
+                LRUNode rem = head.next;
+                prev.next = next;
+                next.prev = prev;
+                map.remove(rem.key);
+                maxCapacity++;
+            }
+            maxCapacity--;
         }
         else
         {
-            addLast(node);
-            Maxcapacity--;
-            if(Maxcapacity < 0)
-            {
-                removeFirst();
-                Maxcapacity++;
-            }
+            temp = map.get(key);
+            temp.val = value;
+            map.put(key,temp);
+            LRUNode prev = temp.prev;
+            LRUNode next = temp.next;
+            temp.next = null;
+            temp.prev = null;
+            prev.next = next;
+            next.prev = prev;
         }
+        relocate(temp);
+    }
+    
+    public void relocate(LRUNode temp)
+    {
+        LRUNode prev = tail.prev;
+        LRUNode next = tail;
+        
+        prev.next = temp;
+        temp.prev = prev;
+        temp.next = next;
+        next.prev = temp;
     }
 
     // COPY LIST WITH RANDOM POINTER APPROACH 2 WITHOUT HASHMAP
@@ -609,7 +608,13 @@ class ll
         }
         return headP2;
     }
-    // SEGREGATE ODD AND EVEN
+
+
+
+    // 
+
+
+
     public static ListNode divide(int N,ListNode head)
     {
         ListNode dummyOdd = new ListNode(-1);
@@ -828,10 +833,12 @@ class ll
         l2 = reverseList(l2);
         ListNode c1 = l1 , c2 = l2;
         int borrow = 0;
+
         while(c1!=null)
         {
             int diff = borrow + c1.val - (c2!=null ? c2.val : 0);
-            if(diff < 0){
+            if(diff < 0)
+            {
                 borrow = -1;
                 diff+=10;
             }
@@ -941,41 +948,37 @@ class ll
         return head;
     }
 
-    // LEETCODE 82 REMOVE DUPLICATES || VERY IMPORTANT 
-    public ListNode deleteDuplicates_(ListNode head) 
+    // LEETCODE 82 REMOVE DUPLICATES 
+    // || VERY IMPORTANT Using Sentential(Dummy Node Approach)
+    // Very Easy to handel edge cases
+
+    
+    public ListNode deleteDuplicates(ListNode head) 
     {
-        if(head == null || head.next == null) return head;
-        ListNode dummy = new ListNode(-1);
-        ListNode a = dummy;
-        ListNode prev = head;
-        ListNode ptr = head.next;
-        while(ptr!=null)
+        ListNode sentinel = new ListNode(0, head);
+
+        ListNode pred = sentinel;
+        
+        while (head != null) 
         {
-            if(prev.val == ptr.val)
+
+            if (head.next != null && head.val == head.next.val) 
             {
-                ListNode temp = null;
-                while(ptr!=null && prev.val == ptr.val)
+                while (head.next != null && head.val == head.next.val) 
                 {
-                    temp = ptr;
-                    ptr = ptr.next;
+                    head = head.next;    
                 }
-                a.next = ptr;
-                prev = ptr;
-                if(ptr!=null) ptr = ptr.next;
-            }
-            else
+                pred.next = head.next;     
+            } 
+            else 
             {
-                a.next = prev;
-                a = a.next;
-                a.next = null;
-                prev = ptr;
-                if(ptr!=null) ptr = ptr.next;
+                pred = pred.next;    
             }
-            
-        }
-        a.next = prev;
-        return dummy.next;
-    } 
+                
+            head = head.next;    
+        }  
+        return sentinel.next;
+    }
 
     // LEETCODE 86 PARTITION LIST
     public ListNode partition(ListNode head, int x) 
@@ -1017,85 +1020,109 @@ class ll
     
     // [100,90,100]
     // 3
+    public int length(ListNode head)
+    {
+        int count = 0;
+        while(head!=null)
+        {
+            count++;
+            head = head.next;
+        }
+        return count;
+    }
     public ListNode swapNodes(ListNode head, int k) 
     {
-        if(head == null) return head;
-        int length = length(head);
-
-        // HANDLE WHEN K == LENGTH JUST SWAP FIRST ANS LAST NODE
-
-        if(k == length)
+        ListNode d = new ListNode(-1);
+        d.next = head;
+        ListNode prev1 = d;
+        ListNode prev2 = null;
+        
+        int len = length(head);
+        if(k > len ) return head;
+        int fIdx = Math.min(k , len-k+1);
+        int lIdx = Math.max(k , len-k+1);
+        
+        int c1 = 1;
+        
+        while(c1 < fIdx)
         {
-            ListNode ptr = head;
-            while(ptr.next!=null) ptr = ptr.next;
-            int val = ptr.val;
-            ptr.val = head.val;
-            head.val = val;
-            return head;
+            head = head.next;
+            prev1 = prev1.next;
+            c1++;
         }
-        ListNode ptr = head;
-        ListNode prev = null;
-        int count = 1;
-        ListNode temp = null;
-        while(ptr!=null)
+        ListNode temp1 = head;
+        prev2 = prev1;
+        
+        int c2 = c1;
+        while(c2 < lIdx)
         {
-            //IMPORTANT TESTCASE
-            // [1,2,3,4,5,6,7,8,9]
-            // K = 6
-            if(temp == null &&(count == k || count == length-k+1)) temp = ptr;
-            else if(temp!=null && (length - count + 1 == k || count == k))
-            {
-                int val = temp.val;
-                temp.val = ptr.val;
-                ptr.val = val;
-                break;
-            }
-            prev = ptr;
-            ptr = ptr.next;
-            count++;
+            head = head.next;
+            prev2 = prev2.next;
+            c2++;
         }
-        return head;
+        
+        
+        if(lIdx - fIdx == 1)
+        {
+            prev1.next = head;
+            temp1.next = head.next;
+            head.next = temp1;
+        }
+        else if(lIdx - fIdx > 1)
+        {
+            ListNode forw = head.next;
+            head.next = temp1.next;
+            temp1.next = forw;
+            prev1.next = head;
+            prev2.next = temp1;
+        }
+        
+        return d.next;
     }
 
     //LEETCODE 725 SPLIT LINKEDLISTS IN PARTS IMPORTANT QUESTION
     public ListNode[] splitListToParts(ListNode head, int k) 
     {
-        if(head == null) return new ListNode[k];
-        int length = length(head);
-        ListNode[] arr = new ListNode[k];
+        int size = 0;
+        ListNode cur = head;
+        ListNode[] result = new ListNode[k];
+        
+        while(cur != null)
+        {
+            cur = cur.next;
+            size++;
+        }
+        
+        
+        int partSize = size/k;
+        int remainder = size%k;
+        cur = head;
         int i = 0;
-        if(length<=k)
+        while(cur != null && i < k)
         {
-            ListNode temp = head;
-            while(temp!=null)
+            result[i] = cur;
+            i++;
+            if(remainder > 0 && partSize > 0)
             {
-                ListNode forw = temp.next;
-                arr[i++] = temp;
-                temp.next = null;
-                temp = forw;
+                remainder--;
+                cur = cur.next;
             }
-            return arr;
-        }
-        while(head!= null && length>0)
-        {
-            int div = length/k;
-            int mod = length%k;
-            k--; 
-            int count = div + ((mod > 0) ? 1 : 0);
-            length = length - count;
-            ListNode temp = head;
-            ListNode prev = null;
-            while(count > 0)
+            int curPartSize = 0;
+            
+            while(curPartSize < partSize-1 && cur != null)
             {
-                prev = temp;
-                temp = temp.next;
-                count--;
+                curPartSize++;
+                cur = cur.next;
             }
-            arr[i++] = head;
-            head = prev.next;
-            prev.next = null;
+            
+            if(cur != null)
+            {
+                ListNode next = cur.next;
+                cur.next = null;
+                cur = next; 
+            }
         }
-        return arr;
+        return result;
     }
 
     // GFG LINKED LIST THAT IS SORTED ALTERNATINGLY

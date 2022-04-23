@@ -666,6 +666,390 @@ class leftGraphsQues
         return ans;
     }
 
+    // 1361. Validate Binary Tree Nodes
 
+    // Very Important Solution
+
+    // BY UNION FIND WE WILL TAKE CARE OF BOTH CYCLES AND MORE THAN ONE INDEGREE
+    // BY UNION FIND WE CAN ALSO TAKE CARE ABOUT WHETHER THERE ARE MORE THAN ONE COMPONENTS OR NOT
+    public boolean validateBinaryTreeNodes(int n, int[] left, int[] right)
+    {
+        int[] parent = new int[n];
+        for(int i = 0; i < n; i++) parent[i] = i; //every node is parent of itselt
+
+        for(int i = 0; i < n; i++) 
+        {
+            int l = left[i];
+            int r = right[i];
+            int x = find(parent, i);
+            if(l != -1) 
+            {
+                int root = find(parent, l);
+                if(root == x) return false; // tells boyh cycle ans more than 1 indegree
+                union(parent, i, l);
+            }
+            if(r != -1) 
+            {
+                int root = find(parent, r); 
+                if(root == x) return false; // tells boyh cycle ans more than 1 indegree
+                union(parent, i, r);
+            }
+        }
+        int root = find(parent, 0);
+        for(int i = 1; i < n; i++) 
+        {
+            int rootI = find(parent, i);
+            if(root != rootI) return false; //Root of all node should be same - note the path compression
+        }
+        return true;
+    }
     
+    public void union(int[] parent, int x, int y) {
+        parent[y] = x;
+    }
+    
+    int find(int[] parent, int x) 
+    {
+        if(parent[x] != x) 
+        {
+            //Path compression for faster parent search - this makes Tree root as parent of all nodes
+            parent[x] = find(parent, parent[x]); 
+            return parent[x];
+        }
+        return x;
+    }
+
+    // 2101. Detonate the Maximum Bombs
+
+    // bomb A can trigger bomb B
+    // bomb C can trigger bomb B
+    // bomb B cannot trigger bomb A and C
+    // bomb A, C cannot trigger each other
+    // but in Union Find A B C will be in same group. (cause A->B, C->B
+    // it is not possible that each of them triggers other two bombs.
+
+    // IN THIS QUESTION TYPECASTING TO LONG IS VERY IMPORTANT
+    public long findDistance(int x1 , int y1 , int x2 , int y2)
+    {
+        long val = (long)Math.abs(x2-x1)*(long)Math.abs(x2-x1) + (long)Math.abs(y2-y1)*(long)Math.abs(y2-y1);
+        // System.out.println(val);
+        return val;
+    }
+    
+    public void dfs(HashSet<Integer>[] graph , int p , boolean[] vis , int[]count)
+    {
+        vis[p] = true;
+        count[0]++;
+        for(int ele : graph[p])
+        {
+            if(!vis[ele]) dfs(graph,ele,vis,count);
+        }
+    }
+    
+    public int maximumDetonation(int[][] bombs) 
+    {
+        int n = bombs.length;
+        HashSet<Integer>[] graph = new HashSet[n];
+        for(int i = 0;i<n;i++) graph[i] = new HashSet<>();
+        
+        
+        for(int i = 0;i<n;i++)
+        {
+            for(int j = i+1;j<n;j++)
+            {
+                int[] b1 = bombs[i];
+                int[] b2 = bombs[j];
+                
+                long dist = findDistance(b1[0],b1[1],b2[0],b2[1]);
+                
+                int r1 = b1[2];
+                int r2 = b2[2];
+                
+                if((long)r1*(long)r1 >= dist) graph[i].add(j);
+                if((long)r2*(long)r2 >= dist) graph[j].add(i);
+            }
+        }
+        int maxCount = -(int)1e9;
+        
+        for(int i = 0;i<n;i++)
+        {
+            int[] count = new int[]{0};
+            boolean[] vis = new boolean[n];
+            dfs(graph,i,vis,count);
+            maxCount = Math.max(maxCount , count[0]);
+        }
+        
+        return maxCount;
+    }
+
+
+    // 1786. Number of Restricted Paths From First to Last Node
+
+    public int calcResPath(ArrayList<int[]>[] graph , int[]dist , int p , boolean[]vis , int[]dp)
+    {
+        if(dp[p]!=-1) return dp[p];
+        if(p == graph.length-1) return dp[p] = 1;
+        vis[p] = true;
+        int c = 0;
+        for(int[] ele : graph[p])
+        {
+            if(dist[ele[0]] < dist[p] && !vis[ele[0]]) c = (c +  calcResPath(graph,dist,ele[0],vis,dp))%((int)1e9 + 7);
+        }
+        vis[p] = false;
+        dp[p] = c%((int)1e9 + 7);
+        return dp[p];
+    }
+    public int countRestrictedPaths(int n, int[][] edges) 
+    {
+        ArrayList<int[]>[] graph = new ArrayList[n+1];
+        for(int i =0;i<n+1;i++) graph[i] = new ArrayList<>();
+        
+        for(int[] ele : edges){
+            int u = ele[0];
+            int v = ele[1];
+            int w = ele[2];
+            graph[u].add(new int[]{v,w});
+            graph[v].add(new int[]{u,w});
+        }
+        
+        int[] minDist = new int[n+1];
+        Arrays.fill(minDist,(int)1e11);
+        PriorityQueue<int[]> queue = new PriorityQueue<>((a,b)->{
+            return a[1] - b[1];
+        });
+        queue.add(new int[]{n,0});
+        minDist[n] = 0;
+        while(queue.size() > 0)
+        {
+            int[] t = queue.remove();
+            
+            for(int []node : graph[t[0]])
+            {
+                if(node[1] + t[1] < minDist[node[0]]) 
+                {
+                    minDist[node[0]] = node[1] + t[1]; // To stop extra edges entry in PQ and getting rid of TLE
+                    queue.add(new int[]{node[0],node[1] + t[1]});
+                }
+            }
+        }
+        
+        // System.out.println(Arrays.toString(minDist));
+        
+        int[] count = new int[]{0};
+        boolean[] vis = new boolean[n+1];
+        int[] dp = new int[n+1];
+        Arrays.fill(dp,-1);
+        calcResPath(graph,minDist,1,vis,dp);
+        return dp[1];
+    }
+
+
+    // 1976. Number of Ways to Arrive at Destination
+
+    // Very Important Dijikstra Style to find no 
+    // of minimum  Paths from source to any node 
+    // We have also used a DP(paths) in this quesstion
+
+    // One thing I Noted about dijikstra Algorithm that it
+    // Kind of Behaves Like TopoSort because first all 
+    // minimum weights are processed.
+
+    public int countPaths(int n, int[][] edges)
+    {
+        ArrayList<int[]>[] graph = new ArrayList[n];
+        for(int i =0;i<n;i++) graph[i] = new ArrayList<>();
+
+        for(int[] ele : edges)
+        {
+            int u = ele[0];
+            int v = ele[1];
+            int w = ele[2];
+            graph[u].add(new int[]{v,w});
+            graph[v].add(new int[]{u,w});
+        }
+        
+        PriorityQueue<int[]> queue = new PriorityQueue<>((a,b)->{return a[1] - b[1];});
+        
+        int[] min = new int[n];
+        Arrays.fill(min,(int)1e11);
+        int[] path = new int[n];
+        path[0] = 1;
+        min[0] = 0;
+        int mod = (int)1e9+7;
+        queue.add(new int[]{0,0});
+        
+        while(queue.size() > 0)
+        {
+            int[] t = queue.remove();
+            int u = t[0];
+            int w1 = t[1];
+            if(u == n-1) return path[n-1]; // Will always give total no of paths because at the time of popping out
+            // there are No more Minimum Distance ways to reach destination node because all minimum ways are already
+            // resolved and all other psf present in PQ is greater than this one
+            for(int[] ele : graph[u])
+            {
+                int v = ele[0];
+                int w2 = ele[1];
+                if(w1 + w2 == min[v]) path[v] = (path[v] + path[u])%mod;
+                else if(w1 + w2 < min[v])
+                {
+                    path[v] = path[u]%mod;
+                    min[v] = w1+w2;
+                    queue.add(new int[]{v,w1+w2});
+                }
+            }
+        }
+        return -1;
+    }
+    
+
+    // 1466. Reorder Routes to Make All Paths Lead to the City Zero
+    // Very Simple Solution
+    // reverse the current edges with weight 0;
+    // add new edges in the orignal direction with weight 1
+
+    public int minReorder(int n, int[][] edges) 
+    {
+        ArrayList<int[]>[] graph = new ArrayList[n];
+        for(int i =0;i<n;i++) graph[i] = new ArrayList<>();
+
+        for(int[] ele : edges)
+        {
+            int u = ele[0];
+            int v = ele[1];
+            graph[u].add(new int[]{v,1});
+            graph[v].add(new int[]{u,0});
+        }
+        
+        LinkedList<Integer> queue = new LinkedList<>();
+        
+        boolean[] vis = new boolean[n];
+        
+        queue.addLast(0);
+        int count = 0;
+        while(queue.size() > 0)
+        {
+            int v = queue.removeFirst();
+            vis[v] = true;
+            
+            for(int[] ele : graph[v])
+            {
+                if(vis[ele[0]]) continue;
+                count+=ele[1];
+                queue.add(ele[0]);
+            }
+        }
+        
+        return count;
+    }
+
+
+    // 2039. The Time When the Network Becomes Idle
+
+    public int networkBecomesIdle(int[][] edges, int[] patience) 
+    {
+        // We Can Apply Simple BFS as Well
+        int n = patience.length;
+        ArrayList<int[]>[] graph = new ArrayList[n];
+        for(int i =0;i<n;i++) graph[i] = new ArrayList<>();
+        
+        for(int[] ele : edges){
+            int u = ele[0];
+            int v = ele[1];
+            int w = 1;
+            graph[u].add(new int[]{v,w});
+            graph[v].add(new int[]{u,w});
+        }
+        
+        int[] minDist = new int[n];
+        Arrays.fill(minDist,(int)1e11);
+        PriorityQueue<int[]> queue = new PriorityQueue<>((a,b)->{
+            return a[1] - b[1];
+        });
+        queue.add(new int[]{0,0});
+        minDist[0] = 0;
+        while(queue.size() > 0)
+        {
+            int[] t = queue.remove();
+            
+            for(int []node : graph[t[0]])
+            {
+                if(node[1] + t[1] < minDist[node[0]]) // To stop extra edges entry in PQ and getting rid of TLE
+                {
+                    minDist[node[0]] = node[1] + t[1]; 
+                    queue.add(new int[]{node[0],node[1] + t[1]});
+                }
+            }
+        }
+        
+        
+        int max = 0;
+        for(int i = 1;i<n;i++)
+        {
+            int dis = minDist[i]*2;
+            int pat = patience[i];
+            int val = dis + dis - (dis % pat);
+            if(dis % pat == 0) val -= pat;
+            // Yeh VAli Line Isliye likhi kyoki agar dis pat kaa multiple hoga toh 
+            // last wala message generate nahi ho payega kyoki First Message phle he vaha pahunch jayega
+            // DryRun On This
+            max = Math.max(max,val);
+        }
+        return max+1;
+    }
+
+
+    // 310. Minimum Height Trees
+    // Very Important Approach Saw From Leetcode's Original Solution
+    // The Idea Is to trim the leave nodes and do this until the size of 
+    // the graph is greater than 2
+    // Note That A Tree Can HAve Atmost two centroids
+    // If we Consider Odd Length then centriod will we 1;
+    // In Case Of Even Centriod Will be 2;
+    public List<Integer> findMinHeightTrees(int n, int[][] edges) 
+    {
+        if (n < 2) {
+            ArrayList<Integer> centroids = new ArrayList<>();
+            for (int i = 0; i < n; i++) centroids.add(i);
+            return centroids;
+        }
+        
+        HashSet<Integer>[] graph = new HashSet[n];
+        for(int i = 0;i<n;i++) graph[i] = new HashSet<>();
+        for(int[] ele : edges)
+        {
+            int u = ele[0];
+            int v = ele[1];
+            graph[u].add(v);
+            graph[v].add(u);
+        }
+        
+        ArrayList<Integer> leaves = new ArrayList<>();
+        for(int i = 0;i<n;i++) 
+        {
+            if(graph[i].size() == 1) 
+            {
+                leaves.add(i);
+            }
+        }
+        
+        int nodes = n;
+        // System.out.println(leaves.toString());
+        while(nodes > 2)
+        {
+            nodes -= leaves.size();
+            ArrayList<Integer> temp = new ArrayList<>();
+            for(int i : leaves) 
+            {
+                int val = -1;
+                for(int ele : graph[i]) val = ele;
+                graph[i].remove(val);
+                graph[val].remove(i);
+                if(graph[val].size() == 1) temp.add(val);
+            }
+            // System.out.println(leaves.toString());
+            leaves = temp;
+        }
+        return leaves;
+    }
 }

@@ -409,6 +409,9 @@ class pepYtList
         ArrayList<Integer> xcord = new ArrayList<>();
         ArrayList<Integer> ycord = new ArrayList<>();
 
+        // We Are Doing it this way i.e seperately because
+        // This way we will get values in sortd order in the ArrayList
+
         // for row coordinates
         for(int r = 0; r < grid.length; r++) {
             for(int c = 0; c < grid[0].length; c++) {
@@ -431,6 +434,7 @@ class pepYtList
         int y = ycord.get(ycord.size() / 2);
         
         // calculate distance
+        // Manhatten Distance
         int dist = 0;
         for(int i = 0; i < xcord.size(); i++) {
             dist += Math.abs(xcord.get(i) - x) + Math.abs(ycord.get(i) - y);
@@ -441,14 +445,18 @@ class pepYtList
     // sieve of eratosthenese leetcode 204
     // here it is mentioned less than n so we have created the array of size n;
     // but generally we create array of n-1;
-    public int countPrimes(int n) 
+    public int countPrimes(int n)
     {
         if(n == 0 || n == 1) return 0;
         Boolean[] isPrime = new Boolean[n];
         Arrays.fill(isPrime,true);
-        for(int i=2;i*i<isPrime.length;i++){   
-            if(isPrime[i]){
-                for(int j = i+i;j<isPrime.length;j = j + i){
+
+        for(int i=2;i*i<isPrime.length;i++)
+        {   
+            if(isPrime[i])
+            {
+                for(int j = i+i;j<isPrime.length;j = j + i)
+                {
                     isPrime[j] = false;
                 }
             }
@@ -460,51 +468,67 @@ class pepYtList
 
     // segmented sieve pepcoding solution
 
-    public static ArrayList<Integer> sieveOfEratosthenes(int N) {
-    boolean[] arr = new boolean[N + 1]; // false - prime || true - non prime
-    for (int i = 2; i * i <= N; i++) {
-      if (arr[i] == false) {
-        for (int j = i * 2; j <= N; j += i) {
-          arr[j] = true;
-        }
-      }
-    }
-    ArrayList<Integer> ans = new ArrayList<>();
-    for (int i = 2; i <= N; i++) {
-      if (arr[i] == false) {
-        ans.add(i);
-      }
-    }
-    return ans;
-  }
+    public static ArrayList<Integer> sieveOfEratosthenes(int N) 
+    {
+        Boolean[] isPrime = new Boolean[n];
+        Arrays.fill(isPrime,true);
 
-  public static void segmentedSieveAlgo(int a, int b) {
-    StringBuilder sb = new StringBuilder();
-    int rootb = (int) Math.sqrt(b);
-    ArrayList<Integer> primes = sieveOfEratosthenes(rootb);
-    boolean[] arr = new boolean[b - a + 1];
-    for (int i : primes) {
-      int multiple = (int) Math.ceil(a * 1.0 / i);
-      if (multiple == 1) {
-        multiple++;
-      }
-      int firstidx = (multiple * i) - a;
-      while (firstidx < arr.length) {
-        arr[firstidx] = true;
-        firstidx += i;
-      }
+        for(int i=2;i*i<isPrime.length;i++)
+        {   
+            if(isPrime[i])
+            {
+                for(int j = i+i;j<isPrime.length;j = j + i)
+                {
+                    isPrime[j] = false;
+                }
+            }
         }
-        for (int i = 0; i < arr.length; i++) {
-          if (arr[i] == false && (a + i) != 1) {
+        ArrayList<Integer> ans = new ArrayList<>();
+
+        for (int i = 2; i <= N; i++) 
+        {
+          if (isPrime[i]) 
+          {
+            ans.add(i);
+          }
+        }
+        return ans;
+    }
+
+    public static void segmentedSieveAlgo(int a, int b) 
+    {
+        StringBuilder sb = new StringBuilder();
+        int rootb = (int) Math.sqrt(b);
+        ArrayList<Integer> primes = sieveOfEratosthenes(rootb);
+        boolean[] arr = new boolean[b - a + 1];
+
+        for (int i : primes) 
+        {
+          int multiple = (int) Math.ceil(a * 1.0 / i);
+          if (multiple == 1) 
+          {
+            multiple++;
+          }
+          int firstidx = (multiple * i) - a;
+
+          while (firstidx < arr.length) 
+          {
+            arr[firstidx] = true;
+            firstidx += i;
+          }
+        }
+        for (int i = 0; i < arr.length; i++) 
+        {
+          if (arr[i] == false && (a + i) != 1) 
+          {
             sb.append(a + i + "\n");
           }
         }
         sb.append("\n");
         System.out.println(sb);
-      }
+    }
 
-
-      // transpose of a matrix leetcode
+    // transpose of a matrix leetcode
 
     public int[][] transpose(int[][] matrix) 
     {
@@ -764,13 +788,19 @@ class pepYtList
         int count = 0;
         int prevc = 0;
 
-        while (ei < arr.length) {
-          if (arr[ei] >= left && arr[ei] <= right) {
+        while (ei < arr.length) 
+        {
+          if (arr[ei] >= left && arr[ei] <= right) 
+          {
             count += ei - si + 1;
             prevc = ei - si + 1;
-          } else if (arr[ei] < left) {
+          } 
+          else if (arr[ei] < left) 
+          {
             count += prevc;
-          } else {
+          } 
+          else 
+          {
             prevc = 0;
             si = ei + 1;
           }
@@ -1553,8 +1583,8 @@ class pepYtList
         }
         return ans;
     }
-
-    // 56. Merge Intervals
+Merge Intervals
+    // 56. 
 
 
     public int[][] merge(int[][] intervals) 
@@ -1571,7 +1601,7 @@ class pepYtList
             int c = intervals[i][0];
             int d = intervals[i][1];
             
-            if((c>=a&&c<=b)||(d>=a&&d<=b)||(a>=c&&b<=d)){
+            if(c<=b){
                 ans.remove(ans.size()-1);
                 ans.add(new int[]{Math.min(a,c),Math.max(b,d)});
             }
@@ -1891,7 +1921,7 @@ class pepYtList
         return (j-i+1 > 0) ? j-i+1 : 0;
     }
 
-    // SET MATRIX ZERO MOST OPTIMIZED SOLUTION LEETCODE\
+    // SET MATRIX ZERO MOST OPTIMIZED SOLUTION LEETCODE
     
     public void setZeroes(int[][] matrix) {
 
