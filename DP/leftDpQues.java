@@ -170,7 +170,7 @@ class leftDpQues
             return this.end-a.end;
         }
     }
-    public int jobScheduling(int[] s, int[] e, int[] profit) 
+    public int jobScheduling(int[] s, int[] e, int[] profit)
     {
         pair[] arr = new pair[profit.length];
         for(int i = 0;i<profit.length;i++)
@@ -201,7 +201,7 @@ class leftDpQues
                 dpEnd[i] = arr[i-1].end;
                 dpPro[i] = max;
             }
-            else 
+            else
             {
                 dpEnd[i] = dpEnd[i-1];
                 dpPro[i] = dpPro[i-1];
@@ -212,20 +212,26 @@ class leftDpQues
 
     // TreeMap Approach
 
-    public int jobScheduling(int[] s, int[] e, int[] profit) 
+    public int jobScheduling(int[] s, int[] e, int[] profit)
     {
         pair[] arr = new pair[profit.length];
-        for(int i = 0;i<profit.length;i++){
+        for(int i = 0;i<profit.length;i++)
+        {
             arr[i] = new pair(s[i],e[i],profit[i]);
         }
+        
         Arrays.sort(arr);
+        
         TreeMap<Integer,Integer> dp = new TreeMap<>();
-        dp.put(0,0);
+        
+        dp.put(0,0); // To Handle Single Value (Only Me)
+        
         for(pair ele : arr)
         {
             int cur = dp.floorEntry(ele.start).getValue() + ele.profit;
             if (cur > dp.lastEntry().getValue()) dp.put(ele.end, cur);
         }
+        
         return dp.get(dp.lastKey());
     }
 
@@ -352,7 +358,8 @@ class leftDpQues
             {
                 int start = clip[0];
                 int end = clip[1];
-                if (i >= start && i <= end) {
+                if (i >= start && i <= end) 
+                {
                     dp[i] = Math.min(dp[i], dp[start] + 1);
                 }
             }
@@ -1276,96 +1283,62 @@ class leftDpQues
 
     // 978. Longest Turbulent Subarray
     // Handeling for the continous duplicates is important
-    public int maxTurbulenceSize(int[] arr)
+    // [9,9,9,9,8,7,6,7,8,9,10]
+    // [9,10,9,8,7,64]
+    public int maxTurbulenceSize(int[] arr) 
     {
         if(arr.length == 1) return 1;
         int count = 1;
         int max = 1;
-        int toggle = -1;
-        
-        int i = 1;
-        while(i < arr.length && arr[i] == arr[i-1] ) i++;
-        if(i < arr.length && arr[i] > arr[i-1]) 
+        int toggle = (arr[1] > arr[0]) ? 0 : 1;
+        for(int i = 1;i<arr.length;i++)
         {
-            toggle = 1;
-            count = 2;
-            max = 2;
-        }
-        else if(i < arr.length && arr[i] < arr[i-1])
-        {
-            toggle = 0;
-            count = 2;
-            max = 2;    
-        }
-        
-        if(arr.length == 2 && toggle == -1) return 1;
-        else if(arr.length == 2 && toggle!=-1) return 2;
-        
-        i++;
-        
-        for(;i<arr.length;i++)
-        {
-            int prev = arr[i-1];
-            int curr = arr[i];
-            
-            if(curr == prev)
+            if(arr[i] > arr[i-1]) 
+            {
+                if(toggle == 0)
+                {
+                    count++;
+                    toggle = 1;
+                }
+                else if(i-2 >= 0 && arr[i-1] < arr[i-2]) toggle = 1;
+                else 
+                {
+                    max = Math.max(max,count);
+                    count=2;
+                    toggle = 1;
+                }
+            }
+            else if(arr[i] < arr[i-1])
+            {
+                if(toggle == 1)
+                {
+                    count++;
+                    toggle = 0;
+                }
+                else if(i-2>=0 && arr[i-1] > arr[i-2]) toggle = 0;
+                else
+                {
+                    max = Math.max(max,count);
+                    count=2;
+                    toggle = 0;
+                    
+                }
+            }
+            else if(arr[i] == arr[i-1])
             {
                 max = Math.max(max,count);
-                while(i < arr.length && arr[i] == arr[i-1] ) i++;
-        
-                if(i < arr.length && arr[i] > arr[i-1]) {
-                    toggle = 1;
-                    count = 2;
+                count = 1;
+                
+                while(i < arr.length && arr[i] == arr[i-1]) i++;
+                if(i < arr.length)
+                {
+                    if(arr[i] > arr[i-1]) toggle = 1;
+                    else toggle = 0;
                 }
-                else if(i < arr.length && arr[i] < arr[i-1]) {
-                    toggle = 0;
-                    count = 2;
-                }
-                continue;
-            }
-            
-            if(toggle == 0)
-            {    
-                if(curr > prev) {
-                    count++;
-                    max = Math.max(max,count);
-                    toggle = 1;
-                }
-                else if(prev > curr){
-                    toggle = 0;
-                    count = 2;
-                }
-            }
-            else if(toggle == 1)
-            {    
-                if(curr < prev) {
-                    count++;
-                    max = Math.max(max,count);
-                    toggle = 0;
-                }
-                else if(prev < curr){
-                    toggle = 1;
-                    count = 2;
-                }
+                i--;
             }
         }
-        return max;
-    }
-
-    // 1186. Maximum Subarray Sum with One Deletion
-    // Important Solution
-
-    public int maximumSum(int[] arr) 
-    {
-        int n = arr.length;
-        int oneDelete = 0, noDelete = arr[0], max = arr[0];
-        for (int i = 1; i < n; i++) 
-        {
-            oneDelete = Math.max(oneDelete + arr[i], noDelete);
-            noDelete = Math.max(noDelete + arr[i], arr[i]);
-            max = Math.max(max, Math.max(oneDelete, noDelete));
-        }
-        return max;
+        return Math.max(max,count);
     }
 
 
@@ -1958,6 +1931,21 @@ class leftDpQues
         return count;
     }
 
+
+    // Most Optimal Solution
+
+    public int countSquares(int[][] matrix) 
+    {
+        int mat[][] = new int[matrix.length + 1][matrix[0].length + 1];
+        int sum = 0;
+        
+        for(int i = 1; i <= matrix.length; i++)
+            for(int j = 1; j <= matrix[0].length; j++)
+                if(matrix[i - 1][j - 1] != 0)
+                    sum += (mat[i][j] = Math.min(Math.min(mat[i - 1][j], mat[i][j - 1]), mat[i - 1][j - 1]) + 1);
+           
+        return sum;
+    }
 
     /// 1139. Largest 1-Bordered Square
 

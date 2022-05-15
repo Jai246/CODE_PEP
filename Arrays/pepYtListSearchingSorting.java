@@ -152,7 +152,7 @@ public class pepYtListSearchingSorting
 
     // 658. Find K Closest Elements
     // Important bs to find closest element <=
-    public List<Integer> findClosestElements(int[] arr, int k, int x) 
+    public List<Integer> findClosestElements(int[] arr, int k, int x)
     {
         int n = arr.length;
         int l = 0, r = n - 1, pos = 0;
@@ -736,27 +736,27 @@ public class pepYtListSearchingSorting
         return count;
     }
 
-    //Counting elements in two arrays 
-
+    // Counting elements in two arrays 
+    // Using the generic syntax for last 
     public static int findLastIdx(int[]arr , int tar)
     {
         int i = 0;
         int j = arr.length;
-        while(i < j)
+        while(j-i>1)
         {
             int mid = (i+j)/2;
             if(arr[mid] <= tar)
             {
-                i = mid + 1;
+                i = mid;
             }
             else j = mid;
         }
-        return (i < arr.length && arr[i] == tar) ? i+1 : i;
+        if(i == 0 && arr[0] > tar) return 0; // Important to handel
+        return i+1;
     }
     public static ArrayList<Integer> countEleLessThanOrEqual(int arr1[], int arr2[], int m, int n)
     {
         ArrayList<Integer> ans = new ArrayList<>();
-        
         Arrays.sort(arr2);
         
         for(int ele : arr1)
@@ -893,16 +893,33 @@ public class pepYtListSearchingSorting
     // Find the element that appears once in sorted array
     // O(log N) Time Complexity
     // Do DryRun
-    public int findOnce(int arr[], int n)
+    public int singleNonDuplicate(int[] arr) 
     {
         int i = 0;
-        int j = n-1;
+        int j = arr.length-1;
+        
         while(i < j)
         {
             int mid = (i+j)/2;
-            if(mid > 0 && arr[mid] == arr[mid-1] && (mid-i+1)%2 == 0) i = mid + 1;
-            else if(mid + 1 < arr.length && arr[mid] == arr[mid + 1] && (mid+2)%2==0) i = mid + 2;
-            else j = mid;
+            int prev = (mid-1>=0) ? arr[mid-1] : -(int)1e9;
+            int next = (mid+1<arr.length) ? arr[mid+1] : (int)1e9;
+            int val = arr[mid];
+            
+            if((j-mid)%2 == 0 && (mid-i)%2!=0) j = mid;
+            else if((mid-i)%2 == 0 && (j-mid)%2 != 0) i = mid;
+            else if((j-mid)%2 != 0 && (mid-i)%2!=0)
+            {
+                if(val == next) j = mid-1;
+                else if(val == prev) i = mid+1;
+
+            }
+            else if((j-mid)%2 == 0 && (mid-i)%2==0)
+            {
+                if(val == next) i = mid+2;
+                else if(val == prev) j = mid-2;
+                else return val;
+                // [1,1,2,3,3]
+            }
         }
         return arr[i];
     }

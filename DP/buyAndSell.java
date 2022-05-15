@@ -26,10 +26,9 @@ class buyAndSell
         int maxprofit = 0;
         for (int i = 1; i < prices.length; i++) 
         {
-            if (prices[i] > prices[i - 1])
-                maxprofit += prices[i] - prices[i - 1];
+            if (prices[i] > prices[i - 1]) maxprofit += prices[i] - prices[i - 1];
         }
-            return maxprofit;
+        return maxprofit;
     }
         
 
@@ -92,7 +91,8 @@ class buyAndSell
           {
              int fadd = Integer.MIN_VALUE;
 
-             for(int j = 1; j < n; j++){
+             for(int j = 1; j < n; j++)
+             {
                 if(dp[i - 1][j - 1] - arr[j - 1] > fadd)
                 {
                    fadd = dp[i - 1][j - 1] - arr[j - 1];
@@ -101,7 +101,8 @@ class buyAndSell
                 if(fadd + arr[j] > dp[i][j - 1])
                 {
                    dp[i][j] = fadd + arr[j];
-                } else 
+                }
+                else 
                 {
                    dp[i][j] = dp[i][j - 1];
                 }
@@ -115,29 +116,39 @@ class buyAndSell
 
     public int maxProfit(int[] arr) 
     {
-        int bstp = -arr[0];
+      int bstp = -arr[0];
       int sstp = 0;
       int cstp = 0;
-      for(int i = 1; i < arr.length; i++){
+      for(int i = 1; i < arr.length; i++)
+      {
          int nbstp = 0;
          int nsstp = 0;
          int ncstp = 0;
 
-         if(cstp - arr[i] > bstp){
+         if(cstp - arr[i] > bstp)
+         {
             nbstp = cstp - arr[i];
-         } else {
+         } 
+         else 
+         {
             nbstp = bstp;
          }
 
-         if(bstp + arr[i] > sstp){
+         if(bstp + arr[i] > sstp)
+         {
             nsstp = bstp + arr[i];
-         } else {
+         } 
+         else 
+         {
             nsstp = sstp;
          }
 
-         if(sstp > cstp){
+         if(sstp > cstp)
+         {
             ncstp = sstp;
-         } else {
+         } 
+         else 
+         {
             ncstp = cstp;
          }
 
@@ -145,10 +156,8 @@ class buyAndSell
          sstp = nsstp;
          cstp = ncstp;
       }
-
       return Math.max(sstp, cstp);
     }
 
-
-
+    
 }

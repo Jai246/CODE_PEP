@@ -1414,7 +1414,7 @@ class ll
     Node deleteNodeDoubly(Node head,int x)
     {
         if(head == null || (head.next == null && head.data == x)) return null;
-        if(x == 1)
+        if(x == 1) // We CAn handle this case with dummy node
         {
             Node forw = head.next;
             head.next = null;
@@ -1598,158 +1598,142 @@ class ll
     
 
     // LFU CACHE
-    public class ListNode
+    public class node
     {
-        int val = 0;
-        int count = 1;
-        ListNode prev = null;
-        ListNode next = null;
-        ListNode keyPtr = null;
-        ListNode(int val)
-        {
+        int data;
+        int val;
+        int freq;
+        node next;
+        node prev;
+        node(){
+        }
+        node(int data , int val , int freq){
+            this.data = data;
+            this.freq = freq;
             this.val = val;
         }
     }
-    public int maxCapacity = 0;
-    public int capacity = 0;
-    public int minCount = 1;
-    HashMap<Integer,ListNode> tailMap;
-    HashMap<Integer,ListNode> countMap;
-    HashMap<Integer,ListNode> keyMap;
     
+    public HashMap<Integer,node[]> freq = new HashMap<>();
+    public HashMap<Integer,node> map = new HashMap<>();
+    public int minFreq;
+    public int capacity;
+    public int maxCapacity;
     public LFUCache(int capacity) 
     {
-        countMap = new HashMap<>();
-        keyMap = new HashMap<>();
-        tailMap = new HashMap<>();
+        freq = new HashMap<>();
+        map = new HashMap<>();
         this.capacity = capacity;
-        this.maxCapacity = capacity;
+        maxCapacity = capacity;
+        minFreq = 0;
     }
-    
-    
-    public void relocate(int key)
-    {
-        ListNode ret = keyMap.get(key).next;
-        if(ret.next == null)
-        {
-            ListNode retTail = tailMap.get(ret.count);
-            if(retTail!=null) retTail.next = ret.prev;
-        }
-        else
-        {
-            ListNode retTail = tailMap.get(ret.count);
-            if(retTail!=null) retTail.next = ret.next;
-        }
-        
-        ListNode prev = ret.prev;
-        System.out.println(ret.prev.val);
-        ListNode forw = ret.next;
-        prev.next = forw;
-        if(forw!=null) forw.prev = prev;
-        ret.next = null;
-        ret.prev = null;
-        
-
-        int newCount = ret.count+1;
-        
-        if(!countMap.containsKey(newCount)) countMap.put(newCount , new ListNode(-1));
-        
-        if(!tailMap.containsKey(newCount))
-        {
-            ListNode t = new ListNode(-1);
-            t.next = countMap.get(newCount);
-            tailMap.put(newCount , t);
-        }
-                
-        if(countMap.containsKey(ret.count) && countMap.get(ret.count).next == null)
-        {
-            countMap.remove(ret.count);
-            tailMap.remove(ret.count);
-            if(countMap.containsKey(minCount+1)) minCount++;
-        }
-        
-        
-        ret.count = newCount;
-        ListNode tail = tailMap.get(newCount);
-        ListNode lastNode = tail.next;
-        lastNode.next = ret;
-        ret.prev = lastNode;
-        tail.next = ret;
-    }
-
     
     public int get(int key) 
     {
-        if(!keyMap.containsKey(key)) return -1;
         
-        ListNode ret = keyMap.get(key).next;
-        int retVal = ret.val;
-        relocate(key);                
-        return retVal;
+        // if(key == 4) System.out.println(map.toString());
+        if(!map.containsKey(key) || minFreq == 0 || maxCapacity == 0) return -1;
+        
+        node rem  = map.get(key);
+
+        node prev = rem.prev;
+        node next = rem.next;
+
+        if(prev.val == -1 && next.val == -1 && rem.freq == minFreq) minFreq++;
+
+        prev.next = next;
+        next.prev = prev;
+
+        if(!freq.containsKey(rem.freq+1))
+        {
+            node first = new node(-1,-1,0);
+            node last = new node(-1,-1,0);
+            first.next = last;
+            last.prev = first;
+            freq.put(rem.freq+1,new node[]{first,last});
+        }
+
+        next = freq.get(rem.freq+1)[1];
+        prev = next.prev;
+
+        prev.next = rem;
+        rem.prev = prev;
+        rem.next = next;
+        next.prev = rem;
+        rem.freq++;
+        return rem.val;
     }
     
-    public void put(int key, int value) 
+    public void put(int key, int value)
     {
-        if(maxCapacity > 0)
-        {
-            if(capacity == 0 && !keyMap.containsKey(key))
-                {                
-                    ListNode firstNode = countMap.get(minCount);
-
-                    ListNode rem = firstNode.next;
-                    int remKey = rem.keyPtr.count;
-                    ListNode forw = rem.next;
-
-                    firstNode.next = forw;
-                    if(forw!=null) forw.prev = firstNode;
-                    rem.prev = null;
-                    rem.next = null;
-                    keyMap.remove(remKey);
-                    if(countMap.get(minCount).next == null)
-                    {
-                        countMap.remove(minCount);
-                        tailMap.remove(minCount);
-                    }
-                    capacity++;
-                }
-
-                if(keyMap.containsKey(key))
-                {
-                    ListNode ptr = keyMap.get(key).next;
-                    ptr.val = value;
-                    relocate(key);
-                    return;
-                }
-
-                ListNode N = new ListNode(value);
-                ListNode KM = new ListNode(-1);
-                KM.count = key;
-                KM.next = N;
-                N.keyPtr = KM;
-                keyMap.put(key,KM);
-
-                if(!countMap.containsKey(1))
-                {
-                    countMap.put(1,new ListNode(-1));
-                }
-                if(!tailMap.containsKey(1))
-                {
-                    ListNode tail = new ListNode(-1);
-                    tail.next = countMap.get(1);
-                    tailMap.put(1,tail);
-                }
-                ListNode tail = tailMap.get(1);
-                ListNode lastNode =  tail.next;
-
-                lastNode.next = N;
-                N.prev = lastNode;
-                tail.next = N;
-                capacity--;
-                minCount = 1;
-        }
-    }
-    public static void main(String[] args)
-    {
+        if(maxCapacity == 0) return;
         
+        if(!map.containsKey(key))
+        {
+            capacity--;
+            
+            if(capacity < 0)
+            {
+                node first = freq.get(minFreq)[0];
+                node last = first.next.next;
+                int remData = first.next.data;
+                map.remove(remData);                
+                first.next = last;
+                last.prev = first;
+                capacity++;
+            }
+            
+            if(!freq.containsKey(1)) 
+            {
+                node first = new node(-1,-1,0);
+                node last = new node(-1,-1,0);
+                first.next = last;
+                last.prev = first;
+                freq.put(1,new node[]{first,last});
+            }
+            
+            node next = freq.get(1)[1];
+            node prev = next.prev;
+
+            node add = new node(key,value,1);
+            prev.next = add;
+            add.prev = prev;
+            add.next = next;
+            next.prev = add;
+            map.put(key,add);
+            minFreq = 1;
+        }
+        else
+        {
+            node rem  = map.get(key);
+            rem.val = value;
+            
+            node prev = rem.prev;
+            node next = rem.next;
+            
+            if(prev.val == -1 && next.val == -1 && rem.freq == minFreq) minFreq++;
+            
+            prev.next = next;
+            next.prev = prev;
+            
+            if(!freq.containsKey(rem.freq+1)) 
+            {
+                node first = new node(-1,-1,0);
+                node last = new node(-1,-1,0);
+                first.next = last;
+                last.prev = first;
+                freq.put(rem.freq+1,new node[]{first,last});
+            }
+            
+            rem.freq++;
+            
+            next = freq.get(rem.freq)[1];
+            prev = next.prev;
+
+            prev.next = rem;
+            rem.prev = prev;
+            rem.next = next;
+            next.prev = rem;
+        }
     }
 }

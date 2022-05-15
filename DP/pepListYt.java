@@ -62,24 +62,14 @@ public class pepListYt
         {
             for(int j = 0 ; j < dp[0].length; j++)
             {
-                if(j == 0 )
-                {
-                    if(p.charAt(i - 1) == '*')
-                        dp[i][j] = dp[i - 2][j];
-                }
+                if(j == 0 ) if(p.charAt(i - 1) == '*') dp[i][j] = dp[i - 2][j];
                 else
                 {
-                    if(p.charAt(i - 1) == '.' || p.charAt(i - 1) == s.charAt(j - 1))
-                    {
-                        dp[i][j] = dp[i - 1][j - 1];
-                    }
+                    if(p.charAt(i - 1) == '.' || p.charAt(i - 1) == s.charAt(j - 1)) dp[i][j] = dp[i - 1][j - 1];
                     else if(p.charAt(i - 1) == '*')
                     {
                         dp[i][j] = dp[i - 2][j];
-                        if(p.charAt(i - 2) == s.charAt(j - 1) || p.charAt(i - 2) == '.')
-                        {
-                            dp[i][j] = dp[i][j - 1] || dp[i - 2][j];
-                        }
+                        if(p.charAt(i - 2) == s.charAt(j - 1) || p.charAt(i - 2) == '.') dp[i][j] = dp[i][j - 1] || dp[i - 2][j];
                     }
                 }
                 
@@ -368,7 +358,8 @@ public class pepListYt
                     }
                     for(int cut = 1;cut<len && !dp[si1][si2][len];cut++)
                     {
-                        if(si1+len <= s1.length() && si2+len <= s2.length()){
+                        if(si1+len <= s1.length() && si2+len <= s2.length())
+                        {
                             dp[si1][si2][len] = (dp[si1][si2][cut] && dp[si1+cut][si2+cut][len-cut]) || (dp[si1][si2+len-cut][cut] && dp[si1+cut][si2][len-cut]);
                         }
                     }
@@ -811,23 +802,43 @@ public class pepListYt
         return Math.max(include, exclude);
     }
 
-    public static int maxSumTab(int[] arr, int m, int k){
-        int[] ssum = new int[arr.length];
-        for(int i = arr.length - 1; i >= arr.length - k; i--){
-            ssum[arr.length - 1] += arr[i];
-        }
-        for(int i = arr.length - 2; i >= k - 1; i--){
-            ssum[i] = ssum[i + 1] + arr[i - k + 1] - arr[i + 1];
-        }
 
-        int[][] dp = new int[arr.length + 1][m + 1];
-        for(int i = 1; i < dp.length; i++){
-            for(int j = 1; j < dp[0].length; j++){
-                dp[i][j] = Math.max(dp[i - 1][j],i - k >= 0 ? dp[i - k][j - 1] + ssum[i - 1] : 0);
-            }
+    // Tabulation Solution
+    public static int solution(int[] arr, int m, int k)
+    {
+        int[] pfx = new int[arr.length+1];
+        for(int i = 0;i<arr.length;i++){
+            pfx[i+1] = arr[i] + pfx[i]; 
         }
         
-        return dp[dp.length - 1][dp[0].length - 1];
+        int[][] dp = new int[m][arr.length];
+
+        int max = -(int)1e9;
+
+        for(int i = arr.length-1;i>=0;i--)
+        {
+            if(i+k > arr.length) continue;
+            dp[0][i] = pfx[i+k]-pfx[i];
+            max = Math.max(max,dp[0][i]);
+        }
+
+        
+        for(int x = 1;x<m;x++)
+        {
+            for(int i = 0;i<arr.length-k;i++)
+            {
+                int v1 = pfx[i+k]-pfx[i];
+                for(int j = i+k;j<arr.length;j++)
+                {
+                    int v2 = dp[x-1][j];
+                    if(v2 == 0) continue;
+                    dp[x][i] = Math.max(dp[x][i],v1 + v2);
+                    if(x == m-1) max = Math.max(max,dp[x][i]);
+                }
+            }
+        }
+        // for(int[] ele : dp) System.out.println(Arrays.toString(ele));
+        return max;
     }
 
     // ARITHEMATIC SLICES LEETCODE 
@@ -904,15 +915,18 @@ public class pepListYt
                 if(map[j].containsKey((int)cd))
                 {
                     int count = map[j].get((int)cd);
-                    if(!map[i].containsKey((int)cd)){
+                    if(!map[i].containsKey((int)cd))
+                    {
                         map[i].put((int)cd,count+1);
                     }
-                    else{
+                    else
+                    {
                         map[i].put((int)cd,map[i].get((int)cd) +count+1);
                     }
                     if(count+1 >= 2 && map[i].containsKey((int)cd)) ans+=count;
                 }
-                else{
+                else
+                {
                     map[i].put((int)cd,map[i].getOrDefault((int)cd,0)+1);
                 }
             }
@@ -1401,5 +1415,34 @@ public class pepListYt
     public int sumRegion(int row1, int col1, int row2, int col2) 
     {
         return ans[row2 + 1][col2 + 1] - ans[row1][col2 + 1] - ans[row2 + 1][col1] + ans[row1][col1];
+    }
+
+
+    // 44. Wildcard Matching
+
+    public boolean isMatch(String s, String p) 
+    {
+        int m = p.length();
+        int n  = s.length();
+        boolean[][] dp = new boolean[m+1][n+1];
+        
+        dp[m][n] = true;
+        
+        for(int i = m;i>=0;i--)
+        {
+            for(int j = n;j>=0;j--)
+            {
+                if(i == m || j == n)
+                {
+                    if(j == n && i < m && p.charAt(i) == '*') dp[i][j] = dp[i+1][j];
+                    continue;
+                }
+                char c1 = p.charAt(i);
+                char c2 = s.charAt(j);
+                if(c1 == c2 || c1 == '?') dp[i][j] = dp[i+1][j+1];
+                else if(c1 == '*') dp[i][j] = dp[i+1][j+1] || dp[i+1][j] || dp[i][j+1];
+            }
+        }
+        return dp[0][0];
     }
 }

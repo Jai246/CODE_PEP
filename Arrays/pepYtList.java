@@ -29,7 +29,7 @@ class pepYtList
     }
 
 
-    // renge query leetcode locked submitted on pepcoding
+    // range query leetcode locked submitted on pepcoding
     public static int[] getModifiedArray(int length, int[][] queries) 
     {
         int[] arr = new int[length];

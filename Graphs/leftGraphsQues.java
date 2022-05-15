@@ -540,7 +540,7 @@ class leftGraphsQues
 
     // 2192. All Ancestors of a Node in a Directed Acyclic Graph
 
-     public List<List<Integer>> getAncestors(int n, int[][] edges) 
+     public List<List<Integer>> getAncestors(int n, int[][] edges)
      {
         List<TreeSet<Integer>> ancestorList = new ArrayList();
         List<List<Integer>> list = new ArrayList();
@@ -588,6 +588,48 @@ class leftGraphsQues
     }
 
 
+    // Another solution For the Above Problem 
+    // Here Starting from the node 0 we will do DFS and check Its reachebility using DFS
+    // if that node is reachable from the starting node then add SRC node to the answer to that node
+    // By this we will also ensure that the answer is sorted
+    class Solution {
+       public List<List<Integer>> getAncestors(int n, int[][] edges) {
+        ArrayList<Integer>[] graph = new ArrayList[n], res = new ArrayList[n];
+        for (int i = 0; i < n; i++) graph[i] = new ArrayList<>();
+        for (int[] e : edges) {
+            graph[e[0]].add(e[1]);
+        }
+        for (int i = 0; i < n; i++) {
+            res[i] = new ArrayList<>();
+        }
+        for (int i = 0; i < n; i++) {
+            boolean[] visited = new boolean[n];
+            dfs(i, i, graph, visited, res);
+        }
+        List<List<Integer>> answer = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            answer.add(res[i]);
+        }
+        return answer;
+    }
+    
+    // originalSource, neighbour, graph, visited
+    public void dfs(int osrc, int next, ArrayList<Integer>[] graph, boolean[] visited, ArrayList<Integer>[] res) 
+    {
+        visited[next] = true;
+        for (int nbr : graph[next]) 
+        {
+            if (!visited[nbr]) 
+            {
+                res[nbr].add(osrc);
+                dfs(osrc, nbr, graph, visited, res);
+            }
+        }
+    }
+    
+}
+
+
 
     // 1129. Shortest Path with Alternating Colors
 
@@ -632,14 +674,14 @@ class leftGraphsQues
         int[] ans = new int[n];
         Arrays.fill(ans,-1);
         
-        queue.add(new int[]{0,-1,0});
+        queue.add(new int[]{0,-1,0});   // Element Color PathSoFar
         
         while(queue.size() > 0)
         {
             int[] pop = queue.remove();
             if(pop[0] == 0) ans[0] = 0;
             else ans[pop[0]] = (ans[pop[0]] == -1) ? pop[2]  : Math.min(ans[pop[0]],pop[2]);
-            
+            // Updating The Answer With Miminum Path So Far
             for(pair ele : graph[pop[0]])
             {
                 if(ele.c!=pop[1])
@@ -717,6 +759,50 @@ class leftGraphsQues
             return parent[x];
         }
         return x;
+    }
+
+
+    // Without Union Find simple Solution
+
+    public boolean validateBinaryTreeNodes(int n, int[] leftChild, int[] rightChild) 
+    {
+        int[] deg = new int[n];
+        
+        
+        for(int i = 0;i<n;i++)
+        {
+            int val = leftChild[i];
+            if(val!=-1) deg[val]++;
+        }
+        
+        for(int i = 0;i<n;i++)
+        {
+            int val = rightChild[i];
+            if(val!=-1) deg[val]++;
+        }
+        
+        int root = -1;
+        
+        for(int i = 0;i<n;i++)
+        {
+            int val = deg[i];
+            if(val > 1) return false;
+            if(val == 0){
+                if(root != -1) return false;
+                root = i;
+            }
+        }
+        
+        if(root == -1) return false;
+        
+        int count = count(root ,leftChild , rightChild);
+        
+        return count == n;
+    }
+    
+    public int count(int root , int[] leftChild , int[] rightChild){
+        if(root == -1) return 0;        
+        return count(leftChild[root],leftChild,rightChild) + count(rightChild[root],leftChild,rightChild) + 1; 
     }
 
     // 2101. Detonate the Maximum Bombs
@@ -885,7 +971,7 @@ class leftGraphsQues
             int w1 = t[1];
             if(u == n-1) return path[n-1]; // Will always give total no of paths because at the time of popping out
             // there are No more Minimum Distance ways to reach destination node because all minimum ways are already
-            // resolved and all other psf present in PQ is greater than this one
+            // resolved and all other psf present in PQ is greater than this one....
             for(int[] ele : graph[u])
             {
                 int v = ele[0];
