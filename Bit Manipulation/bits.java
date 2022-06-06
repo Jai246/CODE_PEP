@@ -1068,6 +1068,19 @@ class Bits
         return ans;
     }
 
-    
+    // 2275. Largest Combination With Bitwise AND Greater Than Zero
+    // Just returning Max Number of Set Bits in a column
+    public int largestCombination(int[] candidates) 
+    {
+        int max = 0;
+        for(int i=0;i<30;i++)
+        {
+            int c=0;
+            for(int x : candidates) if((x>>i&1)==1) c++;
+            max = Math.max(max,c);
+        }
+        return max;
+    }
 
+    
 }

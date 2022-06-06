@@ -907,5 +907,74 @@ public class contests
     }
 
     
+    // 2271. Maximum White Tiles Covered by a Carpet
+
+
+    // Simple Sliding Window Problem
+
+    public int maximumWhiteTiles(int[][] tiles, int carpetLen)
+    {
+        Arrays.sort(tiles,(a,b)->{return a[0]-b[0];});
+        int x = 0;
+        int y = 0;
+        long maxCount = 0;
+        long count = 0;
+        
+        while(y < tiles.length)
+        {
+            long start = tiles[x][0];
+            long end = tiles[y][1];
+            
+            if(end-start+1 <= carpetLen) 
+            {
+                count += tiles[y][1] - tiles[y][0]+1;
+                maxCount = Math.max(maxCount,count);
+                y++;
+            }
+            else 
+            {
+                long midDist = start+carpetLen-1;
+                long s = tiles[y][0];
+                long e = tiles[y][1];
+                if(midDist <= e && midDist >= s)  maxCount = Math.max(maxCount,count+midDist-s+1);
+                count -= tiles[x][1] - tiles[x][0] + 1;
+                x++;
+            }
+        }
+        return (int)maxCount;
+    }
+
+    // 2289. Steps to Make Array Non-decreasing
+    // Very Important solution
+    // Iterate Backwards
+    // Please Do remember to iterate backards once while doing these kind of questions
+
+    // 19,18,17,15,4,10,7,8,9,6,2,5,4,1
+    // 10,1,2,3,4,5,6,1,2,3,4
+
+
+    public int totalSteps(int[] nums)
+    {
+        int max=0;
+        Stack<Integer> st = new Stack<>();
+        int[] dp = new int[nums.length];
+        st.push(nums.length-1);
+        for(int i=nums.length-2;i>=0;i--)
+        {
+            if(nums[st.peek()]>=nums[i]) st.push(i);
+            else
+            {
+                while(!st.isEmpty() && nums[st.peek()]<nums[i])
+                {
+                    dp[i] = Math.max(dp[i]+1,dp[st.peek()]);
+                    st.pop();
+                }
+                max = Math.max(max,dp[i]);
+                st.push(i);
+            }
+        }
+        return max;
+    }
+
     
 }

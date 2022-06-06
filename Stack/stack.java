@@ -1,5 +1,23 @@
 class stack
 {
+    // Leetcode 132 Pattern
+    // Very Important Solution
+    // Here, if we fix the peak, i.e. 3 in the 132 pattern, then we can determine if any numbers on its left and right satisfy the given pattern. We will do this with the help of a stack. 
+    // Our stack implementation will take care of the 32 pattern and then we will iterate over the array to find if any number satisfies the 1 pattern
+    // [3, 6, 4, 1, 2] // we are travsrsing from left to right
+    public boolean find132pattern (int[] nums) 
+    {
+        Stack <Integer> stack = new Stack ();
+        int second = Integer.MIN_VALUE;
+        for (int i = nums.length - 1; i >= 0; i--) 
+        {
+            if (nums [i] < second) return true;
+            while (!stack.isEmpty() && nums [i] > stack.peek ()) second = stack.pop ();
+            stack.push (nums [i]);
+        }
+        return false;
+    }
+
     // Next Greater Element on Right
 	// Similarly We Can Write Next Greater Element on the Left
 	// By Using The Similar FAshion We can Write code for next Smaller element on left and right

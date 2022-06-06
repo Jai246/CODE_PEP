@@ -2284,5 +2284,63 @@ class leftDpQues
         return dp[nums.length-1];
     }
 
+    // 2266. Count Number of Texts
 
+    public int countTexts(String str) 
+    {
+        LinkedList<Long> val = new LinkedList<>();
+        val.addLast(1l);
+        val.addLast(1l);
+        val.addLast(2l);
+        val.addLast(4l);        
+        
+        long max = 1;
+        int mod = (int)1e9 + 7;
+        
+        
+        int prev = -1;
+        
+        int i = 0;
+        int j = 0;
+        
+        int count = 0;
+        
+        while(j < str.length())
+        {
+            char ch = str.charAt(j);
+            int v = Integer.parseInt(ch+"");
+            
+            if(v == prev)
+            {
+                count++;
+                
+                if(count > 3)
+                {
+                    int size = val.size();
+                    long nVal = 0;
+                    if(prev == 7 || prev == 9) nVal = val.get(size-1) + val.get(size-2) + val.get(size-3) + val.get(size-4);
+                    else nVal = val.get(size-1) + val.get(size-2) + val.get(size-3);
+                    val.add((nVal%mod));
+                }
+                j++;
+            }
+            else if(v!=prev)
+            {
+                max = (max * val.get(count))%mod;
+                i = j;
+                count = 0;
+                prev = v;
+                val = new LinkedList<>();
+                val.addLast(1l);
+                val.addLast(1l);
+                val.addLast(2l);
+                val.addLast(4l);
+            }
+        }
+        max = (max * val.get(count))%mod;
+        return (int)max;
+    }
+
+
+    
 }

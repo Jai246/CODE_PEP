@@ -303,7 +303,7 @@ class arrayString
         }
         return count;
     }
-    // gfg Longest K unique characters substring
+    // gfg K unique characters substring
     public static int longestkSubstr(String s, int k) 
     {
         int ei = 0;
