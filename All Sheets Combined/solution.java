@@ -2867,7 +2867,16 @@ class solution
     // GFG mei dikkat hei
     // Mera answer sahi aaraha hei
     // O(n^4) solution
-    
+    // We  can do this in N*N*M or M*M*N using hashing
+
+    //  The solution is based on Maximum sum rectangle in a 2D matrix.
+    //  The idea is to reduce the problem to 1 D array. 
+    //  We can use Hashing to find maximum length of sub-array in 1-D array in O(n) time. 
+    //  We fix the left and right columns one by one and find the largest sub-array with 0 sum 
+    //  contiguous rows for every left and right column pair. 
+    //  We basically find top and bottom row numbers (which have sum is zero) 
+    //  for every fixed left and right column pair.
+
     public static  int[][]ans;
     public static void NumMatrix(int[][] matrix) 
     {
@@ -2949,6 +2958,1266 @@ class solution
     }
 
 
+    // Construct Binary Tree from String with bracket representation
+    // Simple Recursive Solution
+    // We have to use global pointer to get track for String IDX
 
+    static class Node
+    {
+        int data;
+        Node left,right;
+         
+        Node(int data)
+        {
+            this.data = data;
+            this.left = this.right = null;
+        }
+    }
+     
+    // static variable to point to the
+    // starting index of the string.
+    static int start = 0;
+     
+    // Construct Tree Function which accepts
+    // a string and return root of the tree;
+    static Node constructTree(String s)
+    {
+         
+        // Check for null or empty string
+        // and return null;
+        if (s.length() == 0 || s == null)
+        {
+            return null;
+        }
+         
+        if (start >= s.length())
+            return null;
+         
+        // Boolean variable to check
+        // for negative numbers
+        boolean neg = false;
+         
+        // Condition to check for negative number
+        if (s.charAt(start) == '-')
+        {
+            neg = true;
+            start++;
+        }
+         
+        // This loop basically construct the
+        // number from the continuous digits
+        int num = 0;
+        while (start < s.length() &&
+               Character.isDigit(s.charAt(start)))
+        {
+            int digit = Character.getNumericValue(
+                s.charAt(start));
+            num = num * 10 + digit;
+            start++;
+        }
+         
+        // If string contains - minus sign
+        // then append - to the number;
+        if (neg)
+            num = -num;
+         
+        // Create the node object i.e. root of
+        // the tree with data = num;
+        Node node = new Node(num);
+         
+        if (start >= s.length())
+        {
+            return node;
+        }
+         
+        // Check for open bracket and add the
+        // data to the left subtree recursively
+        if (start < s.length() && s.charAt(start) == '(' )
+        {
+            start++;
+            node.left = constructTree(s);
+        }
+         
+        if (start < s.length() && s.charAt(start) == ')')
+        {
+            start++;
+            return node;
+        }
+         
+        // Check for open bracket and add the data
+        // to the right subtree recursively
+        if (start < s.length() && s.charAt(start) == '(')
+        {
+            start++;
+            node.right = constructTree(s);
+        }
+         
+        if (start < s.length() && s.charAt(start) == ')')
+        {
+            start++;
+            return node;
+        }
+        return node;
+    }
+ 
+    // Print tree function
+    public static void printTree(Node node)
+    {
+        if (node == null)
+            return;
+       
+        System.out.println(node.data + " ");
+        printTree(node.left);
+        printTree(node.right);
+    }
+
+
+    // Transform to Sum Tree 
+
+    public void toSumTree(Node root)
+    {
+        create(root);
+    }
+    
+    public int create(Node root)
+    {
+        if(root == null) return 0;
+        int left = create(root.left);
+        int right = create(root.right);
+        int sum = left + right;
+        int rootVal = root.data;
+        root.data = sum;
+        return sum + rootVal;
+    }
+
+
+    // Minimum Swaps To Convert Binary Tree Into BST
+    // Note that we can easily find Inorder , PreOrder , Postorder from the 
+    // Array representation of tree itself without creating a tree
+
+    public static int minSwaps(int nums[])
+    {
+        int count = 0;
+        boolean[] vis = new boolean[nums.length];
+        int[][] arr = new int[nums.length][];
+        for(int i = 0;i<nums.length;i++)
+        {
+            arr[i] = new int[]{nums[i],i};
+        }
+        
+        Arrays.sort(arr ,(a,b)->{
+            return a[0] - b[0];
+        } );
+        
+        for(int i = 0;i<arr.length;i++)
+        {
+            int temp = arr[i][0];
+            int next = arr[i][1];
+            int tCount = 0;
+            if(!vis[i])
+            {
+                vis[i] = true;
+                int j = next;
+                while(arr[j][0]!=temp)
+                {
+                    vis[j] = true;
+                    j = arr[j][1];
+                    tCount++;
+                }
+                count += tCount;
+            }
+        }
+        return count;
+    }
+    public static void getInOrder(ArrayList<Integer> arr , int[] inorder , int[] i , int idx)
+    {
+        if(idx >= inorder.length) return;
+        getInOrder(arr,inorder,i,(2*idx)+1);
+        inorder[i[0]++] = arr.get(idx);
+        getInOrder(arr,inorder,i,(2*idx)+2);
+    }
+    public static int minimumSwaps(ArrayList<Integer> arr, int n) 
+    {
+        int[] inorder = new int[n];
+        getInOrder(arr,inorder,new int[]{0},0);
+//         System.out.println(Arrays.toString(inorder));
+        return minSwaps(inorder);
+    }
+
+
+
+    // Sum Tree 
+
+    boolean isSumTree(Node root)
+    {
+        boolean[] bool = new boolean[1];
+        bool[0] = true;
+        check(root,bool);
+        return bool[0];
+    }
+    public int check(Node root , boolean[] bool)
+    {
+        if(root == null) return 0;
+        if(root.left == null && root.right == null) return root.data;
+        int left = check(root.left,bool);
+        if(!bool[0]) return -1;
+        int right = check(root.right,bool);
+        if(!bool[0]) return -1;
+        
+        if(root.data != left + right)
+        {
+            bool[0] = false;
+            return -1;
+        }
+        
+        return left + right + root.data;
+    }
+
+
+    //Leaf at same level 
+
+    boolean check(Node root)
+    {
+        int[] lvl = new int[]{-1};
+        return isTrue(root,lvl,0);
+    }
+    
+    boolean isTrue(Node root , int[]lvl , int l)
+    {
+        if(root == null) return true;
+        if(root.left == null && root.right == null)
+        {
+            if(l == lvl[0] || lvl[0] == -1)
+            {
+                lvl[0] = l;
+                return true;
+            }
+            else return false;
+        }
+        
+        boolean left = isTrue(root.left,lvl,l+1);
+        boolean right = isTrue(root.right,lvl,l+1);
+        
+        return left && right;
+    }
+
+    // Sum of the Longest Bloodline of a Tree (Sum of nodes on the longest path from root to leaf node) 
+
+    public int sumOfLongRootToLeafPath(Node root)
+    {
+        int[] lvl = new int[]{0};
+        int[] sum = new int[]{0};
+        getSum(root,sum,lvl,0,0);
+        return sum[0];
+    }
+    
+    public void getSum(Node root , int[]sum , int[] lvl ,  int l , int s)
+    {
+        if(root == null)
+        {
+            if(l > lvl[0])
+            {
+                lvl[0] = l;
+                sum[0] = s;
+            }
+            else if(l == lvl[0])
+            {
+                sum[0] = Math.max(sum[0],s);
+            }
+            return;
+        }
+        
+        getSum(root.left,sum,lvl,l+1,s+root.data);
+        getSum(root.right,sum,lvl,l+1,s+root.data);
+    }
+
+
+    // Maximum sum of Non-adjacent nodes 
+    // Important
+    // Good Question
+    // Bewakoofi kari meine iss question mei
+
+
+    static int getMaxSum(Node root)
+    {
+        int[] answer = helper(root);
+        return Math.max(answer[0], answer[1]);
+    }
+    static int[] helper(Node root)
+    {
+        if(root== null) 
+        {
+            return new int[] { 0, 0 };
+        }
+
+        int[] left = helper(root.left);
+        int[] right = helper(root.right);
+
+        int rob = root.data + left[1] + right[1];
+        int notRob = Math.max(left[0],left[1])+Math.max(right[0],right[1]);
+
+        return new int[] { rob, notRob };
+    }
+
+
+    // Populate Inorder Successor for all nodes 
+    // Do Good Dryrun
+    public void populateNext(Node root)
+    {
+        populate(root,new Node[]{null});
+    }
+    
+    public void populate(Node root , Node[]temp)
+    {
+        if(root == null) return;
+        // For Understanding But Not Required
+        // if(root.left == null && root.right == null && temp[0] == null) 
+        // {
+        //     temp[0] = root;
+        //     return;
+        // }
+        populate(root.left,temp);
+        if(temp[0]!=null) temp[0].next = root;
+        temp[0] = root;
+        populate(root.right,temp);
+    }
+    
+
+    // Merge two BST 's 
+    // Using BST to SLL function
+
+    public List<Integer> merge(Node root1,Node root2)
+    {
+        Node d1 = new Node(-1);
+        Node d2 = new Node(-1);
+        bstToSll(root1,new Node[]{d1});
+        bstToSll(root2,new Node[]{d2});
+        d1 = d1.right;
+        d2 = d2.right;
+        
+        List<Integer> ans = new ArrayList<>();
+        
+        while(d1!=null && d2!=null)
+        {
+            int v1 = d1.data;
+            int v2 = d2.data;
+            
+            if(v1 < v2)
+            {
+                ans.add(v1);
+                d1 = d1.right;
+            }
+            else if(v1 > v2)
+            {
+                ans.add(v2);
+                d2 = d2.right;
+            }
+            else
+            {
+                ans.add(v1);
+                ans.add(v1);
+                d1 = d1.right;
+                d2 = d2.right;
+            }
+        }
+        
+        while(d1!=null)
+        {
+            ans.add(d1.data);
+            d1 = d1.right;
+        }
+        
+        while(d2!=null)
+        {
+            ans.add(d2.data);
+            d2 = d2.right;
+        }
+        
+        return ans;
+    }
+    public void bstToSll(Node root , Node[] dummy)
+    {
+        if(root == null) return;
+        bstToSll(root.left,dummy);
+        
+        dummy[0].right = root;
+        dummy[0] = root;
+        
+        bstToSll(root.right,dummy);
+    }
+
+
+    // Kth largest and smallest done Using morris traversal
+    // Check In PRevious Folders
+
+
+
+    // Median of BST 
+    // We can further optimize this solution
+    // y using morris traversal 2 times
+    // 1 for size and 1 for median calculation
+    public static Node rightMostNode(Node node,Node curr)
+    {
+        while(node.right != null && node.right != curr )
+        {
+            node = node.right;
+        }
+        return node;
+    }
+    public static ArrayList<Integer> morris(Node root) 
+    {
+        ArrayList<Integer> ans = new ArrayList<>();
+        Node curr = root;
+        while (curr != null) 
+        {
+            Node next = curr.left;
+
+            if (next == null) 
+            {
+                ans.add(curr.data);
+                curr = curr.right;
+
+            } 
+            else 
+            {
+                Node rightMost = rightMostNode(next, curr);
+                if (rightMost.right == null) 
+                {
+                    rightMost.right = curr;
+                    curr = curr.left;
+                }
+                else 
+                {
+                    rightMost.right = null;
+                    ans.add(curr.data);
+                    curr = curr.right;
+
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    public static float findMedian(Node root)
+    {
+        ArrayList<Integer> ans = morris(root);
+        int s = ans.size()-1;
+        if(s%2 == 0)
+        {
+            return (float)ans.get(s/2);
+        }
+        else
+        {
+            double v1 = (ans.get(s/2));
+            double v2 = ans.get((s+1)/2);
+            // System.out.println((v1 + v2)/2.0);
+            Double v3 = new Double((v1 + v2)/2.0); 
+            return v3.floatValue();
+        }
+    }
+
+
+    // Count BST nodes that lie in a given range 
+
+    int getCount(Node root,int l, int h)
+    {
+        int[] count = new int[]{0};
+        inOrder(root,l,h,count);
+        return count[0];
+    }
+    
+    boolean inOrder(Node root , int l , int h , int[]count)
+    {
+        if(root == null) return true;
+        boolean res1 = inOrder(root.left,l,h,count);
+        if(!res1) return false;
+        if(root.data >= l && root.data <= h) count[0]++;
+        else if(root.data > h) return false;
+        
+        boolean res2 = inOrder(root.right,l,h,count);
+        if(!res2) return false;
+        
+        return true;
+    }
+
+
+    // Check whether BST contains Dead End 
+    // Good way to traverse
+
+    public static boolean isDeadEnd(Node root)
+   {
+     return  find(root,1,Integer.MAX_VALUE);
+   }
+   public static boolean find(Node root,int min,int max)
+   {
+       if(root==null)
+       {
+           return false;
+       }
+       if(root.data==min && root.data==max)
+       {
+           return true;
+       }
+       return find(root.left,min,root.data-1) || find(root.right,root.data+1,max);
+   }
+
+
+   // 1373. Maximum Sum BST in Binary Tree
+   // Almost same as check if BST
+    private int maxSum = 0;
+    public int maxSumBST(TreeNode root) 
+    {
+        postOrderTraverse(root);
+        return maxSum;
+    }
+    private int[] postOrderTraverse(TreeNode root) 
+    {
+        if (root == null) return new int[]{Integer.MAX_VALUE, Integer.MIN_VALUE, 0};
+        int[] left = postOrderTraverse(root.left);
+        int[] right = postOrderTraverse(root.right);
+        if (!(left != null && right != null && root.val > left[1] && root.val < right[0])) return null;
+        int sum = root.val + left[2] + right[2];
+        maxSum = Math.max(maxSum, sum);
+        int min = Math.min(root.val, left[0]);
+        int max = Math.max(root.val, right[1]);
+        return new int[]{min, max, sum};
+    }
+
+
+    // Rat in Maze
+
+    public static ArrayList<String> findPath(int[][] m, int n)
+    {
+        int[][] dir = new int[][]{{1,0},{0,1},{-1,0},{0,-1}};
+        ArrayList<String> ans = new ArrayList<>();
+        paths(m,0,0,dir,ans,"");
+        return ans;
+    }
+    
+    public static void paths(int[][]m , int i , int j , int[][] dir , ArrayList<String> ans , String a)
+    {
+        if(i < 0 || j < 0 || i >= m.length || j >= m[0].length) return ;
+        if(m[i][j] == 0 || m[i][j] == -1) return;
+        if(i == m.length-1 && j == m[0].length-1) 
+        {
+            ans.add(a);
+            return;
+        }
+        m[i][j] = -1;
+        for(int[] ele : dir)
+        {
+            int x = ele[0] + i;
+            int y = ele[1] + j;
+            
+            
+            if(ele[0] == 1 && ele[1] == 0) paths(m,x,y,dir,ans,a+"D");
+            if(ele[0] == 0 && ele[1] == 1) paths(m,x,y,dir,ans,a+"R");
+            if(ele[0] == -1 && ele[1] == 0) paths(m,x,y,dir,ans,a+"U");
+            if(ele[0] == 0 && ele[1] == -1) paths(m,x,y,dir,ans,a+"L");
+        }
+        m[i][j] = 1;
+    }
+
+
+    // Steps by Knight 
+    public int minStepToReachTarget(int kp[], int tp[], int N)
+    {
+        int dx[] = { -2, -1, 1, 2, -2, -1, 1, 2 };
+        int dy[] = { -1, -2, -2, -1, 1, 2, 2, 1 };
+        
+        boolean[][] vis = new boolean[N][N];
+        
+        LinkedList<Integer> queue = new LinkedList<>();
+        queue.addLast(((kp[0]-1)*N)+kp[1]-1);
+        vis[kp[0]-1][kp[1]-1] = true;
+        int level = 0;
+
+        while(queue.size() > 0)
+        {
+            int size = queue.size();
+            while(size-- > 0)
+            {
+                int t = queue.removeFirst();
+                int i = t/N;
+                int j = t%N;
+                // System.out.println(i + " + " + j);
+                if(i == tp[0]-1 && j == tp[1]-1) return level;
+                for(int k = 0 ;k<dx.length;k++)
+                {
+                    int x = i + dx[k];
+                    int y = j + dy[k];
+                    if(x<0||y<0||x>=N||y>=N) continue;
+                    if(vis[x][y]) continue;
+                    
+                    vis[x][y] = true;
+                    queue.addLast((x*N)+y);
+                }
+            }
+            level++;
+        }
+        return -1;
+    }
+
+
+    // Prerequisite Tasks  
+
+    public boolean isPossible(int N, int[][] prerequisites)
+    {
+        ArrayList<Integer>[] graph = new ArrayList[N];
+        int[] indeg = new int[N];
+        for(int i = 0;i<N;i++) graph[i] = new ArrayList<>();
+        for(int[] ele : prerequisites)
+        {
+            int u = ele[0];
+            int v = ele[1];
+            indeg[u]++;
+            graph[v].add(u);
+        }
+        
+        LinkedList<Integer> queue = new LinkedList<>();
+        for(int i = 0;i<N;i++){
+            if(indeg[i] == 0) queue.add(i);
+        }
+        if(queue.size() == 0) return false;
+        int n = 1;
+        while(queue.size() > 0)
+        {
+            int u = queue.removeFirst();
+            for(int ele : graph[u])
+            {
+                indeg[ele]--;
+                if(indeg[ele] == 0) 
+                {
+                    queue.add(ele);
+                    n++;
+                }
+            }
+        }
+        for(int ele : indeg) if(ele > 0) return false;
+        return true;
+    }
+
+
+    // 200. Number of Islands
+
+    public int findPar(int u , int[] par)
+    {
+        return par[u] = (par[u] == u) ? u : findPar(par[u],par);
+    }
+    public int numIslands(char[][] grid) 
+    {
+        int n = grid.length;
+        int m = grid[0].length;
+        int[]par = new int[n*m];
+        for(int i = 0;i<(n*m);i++) par[i] = i;
+        // Arrays.fill(par,-1);
+        int[][] dir = new int[][]{{1,0},{0,-1}};
+        int count = 0;
+        for(int i = 0;i<n;i++)
+        {
+            for(int j = 0;j<m;j++)
+            {
+                if(grid[i][j] == '1')
+                { 
+                    for(int[] d : dir)
+                    {
+                        int x = i + d[0];
+                        int y = j + d[1];
+                        if(x >=0 && y>=0 && x<n && y<m && grid[x][y] == '1')
+                        {
+                            int u = findPar(i*m+j,par);
+                            int v = findPar(x*m+y,par);
+                            if(u!=v)
+                            {
+                                par[v] = u;
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+        // System.out.println(Arrays.toString(par));
+        for(int i = 0;i<(n*m);i++)
+        {
+            if(grid[i/m][i%m] == '1')
+            {
+                if(par[i] == i) count++;
+            }
+        }
+        return count;
+    }
+
+
+
+    // Bridge edge in a graph 
+    // No need to apply ATQPT algo 
+    // Since c and d is given just using dfs make sure from c directly you don't to d and vice versa
+    // and check if we make a call from c are we able to reach d
+
+    static int isBridge(int V, ArrayList<ArrayList<Integer>> adj,int c,int d)
+    {
+        int[] vis = new int[V];
+        int[] count =  new int[]{1};
+        dfs(adj,c,c,d,vis);
+        return (vis[d] == 1) ? 0 : 1;
+    }
+    
+    public static void dfs(ArrayList<ArrayList<Integer>> adj , int u , int c , int d , int[] vis)
+    {
+        vis[u] = 1;
+        for(int ele : adj.get(u))
+        {
+            if((u == c && ele == d) || (ele == c && u == d)) continue; 
+            if(vis[ele] == 0) dfs(adj,ele,c,d,vis);
+        }
+    }
+
+
+    // M-Coloring Problem
+    // Important Problem
+    // Important solution
+    // Note that the graph is not connected
+    public boolean graphColoring(boolean graph[][], int m, int n)
+    {
+        @SuppressWarnings("unchecked")
+        ArrayList<Integer>[] g = new ArrayList[n];
+        for(int i = 0;i<n;i++) g[i] = new ArrayList<>();
+        for(int i = 0;i<graph.length;i++){
+            for(int j = 0;j<graph.length;j++){
+                if(graph[i][j]) g[i].add(j);
+            }
+        }
+        boolean[] vis = new boolean[n];
+        int[] color = new int[n];
+        boolean res = true;
+        for(int i = 0;i<n;i++)
+        {
+            if(!vis[i]) res = res && color(g,i,vis,color,m);
+        }
+        return res;
+    }
+    
+    public boolean isValid(ArrayList<Integer>[]graph,int u,int[]color,int i)
+    {
+        for(int ele : graph[u])
+        {
+            if(color[ele] == i) return false;
+        }
+        return true;
+    }
+    
+    public boolean color(ArrayList<Integer>[]graph,int u,boolean[]vis,int[]color,int m)
+    {
+        vis[u] = true;
+        for(int i = 1;i<=m;i++)
+        {
+            if(isValid(graph,u,color,i))
+            {
+                color[u] = i;
+                boolean r = true;
+                for(int ele : graph[u])
+                {
+                    if(vis[ele]) continue;
+                    
+                    r = r && color(graph,ele,vis,color,m);
+                    if(!r) break;
+                }
+                if(r) return r;
+                color[u] = 0;
+            }
+        }
+        vis[u] = false;
+        return false;
+    }
+
+
+    // Paths to travel each nodes using each edge(Seven Bridges)
+    // Eularian Path Problem
+
+
+    // Number of Triangles in Directed and Undirected Graphs
+    // Simple n^3 problem
+
+    int V = 4;
+    int countTriangle(int graph[][],boolean isDirected)
+   {
+       int count_Triangle = 0;
+       for (int i = 0; i < V; i++)
+       {
+           for (int j = 0; j < V; j++)
+           {
+               for (int k=0; k<V; k++)
+               {
+                  if (graph[i][j] == 1 &&
+                      graph[j][k] == 1 &&
+                      graph[k][i] == 1)
+                      count_Triangle++;
+               }
+           }
+       }
+       if(isDirected == true)
+       {
+           count_Triangle /= 3;
+       }
+       else
+       {
+           count_Triangle /= 6;
+       }
+       return count_Triangle;
+   }
+
+
+   // Two Clique Problem
+   // Check If the graph is Bipartitr or not
+
+
+   // Minimum cash flow
+   // Just Calculate the setteled amount
+   public static int minCashFlow(ArrayList<ArrayList<Integer>> money, int n)
+
+   {
+
+       int balance[] = new int[n];
+
+       for(int i=0;i<n;i++)
+
+       {
+
+           for(int j=0;j<n;j++)
+
+           {
+
+               balance[j]+=money.get(i).get(j);
+
+               balance[i]-=money.get(i).get(j);
+
+           }
+
+       }
+
+       int trans = 0;
+
+       for(int i=0;i<n;i++)
+
+       {
+
+           if(balance[i]>0)
+
+               trans += balance[i];
+
+       }
+       return trans;
+   }
+
+
+   // 50. Pow(x, n)
+
+   // We converted in tn to log n because
+   // if n would be -2^31 and when we convert it to positive then it will overflow
+   // because int range is 2^31-1 and we have 2^31 that's why
+   // Just to a dryrun
+    public double myPow(double x, int n) 
+    {
+        double ans = 1.0;
+        long nn = n;
+        if (nn < 0) nn = -1 * nn;
+        while (nn > 0) 
+        {
+          if (nn % 2 == 1) 
+          {
+            ans = ans * x;
+            nn = nn - 1;
+          } 
+          else 
+          {
+            x = x * x;
+            nn = nn / 2;
+          }
+        }
+        if (n < 0) ans = (double)(1.0) / (double)(ans);
+        return ans;   
+    }
+
+    // 493. Reverse Pair
+    // Important Question 
+    // Use the Strategy that we use in inversion count
+
+    public int reversePairs(int[] nums)
+    {
+        return (int)inversionCount(nums,nums.length);
+    }
+    public int InversionAcrossArray(int[] arr, int l, int r, int mid, int[] sortedArray) 
+    {
+        int lsi = l, lei = mid;
+        int rsi = mid + 1, rei = r;
+
+        int k = 0;
+        int count = 0;
+        int prevCount = 0;
+        
+        int i = lsi;
+        int j = rsi;
+        
+        while(j <= rei && i <= lei)
+        {
+            long v1 = arr[i];
+            long v2 = arr[j];
+            
+            
+            if(2*v2 < v1)
+            {
+                j++;
+                prevCount++;
+            }
+            else
+            {
+                i++;
+                count += prevCount;
+            }
+            
+        }
+        
+        while(i <= lei)
+        {
+            count += prevCount;
+            i++;
+        }
+        
+        
+        while (lsi <= lei && rsi <= rei) 
+        {
+            if (arr[lsi] > arr[rsi]) sortedArray[k++] = arr[rsi++];
+            else sortedArray[k++] = arr[lsi++];
+        }
+
+        while (lsi <= lei) sortedArray[k++] = arr[lsi++];
+        while (rsi <= rei) sortedArray[k++] = arr[rsi++];
+
+        k = 0;
+        for (int m = l; m <= r; m++) arr[m] = sortedArray[k++];
+
+        return count;
+    }
+
+    public int inversionCount(int[] arr, int si, int ei, int[] sortedArray) {
+        if (si >= ei)
+            return 0;
+
+        int mid = (si + ei) / 2;
+        int ICL = inversionCount(arr, si, mid, sortedArray); // IC : Inversion Count, L = left , R = Right
+        int ICR = inversionCount(arr, mid + 1, ei, sortedArray);
+
+        return (ICL + ICR + InversionAcrossArray(arr, si, ei, mid, sortedArray));
+    }
+
+    public int inversionCount(int arr[], int N) {
+        if (N == 0) return 0;
+        int n = (int)N;
+        int[] sortedArray = new int[n];
+        return inversionCount(arr, 0,n - 1, sortedArray);
+    }
+
+
+    // 128. Longest Consecutive Sequence
+    // Very simple Solution from TUF
+    // OTher solution wuld be to take an integer and go left and right untill u are able yo find n+1 and n-1 using an hashset
+    // 
+
+    public static int longestConsecutive(int[] nums)
+    {
+        Set<Integer> hashSet = new HashSet<Integer>();
+        for (int num: nums) 
+        {
+            hashSet.add(num);
+        }
+
+        int longestStreak = 0;
+
+        for (int num: nums) 
+        {
+            if (!hashSet.contains(num - 1)) 
+            {
+                int currentNum = num;
+                int currentStreak = 1;
+
+                while (hashSet.contains(currentNum + 1)) 
+                {
+                    currentNum += 1;
+                    currentStreak += 1;
+                }
+
+                longestStreak = Math.max(longestStreak, currentStreak);
+            }
+        }
+
+        return longestStreak;
+    }
+
+
+    /// 61. Rotate List
+    // Good Question
+
+    public int len(ListNode head)
+    {
+        int count = 0;
+        while(head!=null) 
+        {
+            head = head.next;
+            count++;
+        }
+        return count;
+    }
+    public ListNode reverse(ListNode head)
+    {
+        ListNode prev = null;
+        while(head!=null)
+        {
+            ListNode next = head.next;
+            head.next = prev;
+            prev = head;
+            head = next;
+        }
+        return prev;
+    }
+    public ListNode rotateRight(ListNode head, int k) 
+    {
+        if(head == null) return null;
+        int len = len(head);
+        if(len == 1) return head;
+        if(k > len )k = k%len;
+        if(k == 0) return head;
+        ListNode rev = reverse(head);
+        ListNode d2 = new ListNode(-1);
+        ListNode d = d2;
+        while(k-- > 0)
+        {
+            ListNode next = rev.next;
+            rev.next = null;
+            d.next = rev;
+            d = d.next;
+            rev = next;
+        }
+        ListNode r1 = reverse(d2.next);
+        rev = reverse(rev);
+        if(d2.next!=null) d2.next.next = rev;
+        
+        return r1;
+    }
+
+    // 26. Remove Duplicates from Sorted Array
+    // Good Question
+
+    public int removeDuplicates(int[] nums)
+    {
+        int i = 0;
+        int j = i+1;
+        int count = 0;
+        while(j < nums.length)
+        {
+            int v1 = nums[i];
+            int v2 = nums[j];
+            
+            if(v1 == v2)
+            {
+                count++;
+                j++;
+            }
+            else
+            {
+                i++;
+                nums[i] = v2;
+                j++;
+            }
+        }
+        return nums.length-count;
+    }
+
+
+    // Find Nth root of M 
+    // Important Solution
+    // TUF solution
+    // N*log(M*10^d)
+    // where d is till what decimal place you need the answer
+
+
+    private static double multiply(double number, int n) {
+        double ans = 1.0;
+        for(int i = 1;i<=n;i++) {
+            ans = ans * number;
+        }
+        return ans; 
+    }
+    private static void getNthRoot(int n, int m) {
+        double low = 1;
+        double high = m;
+        double eps = 1e-6; 
+        
+        while((high - low) > eps) {
+            double mid = (low + high) / 2.0; 
+            if(multiply(mid, n) < m) {
+                low = mid; 
+            }
+            else {
+                high = mid; 
+            }
+        }
+        
+        System.out.println(n+"th root of "+m+" is "+low);    
+    } 
+
+
+    // Sort a stack 
+    // Recursive Solution
+
+
+    public Stack<Integer> sort(Stack<Integer> s)
+    {
+        Stack<Integer> ans = new Stack<>();
+        while(s.size() > 0) 
+        {
+            int min[] = new int[]{(int)1e9};
+            getSorted(s,ans,min);
+        }
+        return ans;
+    }
+    
+    public void getSorted(Stack<Integer> s , Stack<Integer> ans , int[] min)
+    {
+        if(s.size() == 0)
+        {
+            ans.push(min[0]);
+            return ;
+        }
+        int val = s.pop();
+        min[0] = Math.min(min[0],val);
+        getSorted(s,ans,min);
+        if(min[0] == val) min[0] = -1;
+        else s.push(val);
+    }
+
+
+    // 155. Min Stack
+    // This solution is mostly equivilant to using 2 stacks but still saves space because
+    // we are adding prev min value in the stack only when the min values is changing
+    // but in two stack we need to add minValue every time in other stack
+
+
+    int min = Integer.MAX_VALUE;
+    Stack<Integer> stack = new Stack<Integer>();
+    public void push(int x) 
+    {
+        if(x <= min)
+        {          
+            stack.push(min);
+            min=x;
+        }
+        stack.push(x);
+    }
+
+    public void pop() 
+    {
+        if(stack.pop() == min) min=stack.pop();
+    }
+
+    public int top() 
+    {
+        return stack.peek();
+    }
+
+    public int getMin() 
+    {
+        return min;
+    }
+
+
+
+    // 901. Online Stock Span
+
+    Stack<int[]> st = new Stack<>();
+    int idx = 0;
+    public StockSpanner() // constructor call
+    {
+        st.push(new int[]{-1, -1});
+    }
+
+    public int next(int price)
+    {
+
+        while (st.peek()[0] != -1 && st.peek()[1] <= price)
+        {
+            st.pop();
+        }
+        int span = idx - st.peek()[0];
+        st.push(new int[]{idx++, price});
+        return span;
+    }
+
+
+    // 215. Kth Largest Element in an Array
+
+    public int findKthLargest(int[] nums, int k)
+    {
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        
+        for(int ele : nums)
+        {
+            pq.add(ele);
+            
+            if(pq.size()>k)
+            {
+                pq.remove();
+            }
+        }
+        
+        return pq.peek();
+        
+        
+    }
+
+    // 703. Kth Largest Element in a Stream
+
+    PriorityQueue<Integer> queue = new PriorityQueue<>();
+    int K = 0;
+    public KthLargest(int k, int[] nums) 
+    {
+        K = k;
+        for(int ele : nums) {
+            queue.add(ele);
+            K--;
+        }
+        while(queue.size() > k) 
+        {
+            queue.poll();
+            K++;
+        }
+    }
+    
+    public int add(int val) 
+    {
+        if(K > 0)
+        {
+            queue.add(val);
+            K--;
+        }
+        else if(queue.size() > 0 && val > queue.peek())
+        {
+            queue.poll();
+            queue.add(val);
+        }
+        return queue.peek();
+    }
+
+
+
+    // Merge Two Balanced Binary Search Trees
+    //     We can use a Doubly Linked List to merge trees in place. Following are the steps.
+    // 1) Convert the given two Binary Search Trees into doubly linked list in place (Refer this post for this step). 
+    // 2) Merge the two sorted Linked Lists (Refer this post for this step). 
+    // 3) Build a Balanced Binary Search Tree from the merged list created in step 2. (Refer this post for this step)
+
+
+    
 
 }
