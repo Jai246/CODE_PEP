@@ -480,7 +480,7 @@ class leftGraphsQues
             
             for(pair2 e : graph[pop.v]) 
             {
-                if(max[e.v] < e.d*pop.w) // We HAve to check this to get rid of tle as th graph is not connected always
+                if(max[e.v] < e.d*pop.w) // We Have to check this to get rid of tle as th graph is not connected always
                 {
                     queue.add(new pair(e.v,e.d*pop.w));
                     max[e.v] = e.d*pop.w;
@@ -542,6 +542,7 @@ class leftGraphsQues
 
      public List<List<Integer>> getAncestors(int n, int[][] edges)
      {
+        // We can use a priority queue as well
         List<TreeSet<Integer>> ancestorList = new ArrayList();
         List<List<Integer>> list = new ArrayList();
 
@@ -592,27 +593,31 @@ class leftGraphsQues
     // Here Starting from the node 0 we will do DFS and check Its reachebility using DFS
     // if that node is reachable from the starting node then add SRC node to the answer to that node
     // By this we will also ensure that the answer is sorted
-    class Solution {
-       public List<List<Integer>> getAncestors(int n, int[][] edges) {
+
+    public List<List<Integer>> getAncestors(int n, int[][] edges) 
+    {
         ArrayList<Integer>[] graph = new ArrayList[n], res = new ArrayList[n];
         for (int i = 0; i < n; i++) graph[i] = new ArrayList<>();
-        for (int[] e : edges) {
+        for (int[] e : edges) 
+        {
             graph[e[0]].add(e[1]);
         }
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) 
+        {
             res[i] = new ArrayList<>();
         }
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) 
+        {
             boolean[] visited = new boolean[n];
             dfs(i, i, graph, visited, res);
         }
         List<List<Integer>> answer = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) 
+        {
             answer.add(res[i]);
         }
         return answer;
     }
-    
     // originalSource, neighbour, graph, visited
     public void dfs(int osrc, int next, ArrayList<Integer>[] graph, boolean[] visited, ArrayList<Integer>[] res) 
     {
@@ -628,7 +633,6 @@ class leftGraphsQues
     }
     
 }
-
 
 
     // 1129. Shortest Path with Alternating Colors
@@ -672,16 +676,17 @@ class leftGraphsQues
         Arrays.fill(one,(int)1e9);
         
         int[] ans = new int[n];
-        Arrays.fill(ans,-1);
+        Arrays.fill(ans,(int)1e9);
         
         queue.add(new int[]{0,-1,0});   // Element Color PathSoFar
         
         while(queue.size() > 0)
         {
             int[] pop = queue.remove();
-            if(pop[0] == 0) ans[0] = 0;
-            else ans[pop[0]] = (ans[pop[0]] == -1) ? pop[2]  : Math.min(ans[pop[0]],pop[2]);
+
+            ans[pop[0]] = Math.min(ans[pop[0]],pop[2]);
             // Updating The Answer With Miminum Path So Far
+
             for(pair ele : graph[pop[0]])
             {
                 if(ele.c!=pop[1])
@@ -705,19 +710,24 @@ class leftGraphsQues
                 }
             }
         }
+        for(int i = 0;i<ans.length;i++)
+        {
+            if(ans[i] == (int)1e9) ans[i] = -1;
+        }
         return ans;
     }
+
 
     // 1361. Validate Binary Tree Nodes
 
     // Very Important Solution
-
+    // Note That DSU can't Validate cycle in Directed Graph
     // BY UNION FIND WE WILL TAKE CARE OF BOTH CYCLES AND MORE THAN ONE INDEGREE
     // BY UNION FIND WE CAN ALSO TAKE CARE ABOUT WHETHER THERE ARE MORE THAN ONE COMPONENTS OR NOT
     public boolean validateBinaryTreeNodes(int n, int[] left, int[] right)
     {
         int[] parent = new int[n];
-        for(int i = 0; i < n; i++) parent[i] = i; //every node is parent of itselt
+        for(int i = 0; i < n; i++) parent[i] = i; //every node is parent of itself
 
         for(int i = 0; i < n; i++) 
         {
@@ -727,16 +737,17 @@ class leftGraphsQues
             if(l != -1) 
             {
                 int root = find(parent, l);
-                if(root == x) return false; // tells boyh cycle ans more than 1 indegree
+                if(root == x) return false; // tells both cycle ans more than 1 indegree
                 union(parent, i, l);
             }
             if(r != -1) 
             {
                 int root = find(parent, r); 
-                if(root == x) return false; // tells boyh cycle ans more than 1 indegree
+                if(root == x) return false; // tells both cycle ans more than 1 indegree
                 union(parent, i, r);
             }
         }
+
         int root = find(parent, 0);
         for(int i = 1; i < n; i++) 
         {
@@ -767,8 +778,7 @@ class leftGraphsQues
     public boolean validateBinaryTreeNodes(int n, int[] leftChild, int[] rightChild) 
     {
         int[] deg = new int[n];
-        
-        
+
         for(int i = 0;i<n;i++)
         {
             int val = leftChild[i];
@@ -787,7 +797,8 @@ class leftGraphsQues
         {
             int val = deg[i];
             if(val > 1) return false;
-            if(val == 0){
+            if(val == 0)
+            {
                 if(root != -1) return false;
                 root = i;
             }
@@ -800,7 +811,8 @@ class leftGraphsQues
         return count == n;
     }
     
-    public int count(int root , int[] leftChild , int[] rightChild){
+    public int count(int root , int[] leftChild , int[] rightChild)
+    {
         if(root == -1) return 0;        
         return count(leftChild[root],leftChild,rightChild) + count(rightChild[root],leftChild,rightChild) + 1; 
     }

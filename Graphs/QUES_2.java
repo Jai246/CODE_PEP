@@ -141,18 +141,25 @@ class extraFaang
             
             int[][] dir = new int[][]{{0,1},{0,-1},{1,0},{-1,0}};
             
-            for(int i = 0;i<l;i++){
-                for(int j = 0;j<m;j++){
-                    if(mat[i][j] == 1){
-                        for(int[] ele : dir){
+            for(int i = 0;i<l;i++)
+            {
+                for(int j = 0;j<m;j++)
+                {
+                    if(mat[i][j] == 1)
+                    {
+                        for(int[] ele : dir)
+                        {
                             int x = i + ele[0];
                             int y = j + ele[1];
-                            if(x>=0 && y>=0 && x<l && y<m){
-                                if(mat[x][y] == 0){
+                            if(x>=0 && y>=0 && x<l && y<m)
+                            {
+                                if(mat[x][y] == 0)
+                                {
                                     ans[i][j] = 1;
                                     break;
                                 }
-                                else{
+                                else
+                                {
                                     ans[i][j] = Math.min(ans[x][y]+1,ans[i][j]);
                                 }
                             }
@@ -161,18 +168,25 @@ class extraFaang
                     else ans[i][j] = 0;
                 }
             }
-            for(int i = l-1;i>=0;i--){
-                for(int j = m-1;j>=0;j--){
-                    if(mat[i][j] == 1){
-                        for(int[] ele : dir){
+            for(int i = l-1;i>=0;i--)
+            {
+                for(int j = m-1;j>=0;j--)
+                {
+                    if(mat[i][j] == 1)
+                    {
+                        for(int[] ele : dir)
+                        {
                             int x = i + ele[0];
                             int y = j + ele[1];
-                            if(x>=0 && y>=0 && x<l && y<m){
-                                if(mat[x][y] == 0){
+                            if(x>=0 && y>=0 && x<l && y<m)
+                            {
+                                if(mat[x][y] == 0)
+                                {
                                     ans[i][j] = 1;
                                     break;
                                 }
-                                else{
+                                else
+                                {
                                     ans[i][j] = Math.min(ans[x][y]+1,ans[i][j]);
                                 }
                             }
@@ -317,7 +331,8 @@ class extraFaang
         }
     }
 
-    // LEETCODE 773 SLIDING PUZZLE IMPORTANT BFS
+    // LEETCODE 773 SLIDING PUZZLE 
+    // IMPORTANT BFS
     // CHECK DRYRUN
     public int slidingPuzzle(int[][] board){
         int level = 0;
@@ -365,6 +380,7 @@ class extraFaang
         }
         return -1;
     }
+
     // LEETCODE 127. Word Ladder IMPORTANT
     // BFS SOLUTION 
     public int ladderLength(String beginWord, String endWord, List<String> wordList){
@@ -374,24 +390,35 @@ class extraFaang
         LinkedList<String> queue = new LinkedList<>();
         int level = 0;
         queue.add(beginWord);
-        while(queue.size()!=0){
+        while(queue.size()!=0)
+        {
             int size = queue.size();
-            while(size-- > 0){
+            while(size-- > 0)
+            {
                 String temp = queue.removeFirst();
-                if(temp.equals(endWord)){
+                if(temp.equals(endWord))
+                {
                     return level + 1;
                 }
                 vis.add(temp);
-                for(int i = 0;i<beginWord.length();i++){
+                for(int i = 0;i<beginWord.length();i++)
+                {
                     StringBuilder sb = new StringBuilder();
                     sb.append(temp);
-                    for(int j = 0;j<26;j++){
+                    // Creating the every possible new String in the brute force way
+                    // We could have create a graph earlier as well
+                    // But this also seems fine
+                    for(int j = 0;j<26;j++)
+                    {
                         char newChar = (char)(j+(int)'a');
-                        if(newChar!=sb.charAt(i)){
+                        if(newChar!=sb.charAt(i))
+                        {
                             sb.setCharAt(i,newChar);
                             String newString = sb.toString();
-                            if(check.contains(newString)){
-                                if(!vis.contains(newString)){
+                            if(check.contains(newString))
+                            {
+                                if(!vis.contains(newString))
+                                {
                                     queue.addLast(newString);
                                     vis.add(newString);
                                 }
@@ -404,7 +431,8 @@ class extraFaang
         }
         return 0;
     }
-    
+
+
     // SATISFIBILITY OF EQUATIONS LEETCODE 990
     // A==B , B==C , C!=D , D!=F , A==F
     // FIRST TRAVERSE AND SET ALL == WALE IN PARENT ARRAY
@@ -430,17 +458,20 @@ class extraFaang
             par[i] = i;
         }
         
-        for(String str : equations){
+        for(String str : equations)
+        {
             int p1 = findPar(str.charAt(0) - 'a');
             int p2 = findPar(str.charAt(3) - 'a');
-            if(p1 != p2 && str.charAt(1) == '='){
+            if(p1 != p2 && str.charAt(1) == '=')
+            {
                 par[p1] = p2;
             }   
         }
         for(String str : equations){
             int p1 = findPar(str.charAt(0) - 'a');
             int p2 = findPar(str.charAt(3) - 'a');
-            if(p1 == p2 && str.charAt(1) == '!'){
+            if(p1 == p2 && str.charAt(1) == '!')
+            {
                 return false;
             }   
         }
@@ -651,7 +682,10 @@ class extraFaang
             return 1;
     }
     
-    // AS FAR FROM LAND AS POSSIBLE USING MULTIPOINT BFS SOLUTION
+    // AS FAR FROM LAND AS POSSIBLE USING MULTIPOINT 
+    // BFS SOLUTION
+    // Note That Hume 1 se 0 ki taraf jaane par solution milega
+    // Naa ki 0 se 1 ki taraf jaane par
     public int maxDistance(int[][] grid) 
     {
         int n = grid.length;
@@ -671,15 +705,20 @@ class extraFaang
         
         int[][] dir = new int[][]{{0,1},{1,0},{0,-1},{-1,0}};
         int level = 0;
-        while(queue.size()!=0){
+        while(queue.size()!=0)
+        {
             int size = queue.size();
-            while(size-- > 0){
+            while(size-- > 0)
+            {
                 int[] temp = queue.removeFirst();
-                for(int[] ele : dir){
+                for(int[] ele : dir)
+                {
                     int x = temp[0] + ele[0];
                     int y = temp[1] + ele[1];
-                    if(x>=0&&y>=0&&x<n&&y<m){
-                        if(grid[x][y] == 0){
+                    if(x>=0&&y>=0&&x<n&&y<m)
+                    {
+                        if(grid[x][y] == 0)
+                        {
                             queue.addLast(new int[]{x,y});
                             grid[x][y] = 1;
                         }
@@ -858,7 +897,8 @@ class extraFaang
     // 332. Reconstruct Itinerary
     // This question we have done using Heirholzer's Algorithm
     // This Algorithm is used to print the Eularian Path in O(E + V) time complexity
-
+    // Kyoki hume saare journey(edges) complete(visit) karni hei 1 time and Location kitni bhi baar 
+    // visit kar sakte hie 
     public List<String> findItinerary(List<List<String>> tickets) 
     {
         HashMap<String,PriorityQueue<String>> graph = new HashMap<>();
@@ -882,12 +922,15 @@ class extraFaang
     public void dfsItinerary(HashMap<String,PriorityQueue<String>> graph,List<String> ans,LinkedList<String> stack , String src)
     {
         ans.add(src);
-        while(graph.get(src).size()!=0){
+        while(graph.get(src).size()!=0)
+        {
             dfsItinerary(graph,ans,stack,graph.get(src).remove());
         }
         stack.addLast(ans.remove(ans.size()-1));
     }
     
+
+
     // COLORING A BORDER LEETCODE 1034
     // Use a DFS to find every square in the component. Then for each square,
     // color it if it has a neighbor that is outside the grid or a different color.
@@ -1246,30 +1289,38 @@ class extraFaang
     // ALIEN DICTONARY
     // TOPOSORT USING KHANS ALGO
     // USING HASHSET TO REMOVE DUPLICACY
-    public static String alienOrder(String[] words) {
+    public static String alienOrder(String[] words) 
+    {
         HashMap<Character, HashSet<Character>> map = new HashMap<Character, HashSet<Character>>();
         HashMap<Character, Integer> degree = new HashMap<Character, Integer>();
         String result = "";
-        if (words == null || words.length == 0)
-          return result;
-        for (String s : words) {
-          for (char c : s.toCharArray()) {
+        if (words == null || words.length == 0) return result;
+        for (String s : words) 
+        {
+          for (char c : s.toCharArray()) 
+          {
             degree.put(c, 0);
           }
         }
-        for (int i = 0; i < words.length - 1; i++) {
+
+        for (int i = 0; i < words.length - 1; i++)
+        {
           boolean flag = false;
           String cur = words[i];
           String next = words[i + 1];
           int length = Math.min(cur.length(), next.length());
-          for (int j = 0; j < length; j++) {
+
+          for (int j = 0; j < length; j++) 
+          {
             char c1 = cur.charAt(j);
             char c2 = next.charAt(j);
-            if (c1 != c2) {
+            
+            if (c1 != c2) 
+            {
               HashSet<Character> set = new HashSet<Character>();
-              if (map.containsKey(c1))
-                set = map.get(c1);
-              if (!set.contains(c2)) {
+              if (map.containsKey(c1)) set = map.get(c1);
+              if (!set.contains(c2)) 
+              {
                 set.add(c2);
                 map.put(c1, set);
                 degree.put(c2, degree.get(c2) + 1);
@@ -1279,30 +1330,34 @@ class extraFaang
             }
           }
     
-          if (flag == false && next.length() < cur.length()) {
+          if (flag == false && next.length() < cur.length()) 
+          {
             return "";
           }
         }
+
+        
         LinkedList<Character> q = new LinkedList<Character>();
-        for (char c : degree.keySet()) {
-          if (degree.get(c) == 0)
-            q.addLast(c);
+        for (char c : degree.keySet()) 
+        {
+          if (degree.get(c) == 0) q.addLast(c);
         }
-        while (!q.isEmpty()) {
+
+        while (!q.isEmpty()) 
+        {
           char c = q.removeFirst();
           result += c;
-          if (map.containsKey(c)) {
-            for (char c2 : map.get(c)) {
+          if (map.containsKey(c)) 
+          {
+            for (char c2 : map.get(c)) 
+            {
               degree.put(c2, degree.get(c2) - 1);
-              if (degree.get(c2) == 0)
-                q.addLast(c2);
+              if (degree.get(c2) == 0) q.addLast(c2);
             }
           }
         }
     
-        if (result.length() != degree.size()) {
-          return "";
-        }
+        if (result.length() != degree.size()) return "";
         return result;
       }
 

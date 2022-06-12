@@ -10,6 +10,9 @@ import java.util.LinkedList;
 class graphQues
 {
     //684 redundant connections
+
+    // Simply Calculating Indegree and outdegree won't help
+    // We have to use dfs or dsu
     public static int findPar(int u , int[] par)
     {
         return (par[u] == u) ? u : (par[u] = findPar(par[u] , par));
@@ -30,26 +33,52 @@ class graphQues
         }
         return new int[]{};
     }
-    // Leetcode Lexicographically samllest string
-	public static String smallestString(String s, String t, String str) 
+
+    // 1202. Smallest String With Swaps
+    // Instead of A TreeMap we can have a priorityQueue of{Character,Integer} sorted on the basis of Character
+    int[] par;
+    public int findPar(int u){
+        return par[u] = (par[u] == u) ? u : findPar(par[u]);
+    }
+    
+    public String smallestStringWithSwaps(String s, List<List<Integer>> pairs) 
     {
-		int[]par = new int[26];
+        StringBuilder sb = new StringBuilder();
+        par  = new int[s.length()];
         for(int i = 0;i<par.length;i++) par[i] = i;
+        for(List<Integer> ele : pairs)
+        {
+            int u = ele.get(0);
+            int v = ele.get(1);
+            int parU = findPar(u);
+            int parV = findPar(v);
+            if(parU != parV) par[parU] = parV;
+        }
+        
+        HashMap<Integer,TreeMap<Character,Integer>> map = new HashMap<>();
+        
+        for(int i=0;i<s.length();i++)
+        {
+            int par = findPar(i);
+            if(!map.containsKey(par)) map.put(par,new TreeMap<>());
+            TreeMap<Character,Integer> set = map.get(par);
+            set.put(s.charAt(i),set.getOrDefault(s.charAt(i),0)+1);
+        }
+        
         for(int i = 0;i<s.length();i++)
         {
-            int u = findPar(s.charAt(i)-'a' , par);
-            int v = findPar(t.charAt(i)-'a' , par);
-            par[u] = Math.min(u,v);
-            par[v] = Math.min(u,v);
+            int par = findPar(i);
+            TreeMap<Character,Integer> temp = map.get(par);
+            char firstKey = temp.firstKey();
+            sb.append(firstKey);
+            temp.put(firstKey,temp.get(firstKey)-1);
+            if(temp.get(firstKey) == 0) temp.remove(firstKey);
         }
-        String res = "";
-        for(int i = 0;i<str.length();i++){
-            res += (char)(findPar(str.charAt(i) - 'a' , par) + 'a');
-        }
-       return res;
-	}
+        
+        return sb.toString();
+    }
 
-    //leetcode 839
+    // 839. Similar String Groups
     public static int findPar1(int u , int[]par)
     {
         return (par[u] == -1) ? u : (par[u] = findPar1(par[u] , par));
@@ -87,6 +116,7 @@ class graphQues
         
         return count;
     }
+
     // Lintcode Number Island 2
     class Point 
     {
@@ -133,7 +163,9 @@ class graphQues
 
         return ans;
     }
-    // optimize water distribution
+
+    // Leetcode Locked Optimize Water Distribution In A Village
+    // Minimum Spanning Tree We Are Finding Using Kruskals which uses Union find Algorithm
     public static int minCostToSupplyWater(int N, ArrayList<int[]> Edges) {
         int[]par = new int[N + 1];
         for (int i = 0; i <= N; i++) {
@@ -153,7 +185,7 @@ class graphQues
         }
         return cost;
     }
-
+    // Sorting on the basis of Minimum Cost
     public static int minCostToSupplyWater(int n, int[] wells, int[][] pipes) {
         ArrayList<int[]> PIPES = new ArrayList<>();
         for (int i = 0; i < n; i++) 
@@ -170,15 +202,21 @@ class graphQues
 
         return minCostToSupplyWater(n, PIPES);
     }
-    // see the way how it is done 
-    // first when we see ch == 1 the we increment and while combining with neighbours we decrement
-    // and the when we go to the neighbours we increment
-    public static int numIslands(char[][] grid) // remember this solution !!!!!!!!!!!!!!!! Imp Imp Imp Imp
+
+
+    // 200. Number of Islands
+
+    public int findPar(int u , int[] par)
+    {
+        return par[u] = (par[u] == u) ? u : findPar(par[u],par);
+    }
+    public int numIslands(char[][] grid) 
     {
         int n = grid.length;
         int m = grid[0].length;
         int[]par = new int[n*m];
-        for(int i = 0;i<n*m;i++) par[i] = i;
+        for(int i = 0;i<(n*m);i++) par[i] = i;
+        // Arrays.fill(par,-1);
         int[][] dir = new int[][]{{1,0},{0,-1}};
         int count = 0;
         for(int i = 0;i<n;i++)
@@ -187,19 +225,17 @@ class graphQues
             {
                 if(grid[i][j] == '1')
                 { 
-                    count++;
                     for(int[] d : dir)
                     {
                         int x = i + d[0];
                         int y = j + d[1];
                         if(x >=0 && y>=0 && x<n && y<m && grid[x][y] == '1')
                         {
-                            int u = findPar1(i*m+j,par);
-                            int v = findPar1(x*m+y,par);
+                            int u = findPar(i*m+j,par);
+                            int v = findPar(x*m+y,par);
                             if(u!=v)
                             {
                                 par[v] = u;
-                                count--;
                             }
 
                         }
@@ -207,10 +243,19 @@ class graphQues
                 }
             }
         }
+        // System.out.println(Arrays.toString(par));
+        for(int i = 0;i<(n*m);i++)
+        {
+            if(grid[i/m][i%m] == '1')
+            {
+                if(par[i] == i) count++;
+            }
+        }
         return count;
     }
 
     // Leetcode 695 Max Area Of Island
+
     public static int maxAreaOfIsland(int[][] grid) 
     {
         int n = grid.length;
@@ -241,19 +286,19 @@ class graphQues
                             {
                                 par[v] = u;
                                 size[u] += size[v];
-
-
                             }
                         }
                     }
                     maxArea = Math.max(maxArea,size[u]);
                 }
                 //else size[i*m+j] = 0;////VVVVVVImp but not compulsary for the given test cases
-                
             }
         }
         return maxArea;
     }
+
+
+    // Journey To Moon
 
     public static void journeyToMoon(int n , int[][]astronauts)// dry run on desktop or in a folder
     {
@@ -341,61 +386,70 @@ class graphQues
         System.out.println(change);
 
     }
+
     // Leetcode Bus Routes 815
-    public static int numBusesToDestination(int[][] routes, int source, int target) 
+    public int numBusesToDestination(int[][] routes, int source, int target)
     {
         if(source == target) return 0;
-        HashMap<Integer , ArrayList<Integer>> mapping = new HashMap<>();
-        int busNumber = 0;
-        for(int[]route : routes)
-        {
-            for(int ele : route)
-            {
-                if(mapping.containsKey(ele))
-                {
-                    mapping.get(ele).add(busNumber);
-                }
-                else
-                {
-                    mapping.put(ele,new ArrayList<Integer>());
-                    mapping.get(ele).add(busNumber);
-                }
-            }
-            busNumber++;
+        int busNo = 0;
+        // btr -> bus to root mapping
+        // rtb -> root to bus mapping
+        HashMap<Integer,HashSet<Integer>> btr = new HashMap<>();
+        HashMap<Integer,HashSet<Integer>> rtb = new HashMap<>();
+        
+        for(int[] ele : routes){
+            HashSet<Integer> set = new HashSet<>();
+            for(int e : ele) set.add(e);
+            btr.put(busNo++,set);
         }
-        boolean[] bus = new boolean[routes.length];
-        HashSet<Integer> busStand = new HashSet<>();// Coz we dont know no of bus stands so instead of iterating over , we created a hash set
+        
+        for(int ele : btr.keySet())
+        {
+            HashSet<Integer> temp = btr.get(ele);
+            for(int e : temp)
+            {
+                if(!rtb.containsKey(e)) rtb.put(e,new HashSet<>());
+                rtb.get(e).add(ele);
+            }
+        }
+        
         LinkedList<Integer> queue = new LinkedList<>();
-        int level = 0;
-        queue.addFirst(source);
-        while(queue.size()!=0)
+        HashSet<Integer> vis = new HashSet<>();
+        for(int ele : rtb.get(source)){
+            queue.add(ele);
+            vis.add(ele);
+        }
+        
+        int level = 1;
+        
+        while(queue.size() > 0)
         {
             int size = queue.size();
-            while(size-- >0)
+            
+            while(size-- > 0)
             {
-                int stand = queue.removeFirst();
-                ArrayList<Integer> buses = mapping.get(stand);
-                for(int ele : buses)
+                int pop = queue.removeFirst();
+                if(btr.get(pop).contains(target)) return level;
+                for(int ele : btr.get(pop)) 
                 {
-                    if(bus[ele]) continue;
-                    for(int r : routes[ele]) // Important we can Iterate over each element of each column in a 2D Array Like This
+                    for(int e : rtb.get(ele))
                     {
-                        if(!busStand.contains(r))
+                        if(!vis.contains(e)) 
                         {
-                            queue.addLast(r);
-                            busStand.add(r);
-                            if(r == target) return level + 1 ;
+                            queue.add(e);
+                            vis.add(e);
                         }
                     }
-                    bus[ele] = true;
                 }
-
             }
             level++;
         }
+        
         return -1;
     }
-    // Leetcode Network Delay
+
+    // Leetcode 743. Network Delay Time
+
     public static int networkDelayTime(int[][] times, int n, int k) // Another Approach In Notes
     {
         int MinTime = 0;
@@ -470,7 +524,8 @@ class graphQues
         }
     }
     // MiniMize Malware Spread
-
+    // Agar eak city mei 1 se zyada nodes infected hei toh vaha se 1 node hatane ke baad bhi infection nahi rukega
+    // toh hume maximum size ki voh city dhoondni hei jismei 1 hi node infected hoo
     public static int minMalwareSpread(int[][] graph, int[] initial) 
     {
         int n = graph.length;
@@ -506,18 +561,26 @@ class graphQues
 
         int ans = initial[0];
         int maxPopulatedCity = 0;
-        for (int i : initial) {
+        for (int i : initial) 
+        {
             int NoOfNodesInfected = InfectedNodesInCity[findPar(i,par)];
-            if (NoOfNodesInfected == 1 && size[findPar(i,par)] > maxPopulatedCity) {
+            if (NoOfNodesInfected == 1 && size[findPar(i,par)] > maxPopulatedCity) 
+            {
                 maxPopulatedCity = size[findPar(i,par)];
                 ans = i;
             }
         }
-
         return ans;
     }
-    // Find Cheapest Flight USING BELLMAN FORD BFS SOLUTION IS GIVING TLE
+
+    // 787. Cheapest Flights Within K Stops
+    // USING BELLMAN FORD 
+    // BFS SOLUTION IS GIVING TLE
     // BFS SOLUTION IS IN LEETCODE NOTES
+    // Iss Question Mei Bellman Ford Lagana Isliye Bhi sahi raha kyoki hum yaha ensure karenge ki
+    // Count k se zyada naa ho , kyo ki har bellman ford ki iteration mei yaa toh new edge add
+    // hoti hei yaa toh edge connect nahi hoti toh yeh cheez hamesha ensure karegi ki edge kaa count
+    // k se zyada naa ho
     public int findCheapestPrice(int n, int[][] flights, int src, int dst, int K) 
     {
         int[] dis = new int[n];
@@ -542,7 +605,10 @@ class graphQues
 
         return dis[dst] != (int) 1e9 ? dis[dst] : -1;
     }
+
+
     // leetcode 959 region cut by slashes
+
     public static int regionsBySlashes(String[] grid) 
     {
         int n = grid.length;
@@ -557,6 +623,7 @@ class graphQues
                 else par[i*(m+1)+j] = i*(m+1)+j;
             }
         }
+        
         for(int i = 0;i<n;i++)
         {
             for(int j = 0;j<m;j++)
