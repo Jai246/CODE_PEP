@@ -150,7 +150,7 @@ class leftDpQues
         return res;
     }
 
-    // MAXIMMUM PROFIT IN JOB SCHEDULING
+    // MAXIMUM PROFIT IN JOB SCHEDULING
 
     class pair implements Comparable<pair>
     {
@@ -210,54 +210,83 @@ class leftDpQues
         return dpPro[e.length];
     }
 
-    // TreeMap Approach
+    // BinarySearch Approach
 
-    public int jobScheduling(int[] s, int[] e, int[] profit)
+    class pair implements Comparable<pair>
+    {
+        int start;
+        int end;
+        int profit;
+        pair(){
+            
+        }
+        pair(int start , int end , int profit){
+            this.start = start;
+            this.end = end;
+            this.profit = profit;
+        }
+        
+        @Override
+        public int compareTo(pair a){
+            return this.end-a.end;
+        }
+    }
+    public int floor(int[] end , int e, int val)
+    {
+        int i = 0;
+        int j = e;
+        int ans = -1;
+        while(i <= j)
+        {
+            int mid = (i+j)/2;
+            if(end[mid] <= val)
+            {
+                ans = mid;
+                i = mid+1;
+            }
+            else j = mid-1;
+        }
+        return ans;
+    }
+        
+    public int jobScheduling(int[] s, int[] e, int[] profit) 
     {
         pair[] arr = new pair[profit.length];
         for(int i = 0;i<profit.length;i++)
         {
             arr[i] = new pair(s[i],e[i],profit[i]);
         }
-        
         Arrays.sort(arr);
         
-        TreeMap<Integer,Integer> dp = new TreeMap<>();
+        int[] dpEnd = new int[e.length+1];
+        int[] dpPro = new int[e.length+1];
         
-        dp.put(0,0); // To Handle Single Value (Only Me)
+        dpEnd[0] = 0;
+        dpPro[0] = 0;
         
-        for(pair ele : arr)
+        for(int i = 0;i<arr.length;i++)
         {
-            int cur = dp.floorEntry(ele.start).getValue() + ele.profit;
-            if (cur > dp.lastEntry().getValue()) dp.put(ele.end, cur);
-        }
-        
-        return dp.get(dp.lastKey());
-    }
-
-
-    // 1326. Minimum Number of Taps to Open to Water a Garden
-    // Solution DP
-    public int minTaps(int n ,int[] ranges) 
-    {
-        int len = ranges.length;
-        int[] dp = new int[len]; 
-        Arrays.fill(dp, len + 1); 
-        dp[0] = 0;
-
-        for (int i = 0; i < len; i++) 
-        {
-            int start = Math.max(i - ranges[i], 0);
-            int end = Math.min(i + ranges[i], len - 1);
-                        
-            for (int j = start; j <= end; j++) 
+            int start = arr[i].start;
+            int end = arr[i].end;
+            int p = arr[i].profit;
+            int idx = floor(dpEnd,i,start);
+            int pro = dpPro[idx] + p;
+            
+            if(pro > dpPro[i])
             {
-                dp[j] = Math.min(dp[j], dp[start] + 1);       
+                dpEnd[i+1] = end;
+                dpPro[i+1] = pro;
+            }
+            else
+            {
+                dpEnd[i+1] = dpEnd[i];
+                dpPro[i+1] = dpPro[i];
             }
         }
-        return dp[len - 1] == len + 1 ? -1 : dp[len - 1];
+        return dpPro[profit.length];
     }
 
+    // Min Taps Leetcode
     // Greedy Approach
 
     public int minTaps(int n ,int[] ranges) 
@@ -1285,60 +1314,29 @@ class leftDpQues
     // Handeling for the continous duplicates is important
     // [9,9,9,9,8,7,6,7,8,9,10]
     // [9,10,9,8,7,64]
-    public int maxTurbulenceSize(int[] arr) 
+    public int maxTurbulenceSize(int[] A) 
     {
-        if(arr.length == 1) return 1;
-        int count = 1;
-        int max = 1;
-        int toggle = (arr[1] > arr[0]) ? 0 : 1;
-        for(int i = 1;i<arr.length;i++)
+        int inc = 1, dec = 1, result = 1;
+        for (int i = 1; i < A.length; i++) 
         {
-            if(arr[i] > arr[i-1]) 
+            if (A[i] < A[i - 1]) 
             {
-                if(toggle == 0)
-                {
-                    count++;
-                    toggle = 1;
-                }
-                else if(i-2 >= 0 && arr[i-1] < arr[i-2]) toggle = 1;
-                else 
-                {
-                    max = Math.max(max,count);
-                    count=2;
-                    toggle = 1;
-                }
-            }
-            else if(arr[i] < arr[i-1])
+                dec = inc + 1;
+                inc = 1;
+            } 
+            else if (A[i] > A[i - 1]) 
             {
-                if(toggle == 1)
-                {
-                    count++;
-                    toggle = 0;
-                }
-                else if(i-2>=0 && arr[i-1] > arr[i-2]) toggle = 0;
-                else
-                {
-                    max = Math.max(max,count);
-                    count=2;
-                    toggle = 0;
-                    
-                }
-            }
-            else if(arr[i] == arr[i-1])
+                inc = dec + 1;
+                dec = 1;
+            } 
+            else 
             {
-                max = Math.max(max,count);
-                count = 1;
-                
-                while(i < arr.length && arr[i] == arr[i-1]) i++;
-                if(i < arr.length)
-                {
-                    if(arr[i] > arr[i-1]) toggle = 1;
-                    else toggle = 0;
-                }
-                i--;
+                inc = 1;
+                dec = 1;
             }
+            result = Math.max(result, Math.max(dec, inc));
         }
-        return Math.max(max,count);
+        return result;
     }
 
 

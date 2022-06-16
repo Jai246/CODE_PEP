@@ -807,22 +807,19 @@ public class pepListYt
     public static int solution(int[] arr, int m, int k)
     {
         int[] pfx = new int[arr.length+1];
-        for(int i = 0;i<arr.length;i++){
-            pfx[i+1] = arr[i] + pfx[i]; 
+        for(int i = 0;i<arr.length;i++)
+        {
+            pfx[i+1] = arr[i] + pfx[i];
         }
-        
+
         int[][] dp = new int[m][arr.length];
-
         int max = -(int)1e9;
-
         for(int i = arr.length-1;i>=0;i--)
         {
             if(i+k > arr.length) continue;
             dp[0][i] = pfx[i+k]-pfx[i];
             max = Math.max(max,dp[0][i]);
         }
-
-        
         for(int x = 1;x<m;x++)
         {
             for(int i = 0;i<arr.length-k;i++)
@@ -898,37 +895,28 @@ public class pepListYt
     }
 
 
-    // arithematic slices 2 IMPORTANT
-    public int numberOfArithmeticSlices(int[] nums) 
+    // Arithematic slices 2 IMPORTANT
+    public int numberOfArithmeticSlices(int[] nums)
     {
         int ans = 0;
-        HashMap<Integer,Integer>[] map = new HashMap[nums.length];
-        for(int i = 0;i<nums.length;i++){
-            map[i] = new HashMap<>();
-        }
+        HashMap<Integer,Integer> []map = new HashMap[nums.length];
+        for(int i = 0;i<nums.length;i++) map[i] = new HashMap<>();
         for(int i = 1;i<nums.length;i++)
         {
+            int v1 = nums[i];
             for(int j = 0;j<i;j++)
             {
-                long cd = (long)nums[i] - (long)nums[j];
-                if(cd<Integer.MIN_VALUE || cd > Integer.MAX_VALUE) continue;
-                if(map[j].containsKey((int)cd))
+                int v2 = nums[j];
+                long d = (long)v1-(long)v2;
+                if (d< Integer.MIN_VALUE || d > Integer.MAX_VALUE) continue;
+                int diff = (int)d;
+                if(map[j].containsKey(diff))
                 {
-                    int count = map[j].get((int)cd);
-                    if(!map[i].containsKey((int)cd))
-                    {
-                        map[i].put((int)cd,count+1);
-                    }
-                    else
-                    {
-                        map[i].put((int)cd,map[i].get((int)cd) +count+1);
-                    }
-                    if(count+1 >= 2 && map[i].containsKey((int)cd)) ans+=count;
+                    int count = map[j].get(diff);
+                    map[i].put(diff,map[i].getOrDefault(diff,0)+count+1);
+                    if(count+1 >= 2) ans+=count;
                 }
-                else
-                {
-                    map[i].put((int)cd,map[i].getOrDefault((int)cd,0)+1);
-                }
+                else map[i].put(diff,map[i].getOrDefault(diff,0)+1);
             }
         }
         return ans;

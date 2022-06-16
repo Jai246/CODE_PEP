@@ -678,8 +678,8 @@ class pepYtList
         }
     }
 
-    // add strings leetcode 415
-    // we can do this question without creating a string builder and reversing it
+    // Add Strings leetcode 415
+    // We can do this question without creating a string builder and reversing it
     public String addStrings(String num1, String num2) 
     {
         String ans = "";
@@ -1583,8 +1583,8 @@ class pepYtList
         }
         return ans;
     }
-Merge Intervals
-    // 56. 
+
+    // 56. Merge Intervals
 
 
     public int[][] merge(int[][] intervals) 

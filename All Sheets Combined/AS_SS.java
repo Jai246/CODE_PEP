@@ -1,6 +1,6 @@
-public class AS_SS 
+public class AS_SS
 {
-        // Minimize the Heights I 
+    // Minimize the Heights I 
 	// Very Importnt Problem
 	// Kind Off Ratne Wala Problem
 	// Consider      ....a..........x (adjacent elements) y..........b....   this array
