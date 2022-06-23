@@ -442,11 +442,10 @@ class leftDpQues
         int[] dp = new int[num + 1];
         dp[0] = 0;
         dp[1] = 1;
-        for(int i = 2; i < num + 1; i++){
-            if(i % 2 == 0)
-                dp[i] = dp[i/2];
-            else
-                dp[i] = dp[i/2] + 1;
+        for(int i = 2; i < num + 1; i++)
+        {
+            if(i % 2 == 0) dp[i] = dp[i/2];
+            else dp[i] = dp[i/2] + 1;
         }
         return dp;
     }
@@ -1724,7 +1723,7 @@ class leftDpQues
     // Firstly, let solve this sub problem Max Sum of Subarray No Larger Than K, which is "Given an array of N integers, find the maximum sum of subarray which is no larger than K".
     // Iterating index i from left to right.
     // Calculate prefixSum so far, let name it right
-    // Try to find the left prefixSum so that right - left <= k => left >= right - k.
+    // Try to find the left prefixSum so that right - left <= k --->>> left >= right - k.
     // We can use TreeSet (implemented as BST), and use ceiling(x) to find the least key greater than or equal to the given x. So left = bst.ceiling(right-k).
     // If we found a valid left, then we update the answer by ans = max(ans, right - left).
     // Then we try all possible pairs of (r1, r2) of rows in the matrix, where 0 <= r1 <= r2 < m. Make an array of n integer, where arr[c] = sum(matrix[r1][c]...matrix[r2][c]), then solve that sub problem.
@@ -1750,10 +1749,12 @@ class leftDpQues
         TreeSet<Integer> bst = new TreeSet<>();
         bst.add(0);
         int ans = Integer.MIN_VALUE;
-        for (int i = 0, right = 0; i < n; ++i) {
+        for (int i = 0, right = 0; i < n; ++i) 
+        {
             right += arr[i];
             Integer left = bst.ceiling(right - k); // right - left <= k -> left >= right - k
-            if (left != null) {
+            if (left != null) 
+            {
                 ans = Math.max(ans, right - left);
             }
             bst.add(right);
@@ -1779,7 +1780,7 @@ class leftDpQues
         }
         return count;
     }
-    // leetcode 1074
+    
     public static int numSubmatrixSumTarget(int M[][] , int tar) 
     {
         int []arr = new int[M[0].length];
@@ -2339,6 +2340,62 @@ class leftDpQues
         return (int)max;
     }
 
+    // 1048. Longest String Chain
 
+    public boolean compare(String o , String t)
+    {
+        int i = 0;
+        int j = 0;
+        
+        boolean temp = false;
+        
+        while(j < o.length())
+        {
+            char c1 = t.charAt(i);
+            char c2 = o.charAt(j);
+            
+            if(c1 == c2)
+            {
+                j++;
+                i++;
+            }
+            else if(c1!=c2 && temp == false)
+            {
+                i++;
+                temp = true;
+            }
+            else if(c1!=c2 && temp) return false;
+        }
+        return true;
+    }
+    
+    public int longestStrChain(String[] words) 
+    {
+        int ans = 1;
+        Arrays.sort(words,(a,b)->{
+           if(a.length()!=b.length()) return a.length()-b.length(); 
+           else return a.compareTo(b);
+        });
+        
+        int[] dp = new int[words.length];
+        Arrays.fill(dp,1);
+        
+        
+        for(int i = 1;i<words.length;i++)
+        {
+            for(int j = 0;j<i;j++)
+            {
+                if(words[j].length() != words[i].length()-1) continue;
+                boolean res = compare(words[j],words[i]);
+                if(res)
+                {
+                    dp[i] = Math.max(dp[i],dp[j]+1);
+                    ans = Math.max(ans,dp[i]);
+                }
+            }
+        }
+        
+        return ans;
+    }
     
 }

@@ -186,7 +186,7 @@ class pepYtList
 
     // ZERO SUM SUBARRAYS
 
-	public static long findSubarray(long[] arr ,int n) 
+	public static long findSubarray(long[] arr ,int n)
     {
         int maxCount = 0;
         HashMap<Integer,Integer> map = new HashMap<>();
@@ -441,7 +441,7 @@ class pepYtList
 	
 	// Equivalent Sub-Arrays 
 
-	public static int countDistinctSubarray(int arr[], int n) 
+	public static int countDistinctSubarray(int arr[], int n)
     { 
         HashSet<Integer> set = new HashSet<>();
         for(int ele : arr)
@@ -534,15 +534,19 @@ class pepYtList
 
     // Max Consecutive Ones 2
     // Submitted on Pepcodings Website
-    public static int solution(int[] arr, int k){
+    public static int solution(int[] arr, int k)
+    {
         int zeroes = 0;
         int ans = 1;
-        for(int i = 0 ,j = 0 ;i < arr.length; i++){
+        for(int i = 0 ,j = 0 ;i < arr.length; i++)
+        {
             if(arr[i] == 0)
             {
                 zeroes++;
-                while(zeroes > k){
-                    if(arr[j] == 0){
+                while(zeroes > k)
+                {
+                    if(arr[j] == 0)
+                    {
                         zeroes--;
                     }
                     j++;
@@ -555,16 +559,20 @@ class pepYtList
 
     // Longest Substring With At Most K Unique Characters
     // pepecoding's website code
-    public static int solution(String str, int k) {
+    public static int solution(String str, int k) 
+    {
         HashMap<Character,Integer> map = new HashMap<>();
         int ans = 0;
-        for(int i = 0 , j = 0; i < str.length(); i++){
+        for(int i = 0 , j = 0; i < str.length(); i++)
+        {
             char ch = str.charAt(i);
             map.put(ch,map.getOrDefault(ch, 0) + 1);
-            while(map.size() > k){
+            while(map.size() > k)
+            {
                 char chj = str.charAt(j);
                 map.put(chj,map.get(chj) - 1);
-                if(map.get(chj) == 0){
+                if(map.get(chj) == 0)
+                {
                     map.remove(chj);
                 }
                 j++;
@@ -1157,7 +1165,8 @@ class pepYtList
 
     // Check Arithmetic Sequence
     // 1502. Can Make Arithmetic Progression From Sequence
-
+    // O(n) Solution
+    // We can do this by simple sorting as well in O(n*lgn)
     public static boolean solution(int[] arr) {
 		if(arr.length == 1) {
 			return true;
@@ -1172,9 +1181,16 @@ class pepYtList
 		}
 		int diff = (max - min) / (arr.length - 1);
 		for(int i = 0 ; i < arr.length; i++) {
-			if(arr[i] == min || arr[i] == max) {
-			}else {
-				if(!set.contains(arr[i] - diff) || !set.contains(arr[i] + diff)) {
+			if(arr[i] == min || arr[i] == max) 
+			{
+				// Just handeling tha base cases
+				// as when we are on min val we can't check left
+				// ans we are on max we can't check on right
+			}
+			else 
+			{
+				if(!set.contains(arr[i] - diff) || !set.contains(arr[i] + diff)) 
+				{
 					return false;
 				}
 			}
@@ -1255,7 +1271,8 @@ class pepYtList
 	
 	// USING HASHMAP
 
-	public static int solve(int[][] num1, int[][] num2, int k) {
+	public static int solve(int[][] num1, int[][] num2, int k) 
+	{
 		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
 		int ans = 0;
 		for(int i = 0 ; i < num1.length ;i++) {
@@ -1274,6 +1291,67 @@ class pepYtList
 		return ans;
 	}
 
+	// Using Binary Search
+
+	public static int firstIndex(int[][] mat , int val)
+	{
+		int i = -1;
+		int j = (mat.length*mat[0].length)-1;
+		int m = mat[0].length;
+		while(j-i > 1)
+		{
+			int mid = (i+j)/2;
+			int ele = mat[mid/m][mid%m];
+			if(ele < val) i = mid;
+			else j = mid;
+		}
+
+		if(mat[j/m][j%m] == val) return j;
+
+		return -1;
+	}
+
+	public static int lastIndex(int[][] mat , int val)
+	{
+		int i = 0;
+		int j = (mat.length*mat[0].length);
+		int m = mat[0].length;
+		while(j-i > 1)
+		{
+			int mid = (i+j)/2;
+			int ele = mat[mid/m][mid%m];
+			if(ele <= val) i = mid;
+			else j = mid;
+		}
+
+		if(mat[i/m][i%m] == val) return i;
+
+		return -1;
+	}
+
+
+    public static int solve(int[][] nums1, int[][] nums2, int k) 
+	{
+		int count = 0;
+		for(int[]arr : nums2)
+		{
+			for(int ele : arr)
+			{
+				int fi = firstIndex(nums1,k-ele);
+				if(fi == -1) continue;
+
+				int li = lastIndex(nums1,k-ele);
+				if(fi == -1) continue;
+
+				int len = li-fi+1;
+
+				count+=len;
+			}
+		}
+		return count;
+	}
+
+	// Using 2 Pointers
 	// Time O(n2) Space O(1)
 	public static int solve(int[][] nums1, int[][] nums2, int k) 
     {
@@ -1330,7 +1408,8 @@ class pepYtList
             else if(sum < k)
             {
                 j1++;
-                if(j1 == nums1[0].length){
+                if(j1 == nums1[0].length)
+                {
                     j1 = 0;
                     i1++; 
                 }
@@ -1338,7 +1417,8 @@ class pepYtList
             else if(sum > k)
             {
                 j2--;
-                if(j2 == -1){
+                if(j2 == -1)
+                {
                     j2 = nums2[0].length-1;
                     i2--;
                 }

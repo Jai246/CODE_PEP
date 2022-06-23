@@ -1,4 +1,4 @@
-class graph
+Matrix Medianclass graph
 {
     // Water Connection Problem 
     public static class pair

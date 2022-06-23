@@ -1,5 +1,33 @@
 class stack
 {
+
+    // Celebrity Problem
+    // O(n^2) Time  O(n) Space Approach
+
+    int celebrity(int M[][], int n)
+    {
+        int[] outdeg = new int[n];
+        
+        for(int i = 0;i<n;i++)
+        {
+            for(int j = 0;j<n;j++)
+            {
+                if(M[i][j] == 1 && i!=j) outdeg[i]++;
+            }
+        }
+        
+        int ans = -1;
+        for(int i = 0;i<n;i++){
+            if(outdeg[i] == 0){
+                if(ans == -1) ans = i;
+                else return -1;
+            }
+        }
+        return ans;
+    }
+
+
+
     // Leetcode 132 Pattern
     // Very Important Solution
     // Here, if we fix the peak, i.e. 3 in the 132 pattern, then we can determine if any numbers on its left and right satisfy the given pattern. We will do this with the help of a stack. 
@@ -1429,6 +1457,8 @@ class stack
       sum+=val;
       return sum/queue.size();
     }
+
+
 
 
 }
