@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.Random;
 import java.util.*;
  
-class rand
+class RANDOM
 {
     // the number of runs
     // for the test data generated
@@ -12,7 +12,7 @@ class rand
     static int lowerBound = 1;
  
     // maximum range of random numbers
-    static int upperBound = 30;
+    static int upperBound = 10;
  
     // Driver Code
     public static void main (String[] args) throws IOException

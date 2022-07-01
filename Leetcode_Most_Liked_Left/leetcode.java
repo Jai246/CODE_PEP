@@ -124,7 +124,7 @@ class leetcode
     // Maximum sum of Non-adjacent nodes Same Questions
     // Did This Question on Geeks For Geeks
 
-    public int rob(TreeNode root) 
+    public int rob(TreeNode root)
     {
         int[] ans = rob_(root);
         return Math.max(ans[0] , ans[1]);
@@ -143,19 +143,26 @@ class leetcode
 
     // 16. 3Sum Closest
     // Almost Same As Three Sum
-    public int threeSumClosest(int[] num, int target) 
+    // We Are Moving From Left to Right Because We want
+    public int threeSumClosest(int[] nums, int target) 
     {
         int result = (int)1e9;
-        Arrays.sort(num);
-        for (int i = 0; i < num.length - 2; i++) 
+        Arrays.sort(nums);
+        int n = nums.length;
+        for(int i = n-1;i>=0;i--)
         {
-            int start = i + 1, end = num.length - 1;
-            while (start < end) 
+            int v1 = nums[i];
+            int j = 0;
+            int k = i-1;
+            
+            while(j < k)
             {
-                int sum = num[i] + num[start] + num[end];
-                if (sum > target) end--;  
-                else start++; 
-                if (Math.abs(sum - target) < Math.abs(result - target)) result = sum;
+                int v2 = nums[j];
+                int v3 = nums[k];
+                int sum = v1+v2+v3;
+                if(Math.abs(result-target) > Math.abs(sum-target)) result = sum;
+                if(sum > target) k--;
+                else j++;
             }
         }
         return result;
@@ -277,10 +284,13 @@ class leetcode
     // Very Important Approach
 
     // Har Node par jakar height nikalni hei left and right both sides
-    // Agar left and right barabar hei(matlab jab left null hogaya hei) toh return kardo (1<<height)-1;
+    // Agar left and right barabar hei(matlab jab left null hogaya hei) 
+    // toh return kardo (1<<height)-1;
     // Kyoki voh sub tree eak complete binary tree hei
-    // Kyoki No of nodes in a complete binary tree kaa formulae(i << height)-1 hota hei;
-    // arag aaisa nahi hei toh left sub tree and right sub tree par call lagado aur current node ka +1 karke return kardo
+    // Kyoki No of nodes in a complete binary tree kaa 
+    // formulae(i << height)-1 hota hei;
+    // arag aaisa nahi hei toh left sub tree and right sub tree par
+    // call lagado aur current node ka +1 karke return kardo
 
     public int countNodes(TreeNode root) 
     {
@@ -300,7 +310,8 @@ class leetcode
 
     // 406. Queue Reconstruction by Height
     // Good Problem
-    // Main thing is sorting and after that inserting people at the people[1] position
+    // Main thing is sorting and after that inserting people 
+    // at the people[1] position
     // O(n2) due to insertion
     // Here Front means left to the current person
 
@@ -380,7 +391,7 @@ class leetcode
     // 424. Longest Repeating Character Replacement
     // Imp BAAA and k == 2
     // O(26.n) solution
-    // O(26) solution nahi samajh aaraha
+    // O(n) solution nahi samajh aaraha
     // "longest substring where (length - max occurrence) <= k"
     // Very Important Line to solve this problem
 
@@ -405,6 +416,7 @@ class leetcode
                 freq = map[ch-'A'];
             }
             int l = j-i+1;
+
             if(l-freq <= k) length = Math.max(length,l);
             else
             {
@@ -502,7 +514,6 @@ class leetcode
         return sb.toString();
     }
 
-
     // 137. Single Number II
 
     public int singleNumber(int[] nums) 
@@ -519,6 +530,9 @@ class leetcode
                     count++;
                 }
             }
+            // Agar count 4 ya ooose zyada hei toh bhi voh
+            // Bit add hogi answer mei
+            // Agar 3 se kam hei toh bhi add hogi
             if(count%3 != 0) 
             {
                 // Here We Are Actually Creating the answer by collecting differrnt bits
@@ -536,21 +550,15 @@ class leetcode
     // Its understanding is kind of Patience sort we did for russian dolls
     public boolean increasingTriplet(int[] nums) 
     {
-        // start with two largest values, as soon as we find a number bigger than both, while both have been updated, return true.
-        int small = Integer.MAX_VALUE, big = Integer.MAX_VALUE;
-        for (int n : nums) 
+        long[] dp = new long[3];
+        Arrays.fill(dp,(long)1e10);
+        for(int ele : nums)
         {
-            if (n <= small) 
-            { 
-                small = n; 
-            } // update small if n is smaller than both
-            else if (n <= big) 
-            { 
-                big = n; 
-            } // update big only if greater than small but smaller than big
-            else return true; // return if you find a number bigger than both
+            if(ele <= dp[0]) dp[0] = ele;
+            else if(ele <= dp[1]) dp[1] = ele;
+            else if(ele <= dp[2]) dp[2] = ele;
         }
-        return false;
+        return dp[2]!=(long)1e10;
     }
 
 
@@ -903,7 +911,8 @@ class leetcode
     // if maxSum < 0 means that all elements in the array are negative
     // so we will return negative
     // else we will return totalSum + minSum
-    // Please note that minSum That we have calculated here is actually the max sum of array when all
+    // Please note that minSum That we have calculated 
+    // here is actually the max sum of array when all
     // elements of the array is inverted ie 1 -> -1 || -1 -> 1
     // That's why we are adding it to total sum ans not subtracting it
 
@@ -1006,9 +1015,11 @@ class leetcode
         
     }
 
-    // The problem can be translated into removing all local minium values while finding the first greater
+    // The problem can be translated into removing all local minium 
+    // values while finding the first greater
     // element on the left and on the right.
-    // A stack based solution from previous problems can be applied as lee215 mentioned in his post.
+    // A stack based solution from previous 
+    // problems can be applied as lee215 mentioned in his post.
 
 
     public int mctFromLeafValues(int[] arr) 
@@ -1040,10 +1051,13 @@ class leetcode
     // 1631. Path With Minimum Effort
     // Very Important Problem
     // We Did This Problem using Dijikstra
-    // Here our cost function is the Maximum Absolute Difference and not the path of absolute difference
+    // Here our cost function is the Maximum 
+    // Absolute Difference and not the path of absolute 
+    // difference
     // I did with distance but it was giving TLE
     // Our Task is to minimize the maximum absolute difference
-    // This will help us find the maximim absolute difference on the mimimum path
+    // This will help us find the maximim absolute 
+    // difference on the mimimum path
 
     public class pair{
         int x;
@@ -1448,8 +1462,10 @@ class leetcode
 
 
     // 991. Broken Calculator
-    // This approach Will Always Work In these kind of questions
-    // Obviously if a number is odd it will always be benificial to make it even
+    // This approach Will Always Work 
+    // In these kind of questions
+    // Obviously if a number is odd it 
+    // will always be benificial to make it even
     // bby adding(1) accordig to this ques and divide by 2
     // we are moving from target to start
     public int brokenCalc(int startValue, int target) 
@@ -1467,9 +1483,11 @@ class leetcode
     }
 
     // 498. Diagonal Traverse
-    // Here We Will Use that fact that Sum of Coordinates on the diagonal are same
+    // Here We Will Use that fact that Sum of 
+    // Coordinates on the diagonal are same
     // Copied Code
-    // You can easily write it according to you only the above fact is important
+    // You can easily write it according to 
+    // you only the above fact is important
     public int[] findDiagonalOrder(int[][] matrix) 
     {
         if(matrix==null|| matrix.length==0) return new int[0];
@@ -1573,8 +1591,10 @@ class leetcode
     }
 
 
-    //1438. Longest Continuous Subarray With Absolute Diff Less Than or Equal to Limit
-    // Simple Solution Using TreeMap to get the minimum and maximum elements 
+    // 1438. Longest Continuous Subarray With 
+    // Absolute Diff Less Than or Equal to Limit
+    // Simple Solution Using TreeMap to get the 
+    // minimum and maximum elements 
 
     // We can Simple Do this question using two PriorityQueues
     // or using a single TreeMap to get Maximum and minimum
@@ -1675,7 +1695,8 @@ class leetcode
 
 
     // 1049. Last Stone Weight II
-    // This Problem is equivilant to partitian into subsets such that the diffenence is minimum
+    // This Problem is equivilant to partitian 
+    // into subsets such that the diffenence is minimum
     // Greedy Was Not working For this problem
 
     public int lastStoneWeightII(int[] elements)
@@ -1830,9 +1851,11 @@ class leetcode
     }
 
     // 845. Longest Mountain in Array
-    // Note That we are talking about mountain continous array and not any subsequence
+    // Note That we are talking about mountain continous 
+    // array and not any subsequence
     // So it is straightforward to come up with this solution
-    // So find continous increasing count and continous decreasing count
+    // So find continous increasing count and continous 
+    /// decreasing count
 
     public int longestMountain(int[] A) 
     {
@@ -2068,7 +2091,8 @@ class leetcode
     // First Simple Solution
     // Sorting On the basis of end time in increasing order
     // filling up the spaces on the array 
-    // The idea is to complete that job first which is going to end first
+    // The idea is to complete that job first 
+    // which is going to end first
     // 42/44 test cases passed
     public int maxEvents(int[][] events) 
     {
@@ -2394,6 +2418,47 @@ class leetcode
         return res;
     }
 
+    // 630. Course Schedule III
+    // Very Important Problem
+
+    // Suppose we have Selected
+    // courses of Durations [10,20,40,30]
+    // and 70 came so do we swap any selected course
+    // with 70 , so the answer is no , we don't
+    // beacuse that will increase the time
+    // But Suppose now 5 came and we would definately 
+    // like to update it with the max duration selected
+    // course (40 -> 5) so that it will increase to encorporate
+    // the chances of slecting new courses becuase the time is less
+
+    // while updating 40 -> 5 it is 100% sure that encorporating
+    // it won't exceed the deadline of the selected course
+    // because we are 100% sure that the course we swapped out have
+    // had a deadline loweer than the current course (because of sorting it in asc ord of deadlines)
+
+
+    public int scheduleCourse(int[][] courses) 
+    {
+        Arrays.sort(courses, (a, b) -> a[1] - b[1]);
+        PriorityQueue < Integer > queue = new PriorityQueue < > ((a, b) -> b - a);
+        int time = 0;
+        for (int[] c: courses) 
+        {
+            if (time + c[0] <= c[1]) 
+            {
+                queue.offer(c[0]);
+                time += c[0];
+            } 
+            else if (!queue.isEmpty() && queue.peek() > c[0]) 
+            {
+                time += c[0] - queue.poll();
+                queue.offer(c[0]);
+            }
+        }
+        return queue.size();
+    }
+
+
     // 1937. Maximum Number of Points with Cost
     // Similar approach to min falling path sum giving tle
     // 152/157 TC passed
@@ -2429,6 +2494,1646 @@ class leetcode
     }
 
 
-    
+    // Optimized Approach
+    // Check Dryrun
 
+    public long maxPoints(int[][] points)
+    {
+        long[] dp = new long[points[0].length];
+        long max = 0;
+        for(int i = 0;i<points[0].length;i++)
+        {
+            dp[i] = points[0][i];
+            max = Math.max(max,dp[i]);
+        }
+        
+        int n = points[0].length;
+        for(int i = 1;i<points.length;i++)
+        {
+            
+            // Using The Idea of best sight seeing pair question
+            long[] lr = new long[n];
+            long[] rl = new long[n];
+            long[] temp = new long[n];
+            
+            lr[0] = dp[0];
+            rl[n-1] = dp[n-1] - (n-1);
+            
+            
+            for(int j = 1;j<n;j++)
+            {
+                lr[j] = Math.max(lr[j-1],dp[j]+j);
+            }
+            
+            for(int j = n-2;j>=0;j--)
+            {
+                rl[j] = Math.max(rl[j+1],dp[j]-j);
+            }
+            
+            for(int j = 0;j<n;j++)
+            {
+                temp[j] = Math.max(rl[j]+points[i][j]+j , lr[j]+points[i][j]-j);
+            }
+            dp = temp;
+        }
+        
+        for(long ele : dp) max = Math.max(max,ele);
+        return max;
+    }
+
+
+    // 1663. Smallest String With A Given Numeric Value
+    // Important Solution
+    // Think Greedly
+    // Store Largest At the end
+    public String getSmallestString(int n, int k) 
+    {
+        char res[] = new char[n];
+        // By this we are able to handle a lot of edge cases
+        Arrays.fill(res, 'a');
+        k -= n;
+        
+        while(k > 0)
+        {
+            res[--n] += Math.min(25, k);
+            k -= Math.min(25, k);
+        }
+        return String.valueOf(res);
+    }
+
+
+    // 491. Increasing Subsequences
+    // We just have to handel that we put call
+    // on the duplicate values in the same context frame
+
+    public List<List<Integer>> findSubsequences(int[] nums) 
+    {
+        List<List<Integer>> ans = new ArrayList<>();
+        getAns(nums,0,ans,new ArrayList<>());
+        
+        return ans;
+    }
+    
+    public void getAns(int[] nums , int start , List<List<Integer>> ans , List<Integer> temp)
+    {
+        if(temp.size() > 1)
+        {
+            List<Integer> t = new ArrayList<>();
+            for(int ele : temp) t.add(ele);
+            ans.add(t);
+        }
+        
+        HashSet<Integer> set = new HashSet<>();
+        for(int i = start ; i < nums.length;i++)
+        {
+            int val = nums[i];
+            boolean added = false;
+            if(temp.size() == 0 || val >= temp.get(temp.size()-1)) 
+            {
+                temp.add(val);
+                added = true;
+            }
+            else continue;
+            
+            if(!set.contains(val)) 
+            {
+                set.add(val);
+                getAns(nums,i+1,ans,temp);
+            }
+            
+            if(added) temp.remove(temp.size()-1);
+            added = false;
+        }
+    }
+
+
+    // 853. Car Fleet
+    // Simple Sorting + Stack
+
+    public int carFleet(int target, int[] position, int[] speed) 
+    {
+        int[][] cars = new int[position.length][2];
+        for(int i = 0;i<position.length;i++)
+        {
+            cars[i][0] = position[i];
+            cars[i][1] = speed[i];
+        }
+        
+        Arrays.sort(cars,(a,b)->{
+           return a[0]-b[0]; 
+        });
+        Stack<Double> st = new Stack<>();
+        for(int[] ele : cars)
+        {
+            double time = (target-ele[0])/(ele[1]*1.0); 
+            while(st.size() > 0 && time >= st.peek())
+            {
+                st.pop();
+            }
+            st.push(time);
+        }
+        return st.size();
+    }
+
+    // 1567. Maximum Length of Subarray With Positive Product
+    // Simple Solution
+    // Get Rid Of OverFlow
+    // Maintain First Negative and First positive
+
+    public int getMaxLen(int[] arr)
+    {
+        int length = 0;
+        
+        int firstPos = -1;
+        int firstNeg = -1;
+        
+        int pfm = 1;
+        
+        for(int i = 0;i<arr.length;i++)
+        {
+            int val = arr[i];
+            if(val == 0)
+            {
+                firstPos = i;
+                firstNeg = -1;
+                pfm = 1;
+                continue;
+            }
+            if(val < 0 && firstNeg == -1) firstNeg = i; 
+            pfm *= ((val < 0) ? -1 : 1);
+            
+            if(pfm > 0) length = Math.max(length,i-firstPos);
+            else if(pfm < 0) if(firstNeg!=-1) length = Math.max(length,i-firstNeg);
+        }
+        return length;
+    }
+    // 1367. Linked List in Binary Tree
+
+    // Ajib Sawal And Code
+    // [1,10]
+    // [1,null,1,10,1,9]
+
+    // [2,2,1]
+    // [2,null,2,null,2,null,1]
+
+
+    //TLE Solution
+    public boolean isSubPath(ListNode head, TreeNode root) 
+    {
+        return checkPath(head,root,head);
+    }
+    
+    public boolean checkPath(ListNode head , TreeNode root ,ListNode orig)
+    {
+        if(root == null && head!=null) return false;
+        if(head == null) return true;
+        
+        boolean data = (root.val == head.val);
+        boolean left = false;
+        boolean right = false;
+        
+        if(data)
+        {
+            left = checkPath(head.next,root.left,orig);
+            right = left || checkPath(head.next,root.right,orig);  
+        }
+
+        left = left || right || checkPath(orig,root.left,orig);
+        right = right || left || checkPath(orig,root.right,orig);
+        
+        return right || left;
+    }
+
+    // Passed Lee's Code
+    // This is almost impossible to come up in an interview
+    public boolean isSubPath(ListNode head, TreeNode root) 
+    {
+        if (head == null) return true;
+        if (root == null) return false;
+        return dfs(head, root) || isSubPath(head, root.left) || isSubPath(head, root.right);
+    }
+
+    private boolean dfs(ListNode head, TreeNode root) 
+    {
+        if (head == null) return true;
+        if (root == null) return false;
+        return head.val == root.val && (dfs(head.next, root.left) || dfs(head.next, root.right));
+    }
+
+    // 1358. Number of Substrings Containing All Three Characters
+    // Important Sliding Window
+
+    public int numberOfSubstrings(String s) 
+    {
+        int i = 0;
+        int j = 0;
+        
+        int a = 0;
+        int b = 0;
+        int c = 0;
+        
+        int count = 0;
+        
+        while(j < s.length())
+        {
+            char ch = s.charAt(j);
+            if(ch == 'a') a++;
+            else if(ch == 'b') b++;
+            else if(ch == 'c') c++;
+            
+            while(a > 0 && b > 0 && c > 0)
+            {
+                count += s.length()-j;
+                char rem = s.charAt(i);
+                if(rem == 'a') a--;
+                else if(rem == 'b') b--;
+                else if(rem == 'c') c--;
+                i++;
+            }
+            j++;
+        }
+        return count;
+    }
+
+    
+    // 462. Minimum Moves to Equal Array Elements II
+    // My solution 
+
+    public int minMoves2(int[] nums) 
+    {
+        Arrays.sort(nums);
+        long[] pfx = new long[nums.length];
+        pfx[0] = nums[0];
+        for(int i=1;i<nums.length;i++)
+        {
+            pfx[i] = pfx[i-1] + nums[i];
+        }
+        
+        int ans = (int)1e10;
+        
+        for(int i = 0;i<nums.length;i++)
+        {
+            long left = (i == 0) ? 0 : pfx[i-1];
+            long right = (i == nums.length-1) ? 0 : pfx[nums.length-1]-pfx[i];
+            
+            
+            long val =  nums[i];
+            
+            
+            long a = (i == nums.length-1) ? 0 : right-(long)(nums.length-i-1)*val;
+            long b = (i == 0) ? 0 : ((long)i*val) - left;
+            
+            ans = (int)Math.min(ans,a+b);
+        }
+        return ans;
+    }
+
+
+    // Discuss Approach
+    // Not Sure How This works
+    public int minMoves2(int[] nums) 
+    {
+        Arrays.sort(nums);
+        int i = 0, j = nums.length-1;
+        int count = 0;
+        while(i < j){
+            count += nums[j]-nums[i];
+            i++;
+            j--;
+        }
+        return count;
+    }
+
+    // 1769. Minimum Number of Operations to Move All Balls to Each Box
+    // Simple Solution
+
+    public int[] minOperations(String boxes) 
+    {
+        int[] res = new int[boxes.length()];
+        for (int i = 0, ops = 0, cnt = 0; i < boxes.length(); ++i) 
+        {
+           res[i] += ops;
+           cnt += boxes.charAt(i) == '1' ? 1 : 0;
+           ops += cnt;
+        }    
+        for (int i = boxes.length() - 1, ops = 0, cnt = 0; i >= 0; --i) 
+        {
+            res[i] += ops;
+            cnt += boxes.charAt(i) == '1' ? 1 : 0;
+            ops += cnt;
+        }
+        return res;
+    }
+
+
+
+    // 1647. Minimum Deletions to Make Character Frequencies Unique
+    // Simple Greedy
+
+    public int minDeletions(String s) 
+    {
+        HashMap<Character,Integer> map = new HashMap<>();
+        for(int i = 0;i<s.length();i++)
+        {
+            char ch = s.charAt(i);
+            map.put(ch,map.getOrDefault(ch,0)+1);
+        }
+        PriorityQueue<Integer> queue = new PriorityQueue<>((a,b)->{
+            return b-a;
+        });
+
+        for(int ele : map.values()) queue.add(ele);
+        
+        int ans = 0;
+        int n = queue.remove();
+        n--;
+        while(queue.size() > 0)
+        {
+            int val = queue.remove();
+            if(val < n)
+            {
+                n = val-1;;
+                continue;
+            }
+            ans += val-n;
+            if(n>0)n--;
+        }
+        return ans;
+    }
+
+
+    // 846. Hand of Straights
+    // nlogn + n*gs solution
+
+    public boolean isNStraightHand(int[] hand, int gs) 
+    {
+        int n = hand.length;
+        if(n%gs!=0) return false;
+        
+        int[][] arr = new int[n/gs][2];
+        for(int[]ele:arr) ele[0]=-1;
+        
+        Arrays.sort(hand);
+        int i = 0;
+        
+        while(i < n)
+        {
+            int val = hand[i];
+            for(int j = 0;j<arr.length;j++)
+            {
+                if(arr[j][1] < gs)
+                {
+                    if(val == arr[j][0]+1 || arr[j][0] == -1)
+                    {
+                        arr[j][0] = val;
+                        arr[j][1]++;
+                        break;
+                    }
+                }
+            }
+            i++;
+        }
+        
+        for(int[]ele:arr) if(ele[1] != gs) return false;
+        return true;
+    }
+
+    // Good Solution
+    public boolean isNStraightHand(int[] hand, int W) 
+    {
+        if(hand.length % W != 0) return false;
+
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+        for(int elem: hand) minHeap.add(elem);
+
+        while(!minHeap.isEmpty())
+        {
+            int head = minHeap.poll();
+            for(int i=1; i<W; i++)
+            {
+                if(!minHeap.remove(head+i)) return false;
+            }
+        }
+        return true;
+    }
+
+    // 524. Longest Word in Dictionary through Deleting
+    // Simple Problem
+
+    public String findLongestWord(String s, List<String> d) 
+    {
+        String res = "";
+        if (s.length() == 0 || d.size() == 0) 
+        {
+            return res;
+        }
+        for (String str : d) 
+        {
+            int resLen = res.length();
+            int strLen = str.length();
+            if (isSequence(s, str) && (strLen > resLen || (strLen == resLen && str.compareTo(res) < 0))) 
+            {
+                res = str;
+            }
+        }
+        return res;
+    }
+    
+    private boolean isSequence(String s, String d) 
+    {
+        int i = 0;
+        int j = 0;
+        while (i < s.length() && j < d.length()) 
+        {
+            while (i < s.length() && s.charAt(i) != d.charAt(j)) 
+            {
+                i++;
+            }
+            if (i < s.length()) 
+            {
+                i ++;
+                j ++;
+            }
+        }
+        return j == d.length();
+    }
+
+
+    // 1696. Jump Game VI
+    // Very Important Solution an Approach
+    // It is kind of a sliding window problem
+    // with max window maintained upto i-k
+
+    // Heap Solution
+    public int maxResult(int[] nums, int k) 
+    {
+        // a[0] = score , a[1] = idx 
+        PriorityQueue<int[]> queue = new PriorityQueue<>((a,b)->{
+           return b[0]-a[0]; 
+        });
+        queue.add(new int[]{nums[0],0});
+        int res = nums[0];
+        for(int i = 1;i<nums.length;i++)
+        {
+            while(queue.peek()[1] < i-k) queue.remove();
+            queue.add(new int[]{res = nums[i]+queue.peek()[0],i});
+        }
+        // System.out.println(queue.peek()[1]);
+        // We have to create res variable explicitely because 
+        // It will Not be always true that the element which is on the top
+        // will always be ending on the last index
+        return res;
+    }
+
+
+    // 1838. Frequency of the Most Frequent Element
+    // Very Important Sliding Window Problem
+
+    public int maxFrequency(int[] nums, int s) 
+    {
+        long k = s;
+        Arrays.sort(nums);
+        int i = 0;
+        int j = 1;
+        long sum = nums[0];
+        int max = 1;
+        while(j < nums.length)
+        {
+            int val = nums[j];
+            
+            if(sum+k >= val*(j-i))
+            {
+                max = Math.max(max,j-i+1);
+                sum+=val;
+                j++;
+            }
+            else
+            {
+                while(sum+k < val*(j-i))
+                {
+                    sum-=nums[i];
+                    i++;
+                }
+            }
+        }
+        return max;
+    }
+
+
+    // 1823. Find the Winner of the Circular Game
+    // This is the Josephus Problem
+    // Check Bits Notes there we have linear time solution
+    // But we are doing it in O(k*n) time and O(n) space
+
+    public int findTheWinner(int n, int k) 
+    {
+        // Initialisation of the LinkedList
+        LinkedList<Integer> participants = new LinkedList<>();
+        for (int i = 1; i <= n; i++) 
+        {
+            participants.add(i);
+        }
+        
+        int lastKilled = 0;
+        for (int i = 0; i < n; i++) 
+        {
+            for (int j = 0; j < k-1; j++) 
+            {
+                participants.add(participants.poll());
+            }
+            lastKilled = participants.poll();
+        }
+        return lastKilled;
+    }
+
+
+    // 1338. Reduce Array Size to The Half
+    // Simple Solution
+
+    public int minSetSize(int[] arr) 
+    {
+        HashMap<Integer, Integer> cnt = new HashMap<>();
+        for (int x : arr) cnt.put(x, cnt.getOrDefault(x, 0) + 1);
+
+        int[] frequencies = new int[cnt.values().size()];
+        int i = 0;
+        for (int freq : cnt.values()) frequencies[i++] = freq;
+        Arrays.sort(frequencies);
+
+        int ans = 0, removed = 0, half = arr.length / 2;
+        i = frequencies.length - 1;
+        while (removed < half) 
+        {
+            ans += 1;
+            removed += frequencies[i--];
+        }
+        return ans;
+    }
+
+
+
+    // 386. Lexicographical Numbers
+    // Approach 1
+    // O(nlogn) time // O(1) space
+    public List<Integer> lexicalOrder(int n) 
+    {
+        List<Integer> temp = new ArrayList<>();
+        for(int i = 1;i<=n;i++) temp.add(i);
+        
+        Collections.sort(temp,(a,b)->{
+            return (a+"").compareTo((b+""));
+        });
+        return temp;
+    }
+
+    // Approach 2
+    // DFS Solution
+
+    // The idea is pretty simple. 
+    // If we look at the order we can find out we just keep adding 
+    // digit from 0 to 9 to every digit and make it a tree.
+    // Then we visit every node in pre-order. 
+    //        1        2        3    ...
+    //       /\        /\       /\
+    //    10 ...19  20...29  30...39   ....
+
+    public List<Integer> lexicalOrder(int n) 
+    {
+        List<Integer> res = new ArrayList<>();
+        for(int i=1;i<10;++i)
+        {
+          dfs(i, n, res); 
+        }
+        return res;
+    }
+    
+    public void dfs(int cur, int n, List<Integer> res)
+    {
+        if(cur>n) return;
+        res.add(cur);
+        for(int i=0;i<10;++i)
+        {
+            if(10*cur+i>n) return;
+            dfs(10*cur+i, n, res);
+        }
+    }
+
+
+    // 1347. Minimum Number of Steps to Make Two Strings Anagram
+    // Simple Solution
+
+    // Could be optimized using character array
+    public int minSteps(String s, String t) 
+    {
+        HashMap<Character,Integer> map = new HashMap<>();
+        for(int i = 0;i<s.length();i++)
+        {
+            char ch = s.charAt(i);
+            map.put(ch,map.getOrDefault(ch,0)+1);
+        }
+        int count = 0;
+        for(int i = 0;i<t.length();i++)
+        {
+            char ch = t.charAt(i);
+            if(map.containsKey(ch))
+            {
+                map.put(ch,map.get(ch)-1);
+                if(map.get(ch)== 0) map.remove(ch);
+                count++;
+            }
+        }
+        return t.length()-count;
+    }
+
+
+    // 870. Advantage Shuffle
+    // Simple Solution Using TreeMap
+
+    public int[] advantageCount(int[] nums1, int[] nums2) 
+    {
+        TreeMap<Integer,Integer> set = new TreeMap<>();
+        for(int ele : nums1) set.put(ele,set.getOrDefault(ele,0)+1);
+        
+        int[] ans = new int[nums2.length];
+        int[][] nms = new int[nums2.length][2];
+        Arrays.fill(ans,-1);
+        for(int i = 0;i<nums2.length;i++){
+            nms[i][0] = nums2[i];
+            nms[i][1] = i;
+        }
+        
+        Arrays.sort(nms,(a,b)->{
+           return a[0]-b[0]; 
+        });
+        
+        
+        for(int[]ele : nms)
+        {
+            Integer a = set.higherKey(ele[0]);
+
+            if(a!=null)
+            {
+                ans[ele[1]] = a;
+                set.put(a,set.get(a)-1);
+                if(set.get(a) == 0) set.remove(a);
+            }
+        }
+        
+        
+        for(int i = 0;i<ans.length;i++)
+        {
+            if(ans[i] == -1)
+            {
+                Integer a = set.firstKey();
+                if(a!=null)
+                {
+                    ans[i] = a;
+                    set.put(a,set.get(a)-1);
+                    if(set.get(a) == 0) set.remove(a);
+                }
+            }
+        }
+        return ans;
+    }
+
+
+    // 436. Find Right Interval
+    // Simple TreeMap solution
+
+    public int[] findRightInterval(int[][] intervals) 
+    {
+        TreeMap<Integer, Integer> startPoints = new TreeMap<>();
+        for(int i=0; i<intervals.length; i++)
+        {
+            startPoints.put(intervals[i][0], i);
+        }
+        
+        int[] ans = new int[intervals.length];
+        for(int i=0; i<intervals.length; i++)
+        {
+            Integer nextClosestStartPoint = startPoints.ceilingKey(intervals[i][1]);
+            ans[i]= nextClosestStartPoint==null ? -1 : startPoints.get(nextClosestStartPoint);
+        }
+        return ans;
+    }
+
+
+    // 1405. Longest Happy String
+
+    public class pair
+    {
+        char ch;
+        int c;
+        pair(char ch , int c)
+        {
+            this.ch=ch;
+            this.c=c;
+        }
+    }
+    public String longestDiverseString(int a, int b, int c) 
+    {
+        PriorityQueue<pair> queue = new PriorityQueue<>((d,e)->{
+            return e.c-d.c;
+        });
+        if(a>0) queue.add(new pair('a',a));
+        if(b>0) queue.add(new pair('b',b));
+        if(c>0) queue.add(new pair('c',c));
+        
+        StringBuilder sb = new StringBuilder();
+        
+        while(queue.size() > 1)
+        {
+            pair f = queue.remove();
+            pair s = queue.remove();
+            
+            if(f.c == 1) 
+            {
+                sb.append(f.ch);
+                f.c--;
+            }
+            else if(f.c >= 2)
+            {
+                sb.append(f.ch);
+                sb.append(f.ch);
+                f.c-=2;
+            }
+            
+            if(s.c == 1) 
+            {
+                sb.append(s.ch);
+                s.c--;
+            }
+            else if(s.c >= 2)
+            {
+                sb.append(s.ch);
+                sb.append(s.ch);
+                s.c-=2;
+            }
+
+            
+            if(f.c > 0) queue.add(f);
+            if(s.c > 0) queue.add(s);
+        }
+                
+        if(queue.size() == 1)
+        {
+            pair r = queue.remove();
+            char l = r.ch;
+            int n = r.c;
+            
+            int i = 0;
+            
+            while(i <= sb.length() && n > 0)
+            {
+                char prev = (i-1>=0) ? sb.charAt(i-1) : '#';
+                char prevPrev = (i-2 < 0) ? '#' : sb.charAt(i-2);
+                char curr = (i<sb.length()) ? sb.charAt(i) : '#';
+                char next = (i+1>sb.length()-1) ? '#' : sb.charAt(i+1);
+                
+                if(prev == prevPrev && l == prev) i++;
+                else if(curr==next && l == curr) i++;
+                else if(prev == curr && l == curr) i++;
+                else
+                {
+                    sb.insert(i,l);
+                    n--;
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+
+    // 1498. Number of Subsequences That Satisfy the Given Sum Condition
+    // Simple Two Sum Problem
+
+    // Intentionally Pre Computed The Power
+    // Due to some conversion Issues
+    public int numSubseq(int[] A, int target)
+    {
+        Arrays.sort(A);
+        int res = 0, n = A.length, l = 0, r = n - 1, mod = (int)1e9 + 7;
+        int[] pows = new int[n];
+        pows[0] = 1;
+        for (int i = 1 ; i < n ; ++i) pows[i] = pows[i - 1] * 2 % mod;
+        while (l <= r) 
+        {
+            if (A[l] + A[r] > target) 
+            {
+                r--;
+            } 
+            else 
+            {
+                res = (res + pows[r - l++]) % mod;
+            }
+        }
+        return res;
+    }
+
+
+    // 962. Maximum Width Ramp
+    // Simple Sorting + Stack
+    // There is an O(N) solution check that as well
+     public int maxWidthRamp(int[] nums) 
+    {
+        int[][] arr = new int[nums.length][2];
+        for(int i = 0;i<nums.length;i++)
+        {
+            arr[i][0] = nums[i];
+            arr[i][1] = i;
+        }
+        
+        Arrays.sort(arr,(a,b)->{
+            return a[0]-b[0];
+        });
+        Stack<Integer> st = new Stack<>();
+        
+        int max = 0;
+        int minIdx = -1;
+        
+        for(int[] ele : arr)
+        {
+            while(st.size() > 0 && st.peek() > ele[1]) st.pop();
+            if(st.size() > 0) max = Math.max(max,ele[1]-minIdx);
+            if(st.size() == 0) minIdx = ele[1];
+            st.push(ele[1]);
+        }
+        
+        if(st.size() > 1)
+        {
+            int rem = st.pop();
+            while(st.size() > 1) st.pop();
+            max = Math.max(rem-st.pop(),max);
+        }
+        return max;
+    }
+
+    // 1052. Grumpy Bookstore Owner
+    // Simple sliding Window
+
+    public int maxSatisfied(int[] cust, int[] gr, int min)
+    {
+        int n = cust.length;
+        int[] lr = new int[n];
+        int[] rl = new int[n];
+        
+        lr[0] = (gr[0] == 1) ? 0 : cust[0];
+        rl[n-1] = (gr[n-1] == 1) ? 0 : cust[n-1];
+        
+        for(int i = 1;i<n;i++)
+        {
+            if(gr[i] == 0) lr[i] = cust[i] + lr[i-1];
+            else lr[i] = lr[i-1];
+        }
+        
+        for(int i = n-2;i>=0;i--)
+        {
+            if(gr[i] == 0) rl[i] = cust[i] + rl[i+1];
+            else rl[i] = rl[i+1];
+        }
+        
+        int i = 0;
+        int j = 0;
+        
+        int sum = 0;
+        int max = 0;
+        while(j < n)
+        {
+            if((j-i) <= min-1) sum+=cust[j];
+            if((j-i) == min-1)
+            {
+                int left = (i == 0) ? 0 : lr[i-1];
+                int right = (j == n-1) ? 0 : rl[j+1];
+                max = Math.max(max,sum+left+right);
+                sum -= cust[i];
+                i++;
+            }
+            j++;
+        }
+        return max;
+    }
+
+
+    // 1286. Iterator for Combination
+    // A simple solution would be to simply backtrack and
+    // generate all the Combinations
+    // Brute Force Solution
+
+    ArrayList<String> comb;
+    int pointer, cLen;
+    public CombinationIterator(String characters, int combinationLength) 
+    {
+        this.comb = new ArrayList<>();
+        this.pointer = 0;
+        this.cLen = combinationLength;
+        this.combinations(characters, 0, "");
+    }
+    public void combinations(String s, int index, String com)
+    {
+        if(com.length() == this.cLen)
+        {
+            this.comb.add(com);
+            return ;
+        }
+        if(index >= s.length()) return ;
+        for(int i = index; i < s.length(); i++) combinations(s, i + 1, com + String.valueOf(s.charAt(i)));
+    }
+    public String next() 
+    {
+        return this.comb.get(this.pointer++);
+    }
+    
+    public boolean hasNext() 
+    {
+        return this.pointer < this.comb.size();
+    }
+
+    // 1371. Find the Longest Substring Containing Vowels in Even Counts
+
+    // Its a HashMap Counting Problem
+    // 0 1 0 
+    // 1 0 1
+    public int findTheLongestSubstring(String s) 
+    {
+        HashSet<Character> set= new HashSet<>();
+        set.add('a');
+        set.add('e');
+        set.add('i');
+        set.add('o');
+        set.add('u');
+        
+        HashMap<Integer, Integer> map= new HashMap<>();
+        map.put(0, -1);
+        int xor=0;
+        int maxLen=0;
+        
+        for(int i=0; i<s.length(); i++)
+        {
+            if(set.contains(s.charAt(i))) xor^=(s.charAt(i)-'a'+1);
+            if(!map.containsKey(xor)) map.put(xor, i);
+            maxLen=Math.max(maxLen, i-map.get(xor));
+        }
+        return maxLen;
+    }
+
+
+    // 910. Smallest Range II
+    // Same Problem as we did Minimum Heights I gfg ADOBE kaa khatarnaak wala question
+    public int smallestRangeII(int[] arr, int k) 
+    {
+       int n = arr.length;
+       if(n==1) return 0;
+       Arrays.sort(arr);
+       int diff = arr[n-1] - arr[0];
+       int minimum,maximum;
+       for(int i=1;i<n;i++)
+       {
+           maximum = Math.max(arr[i-1]+k, arr[n-1]-k);
+           minimum = Math.min(arr[0]+k, arr[i]-k);
+           diff = Math.min(diff,maximum-minimum);
+       }
+       return diff;
+    }
+
+    /// 904. Fruit Into Baskets
+
+    // sliding Window
+    public int totalFruit(int[] arr) 
+    {
+        int n = arr.length, si = 0, ei = 0, len = 0, count = 0;
+        int[] freq = new int[40000 + 1];
+
+        while (ei < n) 
+        {
+            if (freq[arr[ei++]]++ == 0) count++;
+
+            while (count > 2)
+            {
+                if (freq[arr[si++]]-- == 1) count--;
+            }
+
+            len = Math.max(len, ei - si);
+        }
+
+        return len;
+    }
+
+
+    // 954. Array of Doubled Pairs
+    // Sorting On the basis of Absolute values is an Important Step
+
+    public boolean canReorderDoubled(int[] A)
+    {
+        Map<Integer, Integer> count = new HashMap();
+        for (int x: A) count.put(x, count.getOrDefault(x,0)+1);
+        
+        Integer[] B = new Integer[A.length];
+        for (int i = 0; i < A.length; ++i) B[i] = A[i];
+        Arrays.sort(B, Comparator.comparingInt(Math::abs));
+
+        for (int x: B) 
+        {
+            if (count.get(x) == 0) continue;
+            if (count.getOrDefault(2*x, 0) <= 0) return false;
+
+            count.put(x, count.get(x) - 1);
+            count.put(2*x, count.get(2*x) - 1);
+        }
+        return true;
+    }
+
+
+
+    // 2096. Step-By-Step Directions From a Binary Tree Node to Another
+    // Good Problem Based On LCA
+
+    public String getDirections(TreeNode root, int startValue, int destValue) 
+    {
+        if(root == null) return "";
+        StringBuilder direction = new StringBuilder();
+        TreeNode lca= findLCA(root, startValue, destValue); // Common parent        
+        List<String> paths = new ArrayList<>();
+        find(lca, startValue, new StringBuilder(), paths);
+        find(lca, destValue, new StringBuilder(), paths);
+        for(int i=0;i<paths.get(0).length();i++) direction.append("U");
+        direction.append(paths.get(1));
+        return direction.toString();
+    }
+    
+    public TreeNode findLCA(TreeNode root, int start, int end) // Nice way to find LCA without post processing
+    {
+        if(root==null) return null;
+        if(root.val == start || end == root.val) return root;
+        TreeNode left = findLCA(root.left, start, end);
+        TreeNode right = findLCA(root.right, start, end);
+        if(left!=null && right!=null) return root;
+        return left!=null? left: right;
+    }
+    
+    public void find(TreeNode root, int value, StringBuilder path, List<String> paths)
+    {    
+        if(root.val == value)
+        {
+            paths.add(new String(path));
+            return;
+        }
+        if(root.left!=null) find(root.left, value, path.append("L"), paths);
+        if(root.right!=null) find(root.right, value, path.append("R"), paths);        
+        path.deleteCharAt(path.length()-1);
+        return;
+    }
+
+
+    // 1282. Group the People Given the Group Size They Belong To
+    // Simple HashMap Problem
+
+    public List<List<Integer>> groupThePeople(int[] groupSizes) 
+    {
+        Map<Integer, List<Integer>> map=new HashMap<>();
+        List<List<Integer>> res=new ArrayList<>();
+        for(int i=0;i<groupSizes.length;i++) 
+        {
+            if(!map.containsKey(groupSizes[i])) map.put(groupSizes[i], new ArrayList<>());
+            List<Integer> cur=map.get(groupSizes[i]);
+            cur.add(i);
+            if(cur.size()==groupSizes[i]) 
+            {
+                res.add(cur);
+                map.remove(groupSizes[i]);
+            }
+        }
+        return res;
+    }
+
+    // 1109. Corporate Flight Bookings
+    // Similar to range sum problem
+
+    public int[] corpFlightBookings(int[][] bookings, int n) 
+    {
+        int[] ans = new int[n];
+        for (int[] booking : bookings) 
+        {
+            int i = booking[0]-1;
+            int j = booking[1];
+            int seats = booking[2];
+            ans[i] += seats;
+            if (j != n)
+                ans[j] -= seats;
+        }
+        
+        int count = 0;
+        for (int i = 0; i < ans.length; i++) 
+        {
+            ans[i] += count;
+            count = ans[i];
+        }
+        return ans;
+    }
+
+    // 539. Minimum Time Difference
+
+    public int findMinDifference(List<String> timePoints) 
+     {
+        int res = Integer.MAX_VALUE;
+        int N = timePoints.size();
+        int[] c = new int[N];
+        
+        for (int i = 0; i < N; i++) 
+        {
+            String s = timePoints.get(i);
+            c[i] = Integer.parseInt(s.substring(0, 2)) * 60 + Integer.parseInt(s.substring(3, 5));
+        }
+        Arrays.sort(c);
+        for (int i = 1; i < N; i++) 
+        {
+            res = Math.min(res, c[i] - c[i - 1]);
+        }
+        // Thee last can be closest to the first one
+        // That's why
+        res = Math.min(res, c[0] + (24*60 - c[N - 1]));
+        return res;
+    }
+
+
+
+    // 988. Smallest String Starting From Leaf
+    // Simple Solution
+    // Here ye are not sorting all the strings after traversing
+    // We are simply comparing the yay we find min or max in the array
+
+    String ans = "~";
+    public String smallestFromLeaf(TreeNode root)
+    {
+        dfs(root, new StringBuilder());
+        return ans;
+    }
+
+    public void dfs(TreeNode node, StringBuilder sb) 
+    {
+        if (node == null) return;
+        sb.append((char)('a' + node.val));
+
+        if (node.left == null && node.right == null) 
+        {
+            sb.reverse();
+            String S = sb.toString();
+            sb.reverse();
+            if (S.compareTo(ans) < 0) ans = S;
+        }
+
+        dfs(node.left, sb);
+        dfs(node.right, sb);
+        sb.deleteCharAt(sb.length() - 1);
+    }
+
+
+    // 1509. Minimum Difference Between Largest and Smallest Value in Three Moves
+    // Good Question
+    public int minDifference(int[] A) 
+    {
+        int n = A.length;
+        if (n < 5) return 0;
+        Arrays.sort(A);
+        int res = (int)1e11;
+        
+        for(int i = 1;i<=4;i++)
+        {
+            res = Math.min(res,A[n-i]-A[4-i]);
+        }
+        return res;
+    }
+
+
+    // 1760. Minimum Limit of Balls in a Bag
+    // Important Binary Search Problem
+    // With heap it will give TLE
+
+    public int minimumSize(int[] nums, int maxOperations) 
+    {
+        int lo = 1, hi = 1_000_000_001;
+        while (lo < hi) 
+        {
+            int size = lo + hi >> 1;
+            if(canDivide(nums, size, maxOperations)) 
+            {
+                hi = size;
+            }
+            else 
+            {
+                lo = size + 1;
+            }
+        }
+        return lo;
+    }
+    private boolean canDivide(int[] nums, int size, int maxOperations)
+    {
+        int cnt = 0;
+        for (int balls : nums) 
+        {
+            cnt += balls / size - (balls % size == 0 ? 1 : 0);
+            // cnt += (balls - 1) / size;        
+            if (cnt > maxOperations) 
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    // 1578. Minimum Time to Make Rope Colorful
+    // simple Problem
+    // We have to put 1 ballon in a group so we will burst all the ballons with min values except 1 with
+    // the highest value add sum-max t answer
+
+    public int minCost(String s, int[] t) 
+    {
+        int ans = 0;
+        int i = 1;
+        int max = t[0];
+        int sum = t[0];
+        while(i < s.length())
+        {
+            if(s.charAt(i) == s.charAt(i-1))
+            {
+                sum += t[i];
+                max = Math.max(max,t[i]);
+                i++;
+            }
+            else
+            {
+                ans += sum-max;
+                max = t[i];
+                sum = t[i];
+                i++;
+            }
+        }
+        ans += sum-max;
+        return ans;
+    }
+
+
+
+    // 945. Minimum Increment to Make Array Unique
+    // Simple Counting Problem
+
+    public int minIncrementForUnique(int[] nums) 
+    {
+        int count = 0;
+        Arrays.sort(nums);
+        int prevNum = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] <= prevNum) {
+                prevNum++;
+                count += (prevNum - nums[i]);
+            } else {
+                prevNum = nums[i];
+            }
+        }
+        return count;
+    }
+
+
+    // 1905. Count Sub Islands
+    // DFS
+
+    public int countSubIslands(int[][] grid1, int[][] grid2)
+    {
+        int count = 0;
+        int[][] dir = new int[][]{{0,1},{0,-1},{1,0},{-1,0}};
+        for(int i = 0;i<grid1.length;i++)
+        {
+            for(int j = 0;j<grid1[0].length;j++)
+            {
+                if(grid2[i][j] == 1)
+                {
+                    grid2[i][j] = 0;
+                    boolean res = (grid1[i][j] == 1) ? true : false;
+                    res = dfs(i,j,grid1,grid2,dir) && res;
+                    // for(int[] ele : grid2) System.out.println(Arrays.toString(ele));
+                    // System.out.println();
+                    if(res) count++;
+                }
+            }
+        }
+        return count;
+    }
+    
+    public boolean dfs(int i,int j,int[][]g1,int[][]g2,int[][]dir)
+    {
+        boolean res = true;
+        for(int[] ele : dir)
+        {
+            int x = i+ele[0];
+            int y = j+ele[1];
+            
+            if(x<0||y<0||x>=g1.length||y>=g1[0].length||g2[x][y]==0) continue;
+            g2[x][y] = 0;
+            if(g1[x][y] == 0) res = false;
+            res = dfs(x,y,g1,g2,dir) && res;
+        }
+        return res;
+    }
+
+
+
+    // 1574. Shortest Subarray to be Removed to Make Array Sorted
+    // The Solution I wrote was passing 112/117 cases
+    // So this is th copied solution form discussion 
+    // Please do dryrun
+    // 2 2 2 1 1 1
+    // [16,10,0,3,22,1,14,7,1,12,15]
+    // [8,0,92,75,54,1,45,62,38,71,65,28,89,85,78,84,41,11,94,35,49,12,9,87,74,53,48,43,92,77,66,49,27,11,8,81,60,66,6,63,63,37,27,62,82,60,42,64]
+    // Dryrun karke samajh lena iise
+    public int findLengthOfShortestSubarray(int[] arr)
+    {
+        int left = 0;
+        while(left + 1 < arr.length && arr[left] <= arr[left+1]) left++;
+        if(left == arr.length - 1) return 0;
+        
+        int right = arr.length - 1;
+        while(right > left && arr[right-1] <= arr[right]) right--;
+        int result = Math.min(arr.length - left - 1, right);
+        
+        int i = 0;
+        int j = right;
+        while(i <= left && j < arr.length) 
+        {
+            if(arr[j] >= arr[i]) 
+            {
+                result = Math.min(result, j - i - 1);
+                i++;
+            }
+            else j++;
+        }
+        return result;
+    }
+
+
+    // 877. Stone Game
+    // Exactly Same as Optimal Game Strategy
+
+    public boolean stoneGame(int[] piles) 
+    {
+        int n = piles.length;
+        int[][] dp = new int[n][n];
+        for(int gap = 0;gap<n;gap++)
+        {
+            for(int i = 0,j = gap;j<n;i++,j++)
+            {
+                if(gap == 0)
+                {
+                    dp[i][j] = piles[i];
+                    continue;
+                }
+                if(gap == 1)
+                {
+                    dp[i][j] = Math.max(piles[i],piles[j]);
+                    continue;
+                }
+                int left = Math.min(dp[i+2][j],dp[i+1][j-1]);
+                int right = Math.min(dp[i+1][j-1],dp[i][j-2]);
+                dp[i][j] = Math.max(piles[i]+left,piles[j]+right);
+            }
+        }
+        int sum = 0;
+        for(int ele : piles) sum+=ele;
+        int v1 = dp[0][n-1];
+        int v2 = sum-v1;
+        
+        if(v1 > v2) return true;
+        return false;
+    }
+
+
+    // 1406. Stone Game III
+    // Memoized Solution
+
+    public String stoneGameIII(int[] piles)
+    {
+        int[] presum =  Arrays.copyOf(piles, piles.length);
+        for (int i = presum.length - 2; i >= 0; i--) presum[i] += presum[i + 1];
+        int[] dp = new int[piles.length];
+        Arrays.fill(dp,-(int)1e9);
+        int r1 =  dfs(presum, 0, dp);
+        int r2 = presum[0] - r1;
+        if(r1 > r2) return "Alice";
+        else if(r2 > r1) return "Bob";
+        return "Tie";
+        
+    }
+    public int dfs(int[] presum, int p, int[]memo)
+    {
+        if (p  >= presum.length) return 0; 
+        if (memo[p] != -(int)1e9) return memo[p];
+        int res = -(int)1e9, take = 0;
+        for (int i = 1; i <= 3 && p+i <= memo.length; i++) 
+        {
+            int p_i = (p+i >= presum.length) ? 0 : presum[p+i];
+            take = presum[p] - p_i;
+            res = Math.max(res, take + p_i - dfs(presum, p + i, memo));
+        }
+        memo[p] = res;
+        return res;
+    }
+
+
+    // Tabulation
+
+    public String stoneGameIII(int[] piles)
+    {
+        int[] presum =  Arrays.copyOf(piles, piles.length);
+        for (int i = presum.length - 2; i >= 0; i--) presum[i] += presum[i + 1];
+        int[] dp = new int[piles.length];
+        Arrays.fill(dp,-(int)1e9);
+        tab(presum,dp);
+        int r1 =  dp[0];
+        int r2 = presum[0] - r1;
+        if(r1 > r2) return "Alice";
+        else if(r2 > r1) return "Bob";
+        return "Tie";
+    }
+    public void tab(int[] presum,int[]memo)
+    {
+        for(int p = presum.length-1;p>=0;p--)
+        {
+            int res = -(int)1e9, take = 0;
+            
+            for (int i = 1; i <= 3 && p+i <= memo.length; i++) 
+            {
+                int p_i = (p+i >= presum.length) ? 0 : presum[p+i];
+                take = presum[p] - p_i;
+                res = Math.max(res, take + p_i - ((p+i>=presum.length) ? 0 : memo[p + i]));
+            }
+            memo[p] = res;
+        }
+    }
+
+    // 1510. Stone Game IV
+    // Already Did Similar Problem
+
+    public boolean winnerSquareGame(int n) 
+    {
+        boolean[] dp = new boolean[n+1];
+        dp[0] = false;
+        for(int i = 1;i<=n;i++)
+        {
+            for(int k =1;k<=Math.sqrt(i);k++)
+            {
+                dp[i] = dp[i] || !dp[i-(k*k)];
+            }
+        }
+        return dp[n];
+    }
+
+
+    // 1685. Sum of Absolute Differences in a Sorted Array
+
+    public int[] getSumAbsoluteDifferences(int[] nums) 
+    {
+        int[] pfx = new int[nums.length];
+        pfx[0] = nums[0];
+        for(int i=1;i<nums.length;i++) pfx[i] = pfx[i-1] + nums[i];
+        
+        int[] ans = new int[nums.length];
+        
+        for(int i = 0;i<nums.length;i++)
+        {
+            int left = (i == 0) ? 0 : pfx[i-1];
+            int right = (i == nums.length-1) ? 0 : pfx[nums.length-1]-pfx[i];
+            ans[i] = (i*nums[i])-left + right - (nums.length-i-1)*nums[i];
+        }
+        return ans;
+    }
+
+    // 467. Unique Substrings in Wraparound String
+    // Simple Solution
+
+    public int findSubstringInWraproundString(String p)
+    {
+        int[] arr = new int[26];
+        int i = 0;
+        int j = 1;
+        arr[p.charAt(0)-'a'] = 1;
+        while(j < p.length())
+        {
+            int ch = p.charAt(j)-'a';
+            int prev = p.charAt(j-1)-'a';
+            // Max Used To Remove Duplicacy
+            if((prev == 25 && ch == 0) || (prev+1==ch)) arr[ch] = Math.max(arr[ch],j-i+1);
+            else
+            {
+                i = j;
+                arr[ch] = Math.max(arr[ch],1);
+            }
+            j++;
+        }
+        int sum = 0;
+        for(int ele : arr) sum+=ele;
+        return sum;
+    }
+
+
+    // 676. Implement Magic Dictionary
+    // Using Trie
+
+    class Node
+    {
+        Node[] next= new Node[26];
+        boolean isEnd;
+    }
+    Node root= new Node();
+
+    public MagicDictionary() 
+    {
+        
+    }
+    
+    public void buildDict(String[] dict) 
+    {
+        for (String s: dict)
+        {
+            Node cur= root;
+            for (char c: s.toCharArray())
+            {
+                if (cur.next[c-'a']==null) cur.next[c-'a']=new Node();
+                cur=cur.next[c-'a'];
+            }
+            cur.isEnd=true;
+        }
+    }
+
+    public boolean search(String word) 
+    {
+        return dfs(root, word, 0, false);
+    }
+    public boolean dfs(Node cur, String word, int idx, boolean used)
+    {
+        if (cur==null) return false;
+        if (idx==word.length()) return cur.isEnd && used;
+        char c= word.charAt(idx);
+        for (int i=0; i<26; i++)
+        {
+            if (used && (c-'a')!=i) continue; // Means that we have used a chnace of changing
+            // but we are still un un matched character
+            if (dfs(cur.next[i], word, idx+1, used || (c-'a')!=i)) return true;
+            // if (c-'a')!=i set used to true else be it false
+        }
+        return false;
+    }
+
+
+    // 861. Score After Flipping Matrix
+    // First make first column 1 by toggling on the rows
+    // Then traverse on every column chech no of 1
+    // 1 > 0 continue;
+    // 0 > 1 toggle whole columns
+
+
+    public int matrixScore(int[][] grid) 
+    {
+        int m = grid.length;
+        int n = grid[0].length;
+        for(int i = 0;i<m;i++)
+        {
+            if(grid[i][0] == 0)
+            {
+                for(int j = 0;j<n;j++)
+                {
+                    grid[i][j] = (grid[i][j] == 0) ? 1 : 0;
+                }
+            }
+        }
+        
+        for(int i = 1;i<n;i++)
+        {
+            int c = 0;
+            for(int k = 0;k<m;k++)
+            {
+                if(grid[k][i] == 1)  c++;
+            }
+            
+            if(m-c > c)
+            {
+                for(int j = 0;j<m;j++)
+                {
+                    grid[j][i] = (grid[j][i] == 0) ? 1 : 0;
+                }
+            }
+        }
+        
+        int sum = 0;
+        
+        for(int i = 0;i<m;i++)
+        {
+            StringBuilder t = new StringBuilder();
+            for(int j = 0;j<n;j++) t.append(grid[i][j]);
+            sum+=Integer.parseInt(t.toString(),2);
+        }
+        
+        return sum;
+    }
+
+
+    
 }
