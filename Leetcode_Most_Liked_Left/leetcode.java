@@ -4134,6 +4134,294 @@ class leetcode
         return sum;
     }
 
+    // 54. Spiral Matrix
+
+    public List<Integer> spiralOrder(int[][] matrix) 
+    {
+        int n = matrix.length;
+        int m = matrix[0].length;
+        int x = 0;
+        int y = 0;
+        int dx = n-1;
+        int dy = m-1;
+        
+        List<Integer> ans = new ArrayList<>();
+        
+        while(ans.size() < m*n)
+        {
+            for(int i = y;i<=dy;i++) ans.add(matrix[x][i]);
+            
+            if(ans.size() == m*n) break;
+            
+            for(int i = x+1;i<=dx;i++) ans.add(matrix[i][dy]);
+                
+            if(ans.size() == m*n) break;
+            
+            for(int i = dy-1;i>=y;i--) ans.add(matrix[dx][i]);
+            
+            if(ans.size() == m*n) break;
+            
+            for(int i = dx-1;i>x;i--) ans.add(matrix[i][y]);
+            y++;
+            x++;
+            dy--;
+            dx--;
+        }
+        return ans;
+    }
+
+    // 2326. Spiral Matrix IV
+    // Concept is same as above
+    public int[][] spiralMatrix(int m, int n, ListNode head) 
+    {
+        int[][] matrix = new int[m][n];
+        for(int[]ele : matrix) Arrays.fill(ele,-1);
+        
+        int temp = n;
+        n = m;
+        m = temp;
+        int x = 0;
+        int y = 0;
+        int dx = n-1;
+        int dy = m-1;
+        
+        while(head!=null)
+        {
+            for(int i = y;i<=dy;i++) 
+            {
+                matrix[x][i] = head.val;
+                head = head.next;
+                if(head == null) return matrix;
+            }
+            
+            if(head == null) return matrix;
+            
+            for(int i = x+1;i<=dx;i++) 
+            {
+                matrix[i][dy] = head.val;
+                head = head.next;
+                if(head == null) return matrix;
+            }
+                
+            if(head == null) return matrix;
+            
+            for(int i = dy-1;i>=y;i--) 
+            {
+                matrix[dx][i] = head.val;
+                head = head.next;
+                if(head == null) return matrix;
+            }
+            
+            if(head == null) return matrix;
+            
+            for(int i = dx-1;i>x;i--) 
+            {
+                matrix[i][y] = head.val;
+                head = head.next;
+                if(head == null) return matrix;
+            }
+            y++;
+            x++;
+            dy--;
+            dx--;
+        }
+        return matrix;
+    }
+
+
+    // 2327. Number of People Aware of a Secret
+    // Good Problem
+
+        public int peopleAwareOfSecret(int n, int delay, int forget) 
+    {
+        int mod = (int)1e9+7;
+        
+        int[] dp = new int[n];
+        
+        dp[0] = 1;
+        
+        for(int i=1;i<n;i++)
+        {
+            for(int j = Math.max(i-forget+1,0);j<i&&i-j>=delay;j++)
+            {
+                dp[i] = (dp[i] + dp[j])%mod;
+            }
+        }
+        int sum = 0;
+        for(int i = n-1;i>=n-forget;i--) sum = (sum + dp[i])%mod;
+        return sum;
+    }
+
+
+    // 1124. Longest Well-Performing Interval
+
+    public int longestWPI(int[] hours)
+    {
+        int len = 0;
+        int pfx = 0;
+        HashMap<Integer,Integer> map = new HashMap<>();
+        map.put(0,-1);
+        
+        for(int i = 0;i<hours.length;i++)
+        {
+            pfx += (hours[i] > 8) ? 1 : -1;
+            if(!map.containsKey(pfx)) map.put(pfx,i);
+            if(map.containsKey(pfx-1) && pfx <= 0) len = Math.max(i-map.get(pfx-1),len);
+            else if(pfx > 0) len = Math.max(len,i+1);
+        }
+        return len;
+    }
+
+
+    // 916. Word Subsets
+    // Simple Solution
+
+    public List<String> wordSubsets(String[] A, String[] B) 
+  {
+        int[] count = new int[26], tmp;
+        int i;
+        for (String b : B) 
+        {
+            tmp = counter(b);
+            for (i = 0; i < 26; ++i) count[i] = Math.max(count[i], tmp[i]);
+        }
+        List<String> res = new ArrayList<>();
+        for (String a : A) 
+        {
+            tmp = counter(a);
+            for (i = 0; i < 26; ++i) if (tmp[i] < count[i]) break;
+            if (i == 26) res.add(a);
+        }
+        return res;
+    }
+
+    public int[] counter(String word) 
+    {
+        int[] count = new int[26];
+        for (char c : word.toCharArray()) count[c - 'a']++;
+        return count;
+    }
+
+
+    // 1344. Angle Between Hands of a Clock
+    // Its A Math Question
+    // The minute hand moves 360 degrees in 60 minute(or 6 degrees in one minute)
+    // Hour hand moves 360 degrees in 12 hours(or 0.5 degrees in 1 minute).
+    public double angleClock(int hour, int minutes) 
+    {
+         // Degree covered by hour hand (hour area + minutes area)
+        double h = (hour%12 * 30) + ((double)minutes/60 * 30); // This Is Tricky to find
+        
+         // Degree covered by minute hand (Each minute = 6 degree)
+        double m = minutes * 6;
+        
+         // Absolute angle between them
+        double angle = Math.abs(m - h);
+        
+         // If the angle is obtuse (>180), convert it to acute (0<=x<=180)
+        if (angle > 180) angle = 360.0 - angle;
+        
+        return angle;
+    }
+
+
+    // 738. Monotone Increasing Digits
+    // Simple Problem
+
+    public int monotoneIncreasingDigits(int N) 
+    {
+        char[] ch = String.valueOf(N).toCharArray();
+        int mark = ch.length;
+        for(int i = ch.length-1;i>0;i--)
+        {
+            if(ch[i]<ch[i-1])
+            {
+                mark = i-1;
+                ch[i-1]--;
+            }
+        }
+        for(int i = mark+1;i<ch.length;i++) ch[i] = '9';
+        return Integer.parseInt(new String(ch));
+    }
+
+
+    // 433. Minimum Genetic Mutation
+    // Simple BFS
+
+    public int minMutation(String s, String end, String[] bank)
+    {
+        HashSet<String> set = new HashSet<>();
+        for(String ele : bank) set.add(ele);
+        char[] arr = new char[]{'A','C','G','T'};
+        StringBuilder start = new StringBuilder(s);
+        HashSet<String> visited = new HashSet<>();
+        LinkedList<String> queue = new LinkedList<>();
+        
+        queue.add(start.toString());
+        visited.add(start.toString());
+        int level = 0;
+        
+        while(queue.size() > 0)
+        {
+            int size = queue.size();
+            
+            while(size-- > 0)
+            {
+                StringBuilder temp = new StringBuilder(queue.removeFirst());
+                if(temp.toString().equals(end)) return level;
+                
+                for(int i = 0;i<temp.length();i++)
+                {
+                    char original = temp.charAt(i);
+                    for(char ele : arr)
+                    {
+                        temp.setCharAt(i,ele);
+                        if(set.contains(temp.toString()) && !visited.contains(temp.toString())) 
+                        {
+                            visited.add(temp.toString());
+                            queue.addLast(temp.toString());
+                        }
+                    }
+                    temp.setCharAt(i,original);
+                }
+            }
+            level++;
+        }
+        return -1;
+    }
+
+
+    // 1352. Product of the Last K Numbers
+    // Just Handle For ele 0;
+    // Prefix Product
+
+    static List<Integer> prod;
+    static int p;
+    public ProductOfNumbers() 
+    {
+        prod = new ArrayList<>();
+        p = 1;
+    }
+    public void add(int num) 
+    {
+        if(num == 0) 
+        {
+            prod = new ArrayList<>();
+            p = 1;
+            return;
+        }
+        p *= num;
+        prod.add(p);
+    }
+    public int getProduct(int k) 
+    {
+        if(prod.size() < k) return 0;
+        int ans = prod.get(prod.size() - 1);
+        if(prod.size() == k) return ans;
+        return (ans / prod.get(prod.size() - 1 - k));
+    }
+
 
     
+
 }
