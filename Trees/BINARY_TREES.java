@@ -3,6 +3,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+
 class BinaryTrees
 {
     public class TreeNode
@@ -342,7 +343,7 @@ class BinaryTrees
     }
 
     // LEETCODE 337 HOUSE ROBBER 3
-    // JUST RETURN THE VALUE OF (MY) AND (MY CHILD) VIDEO IN DRU RUN
+    // JUST RETURN THE VALUE OF (ME) AND (MY CHILD) VIDEO IN DRU RUN
     public int rob(TreeNode root) 
     {
         int[] ans = rob_(root);
@@ -368,8 +369,10 @@ class BinaryTrees
             this.w = w;
         }
     }
-    public int widthOfBinaryTree(TreeNode root) {
-        if (root == null) {
+    public int widthOfBinaryTree(TreeNode root) 
+    {
+        if (root == null) 
+        {
             return 0;
         }
         LinkedList<pair> que = new LinkedList<>();

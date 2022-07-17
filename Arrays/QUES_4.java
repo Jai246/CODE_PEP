@@ -151,7 +151,7 @@ public class pepYtListSearchingSorting
     }
 
     // 658. Find K Closest Elements
-    // Important bs to find closest element <=
+    // Important binary search to find closest element <=
     public List<Integer> findClosestElements(int[] arr, int k, int x)
     {
         int n = arr.length;
@@ -299,36 +299,50 @@ public class pepYtListSearchingSorting
     }
 
     // 34. Find First and Last Position of Element in Sorted Array
-
-    public int[] searchRange(int[] arr, int target) 
+    // Very Simple Solution
+    public int[] searchRange(int[] nums, int target) 
     {
-        if(arr.length == 0) return new int[]{-1,-1};
-        int[] res = new int[2];
-        res[0] = first(arr,target,-1,arr.length-1);
-        res[1] = last(arr,target,0,arr.length);
-        return res;
+        return new int[]{first(nums,target),last(nums,target)};
     }
-    public static int first(int[] arr , int tar , int si , int ei)
+    
+    public int first(int[] arr , int tar)
     {
-        while(ei-si > 1)
+        int pos = -1;
+        int i = 0;
+        int j = arr.length-1;
+        
+        while(i<=j)
         {
-            int mid = (ei+si)/2;
-            if(arr[mid] >= tar) ei = mid;
-            else si = mid;
+            int mid = (i+j)/2;
+            if(arr[mid] == tar)
+            {
+                pos = mid;
+                j = mid-1;
+            }
+            else if(arr[mid] < tar) i = mid+1;
+            else j = mid-1;
         }
-        if(arr[ei] == tar) return ei;
-        return -1;
+        return pos;
     }
-    public static int last(int[] arr , int tar , int si , int ei)
+    
+    public int last(int[] arr , int tar)
     {
-        while(ei-si > 1)
+        int pos = -1;
+        int i = 0;
+        int j = arr.length-1;
+        
+        while(i<=j)
         {
-            int mid = (ei+si)/2;
-            if(arr[mid] <= tar) si = mid;
-            else ei = mid;
+            int mid = (i+j)/2;
+            if(arr[mid] == tar)
+            {
+                pos = mid;
+                i = mid+1;
+            }
+            else if(arr[mid] < tar) i = mid+1;
+            else j = mid-1;
         }
-        if(arr[si] == tar) return si;
-        return -1;
+        return pos;
     }
 
     // Max sum in the configuration 
@@ -378,6 +392,32 @@ public class pepYtListSearchingSorting
         return -1;
     }
 
+    // 81. Search in Rotated Sorted Array II
+
+    public static boolean search(int[] arr, int data)
+    {
+        int lo = 0;
+        int hi = arr.length-1;
+        
+        while(lo<=hi)
+        {
+            int mid = (lo + hi)/2;
+            if(data == arr[mid] || data == arr[hi]) return true;
+            else if(arr[mid] > arr[lo])
+            {
+                if(data <= arr[mid] && data >= arr[lo]) hi = mid - 1;
+                else lo = mid + 1;
+            }
+            else if(arr[hi] > arr[mid])
+            {
+                if(data <= arr[hi] && data >= arr[mid]) lo = mid+1;
+                else hi = mid-1;
+            }
+            else hi--; // [1,0,1,1,1] Important Case
+        }
+        return false;
+    }
+
     // 153. Find Minimum in Rotated Sorted Array
 
     public int findMin(int[] nums) 
@@ -401,6 +441,8 @@ public class pepYtListSearchingSorting
         }
         return min;
     }
+
+    
 
     // Rotation Geeks For Geeks
 
@@ -955,56 +997,24 @@ public class pepYtListSearchingSorting
 
 
     // 475. Heaters
-
-    public long ceil(int[]arr , int tar)
-    {   
-        int i = 0;
-        int j = arr.length-1;
-        while(i<j)
-        {
-            int mid = (i+j)/2;
-            if(arr[mid] >= tar) j = mid;
-            else i = mid+1;
-        }
-        return (arr[i]>=tar) ? arr[i] : (long)1e11;
-    }
-    
-    public long floor(int[]arr , int tar)
+    // TreeSet Solution
+    public int findRadius(int[] houses, int[] heaters)
     {
-        int i = 0;
-        int j = arr.length-1;
-        while(j-i >=2)
+        TreeSet<Integer> s = new TreeSet<>();
+        for (int ht:heaters)  s.add(ht);
+        int a = 0;
+        for (int ho:houses) 
         {
-            int mid = (i+j)/2;
-            if(arr[mid] <= tar) i = mid;
-            else j = mid-1;
+            Integer lo = s.floor(ho);
+            Integer hi = s.ceiling(ho);
+            if (lo==null) a = Math.max(a, Math.abs(hi-ho));
+            else 
+            {
+                if (hi==null)  a = Math.max(a, Math.abs(lo-ho));
+                else a = Math.max(a, Math.min(Math.abs(lo-ho), Math.abs(hi-ho)));
+            }
         }
-        if(arr[i] == tar || arr[j] == tar) return tar;
-        
-        if(arr[j] < tar) return arr[j];
-        
-        if(arr[i] < tar) return arr[i];
-        
-        return -(long)1e11;
-        
-    }
-    
-    public int findRadius(int[] houses, int[] heaters) 
-    {
-        Arrays.sort(heaters);
-        long max = -(long)1e11;
-        for(int ele : houses){
-            long rightVal = ceil(heaters,ele);
-            long leftVal = floor(heaters,ele);
-            // System.out.println(leftVal+" + "+ rightVal);
-            
-            long left = ele - leftVal;
-            long right = rightVal - ele;
-            
-            max = Math.max(max,Math.min(left,right));
-            // System.out.println(max);
-        }
-        return (int)max;
+        return a;
     }
 
     // Punish the Students 
@@ -1083,7 +1093,8 @@ public class pepYtListSearchingSorting
         int peri = -(int)1e9;
         for(int i = nums.length-1;i>=2;i--)
         {
-            if(nums[i-2] + nums[i-1] > nums[i]){
+            if(nums[i-2] + nums[i-1] > nums[i])
+            {
                 peri = Math.max(peri,nums[i]+nums[i-1]+nums[i-2]);
             }
         }

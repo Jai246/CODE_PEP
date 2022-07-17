@@ -38,6 +38,29 @@ class extraFaang
 
     }
     // GEEKS FOR GEEKS IMAGE MULTIPLICATION
+
+    // Simple Recursive Solution
+
+    long mod = (long) 1e9+7;
+    public long imgMultiply(Node root)
+    {
+        long[] ans = new long[]{((long)root.data*(long)root.data)%mod};
+        multiply(root.left,root.right,ans);
+        return ans[0];
+    }
+    
+    public void multiply(Node r1 , Node r2 , long[]ans)
+    {
+        if(r1 == null || r2 == null) return;
+        ans[0] = (ans[0] + ((long)r1.data*(long)r2.data)%mod)%mod;
+        multiply(r1.left,r2.right,ans);
+        multiply(r1.right,r2.left,ans);
+    }
+
+
+    // Iterative Solution
+
+
     public static void addAllRight(Node root , LinkedList<Node> stack)
     {
         while(root!=null)
@@ -144,7 +167,9 @@ class extraFaang
 
         return;
     }
-    // invert tree leetcode 226. Invert Binary Tree
+
+    // Invert Tree leetcode 226. 
+    // Invert Binary Tree
 
     public TreeNode invert(TreeNode root)
     {
@@ -160,6 +185,8 @@ class extraFaang
     {
         return invert(root);
     }
+
+
     
     // CONVERT TREE TO A DOUBLY LINKED LIST
     public Node bTreeToClist(Node root)
@@ -190,6 +217,8 @@ class extraFaang
         if(right!=null) return right;
         return root;
     }
+
+
 
     // DOUBLY LINKED LIST TO BINARY SEARCH TREE (INORDER TRAVERSAL TO A BINARY SEARCH TREE)
     // VERY NICE SOLUTION READ FROM GFG 
@@ -228,6 +257,11 @@ class extraFaang
     // FIRST CREATE SINGLY LINIKEDLIST FROM BOTH THE BINARY SEARCH TREES
     // MERGE BOTH THE SINGLY LINKED LIST
     // CONVERT THIS CONVERTED LIST TO A BINARY SEARCH TREE
+
+    // We Can Do This Using Stck As WEll 
+    // Leetcode 1305
+    // Check Question 1 File
+
     public static TreeNode convertToSingleLL(TreeNode root , TreeNode dummy)
     {
         if(root == null) return null;
@@ -390,15 +424,15 @@ class extraFaang
         {
             if(root.left!=null)
             {
-                //itr.next = root.left;
-                //itr = itr.next;
+                itr.next = root.left;
+                itr = itr.next;
             }
             if(root.right!=null)
             {
-                //itr.next = root.right;
-                //itr = itr.next;
+                itr.next = root.right;
+                itr = itr.next;
             }
-           // root = root.next;
+           root = root.next;
         }
     }
 
@@ -518,8 +552,12 @@ class extraFaang
         path.remove(path.size()-1);
     }
 
+
+
     // DISTRIBUTE COINS IN  A BINARY TREEE
     // VERY IMPORTANT QUESTION
+    // Ratne Wala Sawal
+    // Check Dryrun
     int ans;
     public int distributeCoins(TreeNode root) 
     {
@@ -709,6 +747,9 @@ class extraFaang
             int min = (int)Math.pow(2, level);
             int max = (int)Math.pow(2, level+1)-1;
             int reversedLabel = min + max - label;
+            // Subtracting the value means that we are circularly rotainf the 
+            // Position 
+            // Think this over the extreme leave nodes
             label = reversedLabel/2;
             level = level - 1;
         }
@@ -917,6 +958,8 @@ class extraFaang
 
     // Solution 2
     // Important Code Plz Do Dryrun
+    // Here We Are Simply Iterating Onn each Level;
+
     public Node connect(Node root)
     {
         Node head = root;
@@ -955,12 +998,12 @@ class extraFaang
 
     // time complexity O(N) , space complexity O(height)
     /*  approach :
-            --> as we are given the starting red color node(x), the only place to start coloring blue that ensures blue to win is to color any adjacent node of x to blue.
-            --> if we color left child of x to blue then we can stop the red color player to color any node of subtree starting from the left child of x.
-            --> similar goes for  right child for x.
-            --> if we initially color parent node of x to blue , then we can stop the red color player to color upper nodes of x and their remaining children.
-            --> in either case blue player will be coloring only 1 part(left subtree/right subtree/ parent tree) and rest 2 parts are colored by red.
-            --> find # nodes in any 1 part > # of nodes in remaining 2 parts , if yes then blue can win else cann't.
+    --> as we are given the starting red color node(x), the only place to start coloring blue that ensures blue to win is to color any adjacent node of x to blue.
+    --> if we color left child of x to blue then we can stop the red color player to color any node of subtree starting from the left child of x.
+    --> similar goes for  right child for x.
+    --> if we initially color parent node of x to blue , then we can stop the red color player to color upper nodes of x and their remaining children.
+    --> in either case blue player will be coloring only 1 part(left subtree/right subtree/ parent tree) and rest 2 parts are colored by red.
+    --> find # nodes in any 1 part > # of nodes in remaining 2 parts , if yes then blue can win else cann't.
     */
 
 
@@ -1012,6 +1055,8 @@ class extraFaang
     // ON LEETCODE WE NEED TO TAKE THE ABSOLUTE DIFFERENCE VALUE
     // IMPORTANT TESTCASE
 
+    // just Find Both Minimum And Maximum
+    // From Bottom to Top
     public static int maxAncestorDiff(TreeNode root) 
     {
         if (root == null) 
@@ -1025,10 +1070,7 @@ class extraFaang
 
     public static void helper(TreeNode node, int curMax, int curMin , int[]result) 
     {
-        if (node == null) 
-        {
-            return;
-        }
+        if (node == null) return;
         int possibleResult = Math.max(Math.abs(curMax - node.val), Math.abs(curMin - node.val));
         result[0] = Math.max(result[0], possibleResult);
         curMax = Math.max(curMax, node.val);

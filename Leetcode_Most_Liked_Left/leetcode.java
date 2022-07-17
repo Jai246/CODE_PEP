@@ -88,15 +88,14 @@ class leetcode
 
     public int leastInterval(char[] tasks, int n)
     {
-        if (n == 0) return tasks.length;
-        n++;
         int ans = 0;
+        n = n + 1;
         Map<Character, Integer> taskToCount = new HashMap<>();
         for (char c : tasks) {
             taskToCount.put(c, taskToCount.getOrDefault(c, 0) + 1);
         }
         
-        Queue<Integer> pq = new PriorityQueue<>((i1, i2) -> i2 - i1);
+        PriorityQueue<Integer> pq = new PriorityQueue<>((i1, i2) -> i2 - i1);
         for (char c : taskToCount.keySet()) pq.offer(taskToCount.get(c));
         
         LinkedList<Integer> rem = new LinkedList<>();
@@ -104,7 +103,7 @@ class leetcode
         while(pq.size()!=0)
         {
             int s = pq.size();
-            ans += n;
+            ans += n; // We just Need to Figure Out This Only
             int p = n;
             while(pq.size() > 0 && p-- > 0) rem.addLast(pq.remove());
 
@@ -114,7 +113,7 @@ class leetcode
                 if(val > 0) pq.add(val);
             }
 
-            if(pq.size() == 0) ans -= (n-s);
+            if(pq.size() == 0) ans -= (n-s); // Handling the Ending Part
         }
         return ans;
     }
@@ -143,7 +142,7 @@ class leetcode
 
     // 16. 3Sum Closest
     // Almost Same As Three Sum
-    // We Are Moving From Left to Right Because We want
+    // This Will Work Both from Left to Right and Right To Left
     public int threeSumClosest(int[] nums, int target) 
     {
         int result = (int)1e9;
@@ -230,12 +229,8 @@ class leetcode
             curr.add(a[i]);
             backtrack(a, i+1, curr,res);
             curr.remove(curr.size()-1);
-            
-            
-            while(i+1 < a.length && a[i] == a[i+1]) 
-            {
-                i += 1;
-            }
+            while(i+1 < a.length && a[i] == a[i+1])  i += 1;
+            // Skipping the Duplicates
         }
     }
 
@@ -315,6 +310,15 @@ class leetcode
     // O(n2) due to insertion
     // Here Front means left to the current person
 
+
+    // When Height is equal sort in increasing order off people
+    // Else sort in decreasing order of height
+    
+    // [(7,0),(4,4),(7,1),(5,0),(6,1),(5,2)]
+    // [(7,0),(7,1),(6,1),(5,0),(5,2),(4,4)]
+
+    // [(5,0),(7,0),(5,2),(6,1),(4,4),(7,1)]
+
     public int[][] reconstructQueue(int[][] people) 
     {
         Arrays.sort(people,new peopleComparator());        
@@ -333,8 +337,8 @@ class leetcode
     }
 
     ///289. Game of Life
-    // No Extra Spac Just Modifying the values
-    // This is someone  else's solution and not my silution
+    // No Extra Space Just Modifying the values
+    // This is someone  else's solution and not my solution
     // There are tons of ways to solve this problem
     // You can do this by using your own convention
     // Only thing to note here is that to update a cell only previous state values are going to be considered
@@ -359,31 +363,22 @@ class leetcode
         }
     }
 
-    private void checkAndUpdate(int[][] board, int i, int j) 
+    public void checkAndUpdate(int[][] board, int i, int j)
     {
         int m = board.length;
         int n = board[0].length;
         int count = 0;
-        int[][] indexes = { { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 }, { 1, 1 }, { -1, -1 }, { -1, 0 }, { -1, 1 } };
+        int[][] indexes = {{0,-1},{0,1},{1,-1},{1,0},{1,1},{-1,-1},{-1,0}, {-1,1}};
         for (int[] index : indexes) 
         {
-            if (i + index[0] < 0 || i + index[0] >= m || j + index[1] < 0 || j + index[1] >= n) 
-            {
-                continue;
-            }
-            if (Math.abs(board[i + index[0]][j + index[1]]) == 1) 
-            {
-                count++;
-            }
+            if (i + index[0] < 0 || i + index[0] >= m || j + index[1] < 0 || j + index[1] >= n) continue;
+            if (Math.abs(board[i + index[0]][j + index[1]]) == 1) count++;
+            // Took the absolute value to cover both 1 and -1
+            // 1 has not died
+            // Whereas -1 represents , Initially I was but now Died
         }
-        if (board[i][j] == 0 && count == 3) 
-        {
-            board[i][j] = 2;
-        } 
-        else if (board[i][j] == 1 && (count < 2 || count > 3)) 
-        {
-            board[i][j] = -1;
-        }
+        if (board[i][j] == 0 && count == 3) board[i][j] = 2; // Will Live Long
+        else if (board[i][j] == 1 && (count < 2 || count > 3)) board[i][j] = -1; // Will Die
     }
 
 
@@ -535,7 +530,7 @@ class leetcode
             // Agar 3 se kam hei toh bhi add hogi
             if(count%3 != 0) 
             {
-                // Here We Are Actually Creating the answer by collecting differrnt bits
+                // Here We Are Actually Creating the answer by collecting different bits
                 ans+= shift;
             }
             shift = shift * 2;
@@ -580,11 +575,11 @@ class leetcode
 
     // 745. Prefix and Suffix Search
     // Using HashMap
-    // for apple we are storing
-    // a|apple  a|pple  a|ple  a|le  a|e
-    // ap|apple  ap|pple  ap|ple  ap|le  ap|e
-    // app|apple  app|pple  app|ple  app|le  app|e
-    // appl|apple  appl|pple  appl|ple  appl|le  appl|e
+    // for apple we are storing every combination of prefix and suffix
+    // a|apple      a|pple      a|ple      a|le      a|e
+    // ap|apple     ap|pple     ap|ple     ap|le     ap|e
+    // app|apple    app|pple    app|ple    app|le    app|e
+    // appl|apple   appl|pple   appl|ple   appl|le   appl|e
     // apple|apple  apple|pple  apple|ple  apple|le  apple|e
 
     public HashMap<String,Integer> map;
@@ -860,8 +855,8 @@ class leetcode
             
             if(curr > next)
             {
-                if(prev <= next) nums[i] = next;
-                else nums[i+1] = nums[i];
+                if(prev <= next) nums[i] = nums[i+1]; // 1 5 7  -->   1 5 5 //  Hamesha Choti Value Lagane Ki Koshish
+                else nums[i+1] = nums[i]; // 5 7 1 -->  5 7 7
                 count++;
             }
             prev = nums[i];
@@ -907,15 +902,18 @@ class leetcode
 
     // 918. Maximum Sum Circular Subarray
     // Very Important Problem
-    // USing The Idea of Finding minSum , maxSum SubArray
+    // Check Dryrun Folder
+    // Using The Idea of Finding minSum , maxSum SubArray
     // if maxSum < 0 means that all elements in the array are negative
     // so we will return negative
     // else we will return totalSum + minSum
-    // Please note that minSum That we have calculated 
+    // Please note that minSum That we have calculated
     // here is actually the max sum of array when all
     // elements of the array is inverted ie 1 -> -1 || -1 -> 1
     // That's why we are adding it to total sum ans not subtracting it
 
+    // SUMMARY
+    // TOTAL-MIN SUBARRAY SUM IS GONNA GIVE YOU MAXIMUM CIRCULAR SUM
     public int maxSubarraySumCircular(int[] A) 
     {
         int total = 0, maxSum = -(int)1e9, curMax = 0, minSum = -(int)1e9, curMin = 0;
@@ -1020,7 +1018,7 @@ class leetcode
     // element on the left and on the right.
     // A stack based solution from previous 
     // problems can be applied as lee215 mentioned in his post.
-
+    // Yeh Mujhe Samajh Nahi Aaya
 
     public int mctFromLeafValues(int[] arr) 
      {
@@ -1143,11 +1141,12 @@ class leetcode
         return ans;
     }
 
+
+
     // No Of Matching Subsequences
     // Again a very good question
     // Very Important Visualization in DryRun
     // Mind Blowing Solution
-
 
     class Node 
     {
@@ -1453,8 +1452,12 @@ class leetcode
     {
         Set<String> s = new HashSet<>(Arrays.asList(words));
         for (String w : words)
+        {
             for (int i = 1; i < w.length(); ++i)
+            {
                 s.remove(w.substring(i));
+            }
+        }           
         int res = 0;
         for (String w : s) res += w.length() + 1;
         return res;
@@ -1548,7 +1551,7 @@ class leetcode
                 
                 if(v1+v2+v3 == target)
                 {
-                    if(v2 == v3) // Important Case
+                    if(v2 == v3) // Important Case [2 2 2 2 2 2]
                     {
                         while(j > i)
                         {
@@ -1577,27 +1580,25 @@ class leetcode
                     i++;
                     j--;
                 }
-                else if(v1+v2+v3 > target)
-                {
-                    j--;
-                }
-                else
-                {
-                    i++;
-                }
+                else if(v1+v2+v3 > target) j--;
+                else i++;
             }
         }
         return count%mod;
     }
 
 
-    // 1438. Longest Continuous Subarray With 
+    // 1438. Longest Continuous Subarray With
     // Absolute Diff Less Than or Equal to Limit
     // Simple Solution Using TreeMap to get the 
-    // minimum and maximum elements 
+    // minimum and maximum elements
 
     // We can Simple Do this question using two PriorityQueues
     // or using a single TreeMap to get Maximum and minimum
+
+    // TreeSet + Sliding Window;
+    // Important Problem
+
     public int longestSubarray(int[] nums, int limit) 
     {
         TreeMap<Integer,Integer> map = new TreeMap<>();
@@ -1657,10 +1658,9 @@ class leetcode
     // ele.count > (ele+1).count break;
     // beacuse agar aaisa kuch hei 1 2 3 3 4 5 aur mei pehla subsequence 1 2 3 4 5 bana leta hu toh
     // joh eak extra 3 hei voh akale reh jayega 
-    // but agar mei 1 2 3 , 3 4 5 banata hu toh 3 bhe subsequence bana sakta hei of length >=3
-    // isliye since humne aaisa kiya
+    // but agar mei 1 2 3 , 3 4 5 banata hu toh 3 bhi subsequence bana sakta hei of length >=3
+    // isliye humne aaisa kiya
     // think over this , Important Solution
-
     public boolean isPossible(int[] nums) 
     {
         HashMap<Integer,Integer> map = new HashMap<>();
@@ -1695,6 +1695,7 @@ class leetcode
 
 
     // 1049. Last Stone Weight II
+    // Important Observation
     // This Problem is equivilant to partitian 
     // into subsets such that the diffenence is minimum
     // Greedy Was Not working For this problem
@@ -1814,6 +1815,7 @@ class leetcode
     // 1254. Number of Closed Islands
     // 2 represents that the cell is visited but not valid as it may lead to no boundary so no need to apply further DFS
     // -1 represents that the cell is visited and valid as it is leading to boundary
+    // Put Dfs Call On Zero
     public int closedIsland(int[][] grid) 
     {
         int count = 0;
@@ -1885,6 +1887,8 @@ class leetcode
     // 1395. Count Number of Teams
     // First Solution
     // Check DryRun
+    // Here We Have created A HashMap which is actually storing
+    // Valid count of Subarrays of length 1 and length 2;
     public int numTeams(int[] rating) 
     {
         HashMap<Integer,Integer>[] dp1 = new HashMap[rating.length];
@@ -1958,7 +1962,7 @@ class leetcode
     // 1219. Path with Maximum Gold
     // Simple DFS Solution
 
-        int r = 0;
+    int r = 0;
     int c = 0;
     int max = 0;
     public int getMaximumGold(int[][] grid) 
@@ -2002,7 +2006,7 @@ class leetcode
     {
         Arrays.sort(intervals,(a,b)->{
             if(a[0]!=b[0]) return a[0]-b[0];
-            return b[1]-a[1];
+            return b[1]-a[1]; // [[1,2],[1,4],[3,4]] because of this TC
         });
         // for(int[]ele : intervals) System.out.println(Arrays.toString(ele));
         int count = 1;
@@ -2093,7 +2097,11 @@ class leetcode
     // filling up the spaces on the array 
     // The idea is to complete that job first 
     // which is going to end first
+    // i.e assigning the first free slot in the range
     // 42/44 test cases passed
+
+    // Here we Are Assgning the first Empty Index to the Job
+
     public int maxEvents(int[][] events) 
     {
         Arrays.sort(events,(a,b)->{
@@ -2119,7 +2127,9 @@ class leetcode
 
 
     // Simple TreeSet Solution
-
+    // Similar Work using TreeSet we did above
+    // In the array we are marking 1 but here in treeset solution 
+    // I am removig the used index
     public int maxEvents(int[][] events) 
     {
         Arrays.sort(events,(a,b)->{
@@ -2215,7 +2225,7 @@ class leetcode
 
 
     // 807. Max Increase to Keep City Skyline
-
+    // Row and Column kaa max nikal lo
     public int maxIncreaseKeepingSkyline(int[][] grid) 
     {
         int n = grid.length;
@@ -2249,7 +2259,7 @@ class leetcode
 
     // 622. Design Circular Queue
     // Very Important And Concise Solution
-    // Initializing rear to -1 is important
+    // Initializing rear to -1 is Important
 
     final int[] a;
     int front = 0, rear = -1, len = 0;
@@ -2314,7 +2324,7 @@ class leetcode
 
 
     // 1079. Letter Tile Possibilities
-    // BAcktrackig Solution
+    // Backtrackig Solution
 
     Set<String> set = new HashSet();
     boolean[] vis;
@@ -2348,15 +2358,11 @@ class leetcode
     {
         int[] dp = new int[values.length];
         dp[0] = values[0];
-        for(int i = 1;i<values.length;i++)
-        {
-            dp[i] = Math.max(dp[i-1],values[i]+i);
-        }
+        for(int i = 1;i<values.length;i++) dp[i] = Math.max(dp[i-1],values[i]+i);
+
         int score = 0;
-        for(int i = values.length-1;i>0;i--)
-        {
-            score = Math.max(score,dp[i-1] + values[i]-i);
-        }
+        for(int i = values.length-1;i>0;i--) score = Math.max(score,dp[i-1] + values[i]-i);
+
         return score;
     }
 
@@ -2428,8 +2434,8 @@ class leetcode
     // beacuse that will increase the time
     // But Suppose now 5 came and we would definately 
     // like to update it with the max duration selected
-    // course (40 -> 5) so that it will increase to encorporate
-    // the chances of slecting new courses becuase the time is less
+    // course (40 -> 5) so that it will increase the chances to encorporate
+    // the chances of selecting new courses becuase the time is less
 
     // while updating 40 -> 5 it is 100% sure that encorporating
     // it won't exceed the deadline of the selected course
@@ -2544,6 +2550,7 @@ class leetcode
 
     // 1663. Smallest String With A Given Numeric Value
     // Important Solution
+    // Kind Off Ratne Wala
     // Think Greedly
     // Store Largest At the end
     public String getSmallestString(int n, int k) 
@@ -2743,7 +2750,7 @@ class leetcode
             
             while(a > 0 && b > 0 && c > 0)
             {
-                count += s.length()-j;
+                count += s.length()-j; // Important , End Se Calculate Karre Hei Substrings
                 char rem = s.charAt(i);
                 if(rem == 'a') a--;
                 else if(rem == 'b') b--;
@@ -2899,7 +2906,7 @@ class leetcode
     }
 
     // Good Solution
-    public boolean isNStraightHand(int[] hand, int W) 
+    public boolean isNStraightHand(int[] hand, int W)
     {
         if(hand.length % W != 0) return false;
 
@@ -2958,12 +2965,10 @@ class leetcode
         return j == d.length();
     }
 
-
     // 1696. Jump Game VI
-    // Very Important Solution an Approach
+    // Very Important Solution and Approach
     // It is kind of a sliding window problem
     // with max window maintained upto i-k
-
     // Heap Solution
     public int maxResult(int[] nums, int k) 
     {
@@ -2976,7 +2981,8 @@ class leetcode
         for(int i = 1;i<nums.length;i++)
         {
             while(queue.peek()[1] < i-k) queue.remove();
-            queue.add(new int[]{res = nums[i]+queue.peek()[0],i});
+            res = nums[i]+queue.peek()[0];
+            queue.add(new int[]{res,i});
         }
         // System.out.println(queue.peek()[1]);
         // We have to create res variable explicitely because 
@@ -3079,10 +3085,7 @@ class leetcode
     {
         List<Integer> temp = new ArrayList<>();
         for(int i = 1;i<=n;i++) temp.add(i);
-        
-        Collections.sort(temp,(a,b)->{
-            return (a+"").compareTo((b+""));
-        });
+        Collections.sort(temp,(a,b)->{return (a+"").compareTo((b+""));});
         return temp;
     }
 
@@ -3151,46 +3154,30 @@ class leetcode
 
     public int[] advantageCount(int[] nums1, int[] nums2) 
     {
-        TreeMap<Integer,Integer> set = new TreeMap<>();
-        for(int ele : nums1) set.put(ele,set.getOrDefault(ele,0)+1);
-        
-        int[] ans = new int[nums2.length];
-        int[][] nms = new int[nums2.length][2];
+        int[] ans = new int[nums1.length];
         Arrays.fill(ans,-1);
-        for(int i = 0;i<nums2.length;i++){
-            nms[i][0] = nums2[i];
-            nms[i][1] = i;
-        }
+        TreeMap<Integer,Integer> map = new TreeMap<>();
         
-        Arrays.sort(nms,(a,b)->{
-           return a[0]-b[0]; 
-        });
+        for(int ele : nums1) map.put(ele,map.getOrDefault(ele,0)+1);
         
-        
-        for(int[]ele : nms)
+        for(int i = 0;i<nums2.length;i++)
         {
-            Integer a = set.higherKey(ele[0]);
-
-            if(a!=null)
-            {
-                ans[ele[1]] = a;
-                set.put(a,set.get(a)-1);
-                if(set.get(a) == 0) set.remove(a);
-            }
+            int val = nums2[i];
+            Integer res = map.higherKey(val);
+            if(res == null) continue;
+            ans[i] = res;
+            map.put(res,map.getOrDefault(res,0)-1);
+            if(map.get(res) == 0) map.remove(res);
         }
-        
         
         for(int i = 0;i<ans.length;i++)
         {
             if(ans[i] == -1)
             {
-                Integer a = set.firstKey();
-                if(a!=null)
-                {
-                    ans[i] = a;
-                    set.put(a,set.get(a)-1);
-                    if(set.get(a) == 0) set.remove(a);
-                }
+                int val = map.firstKey();
+                ans[i] = val;
+                map.put(val,map.getOrDefault(val,0)-1);
+                if(map.get(val) == 0) map.remove(val);
             }
         }
         return ans;
@@ -3332,6 +3319,8 @@ class leetcode
 
 
     // 962. Maximum Width Ramp
+    // Here Sorting Is Important as well
+    // Can't be done without sorting
     // Simple Sorting + Stack
     // There is an O(N) solution check that as well
      public int maxWidthRamp(int[] nums) 
@@ -3464,7 +3453,7 @@ class leetcode
         
         HashMap<Integer, Integer> map= new HashMap<>();
         map.put(0, -1);
-        int xor=0;
+        int xor=0; // good Choice to Use XOR
         int maxLen=0;
         
         for(int i=0; i<s.length(); i++)
@@ -3685,8 +3674,6 @@ class leetcode
         dfs(node.right, sb);
         sb.deleteCharAt(sb.length() - 1);
     }
-
-
     // 1509. Minimum Difference Between Largest and Smallest Value in Three Moves
     // Good Question
     public int minDifference(int[] A) 
@@ -3731,8 +3718,7 @@ class leetcode
         for (int balls : nums) 
         {
             cnt += balls / size - (balls % size == 0 ? 1 : 0);
-            // cnt += (balls - 1) / size;        
-            if (cnt > maxOperations) 
+            if (cnt > maxOperations)
             {
                 return false;
             }
@@ -4085,7 +4071,7 @@ class leetcode
 
     // 861. Score After Flipping Matrix
     // First make first column 1 by toggling on the rows
-    // Then traverse on every column chech no of 1
+    // Then traverse on every column check no of 1
     // 1 > 0 continue;
     // 0 > 1 toggle whole columns
 
@@ -4232,7 +4218,7 @@ class leetcode
     // 2327. Number of People Aware of a Secret
     // Good Problem
 
-        public int peopleAwareOfSecret(int n, int delay, int forget) 
+    public int peopleAwareOfSecret(int n, int delay, int forget)
     {
         int mod = (int)1e9+7;
         
@@ -4254,7 +4240,8 @@ class leetcode
 
 
     // 1124. Longest Well-Performing Interval
-
+    // JAB pfx greater than 0 hei toh map.get(pfx-1) se length nikalenge
+    // Agar pfx >=1 hei toh length is the answer
     public int longestWPI(int[] hours)
     {
         int len = 0;
@@ -4421,7 +4408,511 @@ class leetcode
         return (ans / prod.get(prod.size() - 1 - k));
     }
 
+    // 826. Most Profit Assigning Work
+    // Combine difficulty and profit and sort on the basis of profit
+    // in decreasing onder
+    // Sort Workers also in decreasing order
 
+    public int maxProfitAssignment(int[] difficulty, int[] profit, int[] worker) 
+    {
+        List<Pair<Integer, Integer>> jobs = new ArrayList<>();
+        int N = profit.length, res = 0, i = 0, best = 0;
+        for (int j = 0; j < N; ++j) jobs.add(new Pair<Integer, Integer>(difficulty[j], profit[j]));
+        Collections.sort(jobs, Comparator.comparing(Pair::getKey));
+        Arrays.sort(worker);
+        for (int ability : worker) 
+        {
+            while (i < N && ability >= jobs.get(i).getKey()) best = Math.max(jobs.get(i++).getValue(), best);
+            res += best;
+        }
+        return res;
+    }
     
+    // 1493. Longest Subarray of 1's After Deleting One Element
+    // Simple Sliding Window Problem
 
+    public int longestSubarray(int[] nums) 
+    {
+        int i = 0;
+        int j = 0;
+        boolean zero = false;
+        int len = 0;
+        while(j < nums.length)
+        {
+            int val = nums[j];
+            if(val == 1)
+            {
+                len = Math.max(len,j-i);
+            }
+            else if(val == 0)
+            {
+                if(!zero) 
+                {
+                    len = Math.max(len,j-i);
+                    zero = true;
+                }
+                else
+                {
+                    while(nums[i] == 1) i++;
+                    i++;
+                }
+            }
+            j++;
+        }
+        return len;
+    }
+
+
+    // 1605. Find Valid Matrix Given Row and Column Sums
+    // Important Problem And Solution
+
+        public int[][] restoreMatrix(int[] rowSum, int[] colSum) 
+    {
+        int p, q, answer[][], i = 0, j = 0;
+        p = rowSum.length;
+        q = colSum.length;
+        answer = new int[p][q];
+        while(i<p && j<q) 
+        {
+            answer[i][j] = Math.min(rowSum[i], colSum[j]);
+            rowSum[i] -= answer[i][j];
+            colSum[j] -= answer[i][j];
+            if(rowSum[i] == 0) i++;
+            if(colSum[j] == 0) j++;
+        }
+        return answer;
+    }
+
+
+    // 1834. Single-Threaded CPU
+
+    public class pair{
+        int s;
+        int t;
+        int i;
+        pair(int s , int t , int i)
+        {
+            this.s = s;
+            this.t = t;
+            this.i = i;
+        }
+    }
+    public int[] getOrder(int[][] tasks) 
+    {
+        pair[] arr = new pair[tasks.length];
+        for(int i = 0;i<tasks.length;i++) arr[i] = new pair(tasks[i][0],tasks[i][1],i);
+        Arrays.sort(arr,(a,b)->{return a.s-b.s;});
+        PriorityQueue<pair> queue = new PriorityQueue<>((a,b)->{
+            if(a.t!=b.t) return a.t-b.t;
+            return a.i-b.i;
+        });
+        int[] ans = new int[tasks.length];
+        
+        int i = 0;
+        int j = 0;
+        int time = arr[0].s;
+        
+        while(i < tasks.length)
+        {
+            while(i < tasks.length && arr[i].s <= time) queue.add(arr[i++]);
+            
+            if(queue.size() > 0)
+            {
+                pair temp = queue.remove();
+                ans[j++] = temp.i;
+                time+=temp.t;
+            }
+            else time = arr[i].s; // [[1,2],[40,4],[3,2],[4,1]]
+        }
+        while(queue.size() > 0) ans[j++] = queue.remove().i;
+        return ans;
+    }
+
+
+    // 1442. Count Triplets That Can Form Two Arrays of Equal XOR
+    // Also Did Earlier in Bit Manipulation
+    // Ratne Wala Question 
+    // Check Dryrun In Bits Notes
+    public int countTriplets(int[] arr) 
+    {
+        int ans = 0;
+        for(int i = 0;i<arr.length;i++)
+        {
+            int xor = 0;
+            for(int j = i;j < arr.length;j++)
+            {
+                xor = xor ^ arr[j];
+                if(xor == 0) ans+= j-i;
+            }
+        }
+        return ans;
+    }
+
+    // 1590. Make Sum Divisible by P
+    // Simple Math Problem 
+    // Use The Understanding of the problem subarray sum divisible by k
+
+    public int minSubarray(int[] nums, int p) 
+    {
+        long sum = 0;
+        for(int ele : nums) sum+=ele;
+        long rem = sum%p;
+        if(rem == 0) return 0;
+        
+        HashMap<Long,Long> map = new HashMap<>();
+        map.put(0l,-1l);
+        
+        long pfx = 0;
+        int len = nums.length;
+        for(int i = 0;i<nums.length;i++)
+        {
+            pfx+=nums[i];
+            long val = pfx%p;
+            long find = val-rem;
+            if(find < 0) find+=p;
+            if(map.containsKey(find)) len = Math.min(len,(int)(i-map.get(find)));
+            map.put((long)val,(long)i);
+        }
+        if(len == nums.length) return -1;
+        return len;
+    }
+
+
+    // 1481. Least Number of Unique Integers after K Removals
+    // Simple map + pq
+
+    public int findLeastNumOfUniqueInts(int[] arr, int k) 
+    {
+        HashMap<Integer,Integer> map = new HashMap<>();
+        for(int ele : arr) map.put(ele,map.getOrDefault(ele,0)+1);
+        PriorityQueue<Integer> queue = new PriorityQueue<>((a,b)->{
+            return a-b;
+        });
+        for(int ele:map.keySet()) queue.add(map.get(ele));
+        
+        while(k-- > 0)
+        {
+            int rem = queue.remove();
+            if(rem-1 > 0) queue.add(rem-1);
+        }
+        return queue.size();
+    }
+
+
+    // 1267. Count Servers that Communicate
+    // Simple Solution
+
+    public int countServers(int[][] grid) 
+    {
+        if(grid==null||grid.length==0||grid[0].length==0)return 0;
+        int[] rowSum=new int[grid.length];
+        int[] colSum=new int[grid[0].length];
+        int sum=0;
+        for(int i=0;i<grid.length;i++)
+        {
+            for(int j=0;j<grid[0].length;j++)
+            {
+                if(grid[i][j]!=1) continue;
+                rowSum[i]++;
+                colSum[j]++;
+            }
+        }
+        
+        int onlyOne=0;
+        for(int i=0;i<grid.length;i++)
+        {
+            for(int j=0;j<grid[0].length;j++)
+            {
+                if(grid[i][j]==1&&(rowSum[i]>1||colSum[j]>1))onlyOne++;
+            }
+        }
+        return onlyOne;
+    }
+
+
+    // 1669. Merge In Between Linked Lists
+    // Very Simple Problem
+
+    public ListNode mergeInBetween(ListNode list1, int a, int b, ListNode list2) 
+    {
+        ListNode end = list1, start = null;
+        for (int i = 0; i < b; ++i, end = end.next) if (i == a - 1) start = end;
+        start.next = list2;
+        while (list2.next != null) list2 = list2.next;
+        list2.next = end.next;
+        end.next = null;
+        return list1;
+    }
+
+    // 1871. Jump Game VII
+    // O(n^2) won't pass
+
+    public boolean canReach(String s, int minJump, int maxJump)
+    {
+        int n = s.length();
+        if(s.charAt(n-1) == '1') return false;
+        boolean[] dp = new boolean[n];
+        dp[n-1] = true;
+        for(int i = n-1;i>=0;i--)
+        {
+            for(int j = i+minJump;j<=Math.min(i+maxJump,n-1);j++)
+            {
+                if(s.charAt(i) == '0')
+                {
+                    dp[i] = dp[i] || dp[j];
+                    if(dp[i]) break;
+                }
+            }
+        }
+        return dp[0];
+    }
+
+    // Important Case
+    // "0000000000"
+    // 2
+    // 5 
+    // Important Solution
+    // Lee's Solution
+    // Check Dryrun 
+    // Kind Of Same As Sliding window maximum
+    // We can do this using queue as well
+    public boolean canReach(String s, int minJ, int maxJ) 
+    {
+        int n = s.length(), pre = 0;
+        boolean[] dp = new boolean[n];
+        dp[0] = true;
+        
+        for (int i = 1; i < n; ++i) 
+        {
+            if (i >= minJ && dp[i - minJ]) pre++;
+            // yaha par mein 100% sure hu ki current wale ke liye i-minJ(Agar true hei) wala 
+            // ooski window mei pehle se nahi hoga
+            if (i > maxJ && dp[i - maxJ - 1]) pre--;
+            // Yaha par mei sure hu ki i-maxJ-1(Agar true hei) wala 100% window mein include
+            // hoga
+            dp[i] = pre > 0 && s.charAt(i) == '0';
+        }
+        return dp[n - 1];
+    }
+
+    // 967. Numbers With Same Consecutive Differences
+    // Simple Problem using BFS
+    // Just Generate Level By Level
+
+    public int[] numsSameConsecDiff(int N, int K)
+    {
+        if (N == 1) return new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+        List<Integer> queue = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
+        
+        for(int level = 1; level < N; ++ level) 
+        {
+            ArrayList<Integer> nextQueue = new ArrayList<>();
+            // iterate through each number within the level
+            
+            for (Integer num : queue) 
+            {
+                Integer tailDigit = num % 10;
+
+                ArrayList<Integer> nextDigits = new ArrayList<>();
+                nextDigits.add(tailDigit + K);
+                
+                if (K != 0) nextDigits.add(tailDigit - K);
+                
+                for (Integer nextDigit : nextDigits) 
+                {
+                    if (0 <= nextDigit && nextDigit < 10) 
+                    {
+                        Integer newNum = num * 10 + nextDigit;
+                        nextQueue.add(newNum);
+                    }
+                }
+            }
+            // prepare for the next level
+            queue = nextQueue;
+        }
+        return queue.stream().mapToInt(i->i).toArray();
+    }
+
+    // 1247. Minimum Swaps to Make Strings Equal
+    // Ratne Wala Sawal
+
+    /**
+        Observation from given example
+        case 1:
+        xx
+        yy => minimum swap is 1
+
+        case 2:
+        xy
+        yx => minimum swap is 2
+
+        case 3:
+        xx
+        xy => not possible [If we have odd no of sum of x/y in both strings then it is impossible to make them equal ]
+        
+        Steps:
+        1. Find sum of x and y in both string, return -1 if case 3 [We can ignore count of x and y which are equal on same index in both string]
+        2. Reduce the problem to case 1 and case 2.
+        
+        Eg:
+        s1= xxyyxyxyxx
+        s2= xyyxyxxxyx
+        
+        step 1:
+        xs1 =3, ys1=3
+        xs2 =3, ys2=3
+        
+        step 2:
+        
+        > now we can try to reduce problem to case1 and case 2, 
+            as there sum is even we can run loop by subtracting 2 with each [adding 1 to answer , see code below]
+        
+        > we will left with  xs1 =1, ys1=1, xs2 =1, ys2=1 => case 2 [add two to answer]
+        
+    **/
+
+
+    public int minimumSwap(String s1, String s2) 
+     {
+        int x1 = 0; // number of 'x' in s1 (skip equal chars at same index)
+        int y1 = 0; // number of 'y' in s1 (skip equal chars at same index)
+        int x2 = 0; // number of 'x' in s2 (skip equal chars at same index)
+        int y2 = 0; // number of 'y' in s2 (skip equal chars at same index)
+
+        for(int i = 0; i < s1.length(); i ++)
+        {
+            char c1 = s1.charAt(i);
+            char c2 = s2.charAt(i);
+            if(c1 == c2){ // skip chars that are equal at the same index in s1 and s2
+                continue;
+            }
+            if(c1 == 'x')
+            {
+                x1 ++;
+            }
+            else
+            {
+                y1 ++;
+            }
+            if(c2 == 'x')
+            {
+                x2 ++;
+            }
+            else
+            {
+                y2 ++;
+            }
+        } // end for
+        
+        // After skip "c1 == c2", check the number of  'x' and 'y' left in s1 and s2.
+        if((x1 + x2) % 2 != 0 || (y1 + y2) % 2 != 0){
+            return -1; // if number of 'x' or 'y' is odd, we can not make s1 equals to s2
+        }
+        
+        int swaps = x1 / 2 + y1 / 2 + (x1 % 2) * 2;
+        // Cases to do 1 swap:
+        // "xx" => x1 / 2 => how many pairs of 'x' we have ?
+        // "yy" => y1 / 2 => how many pairs of 'y' we have ?
+        // 
+        // Cases to do 2 swaps:
+        // "xy" or "yx" =>  x1 % 2
+                 
+        return swaps;        
+    } 
+
+
+    // 848. Shifting Letters
+
+    public String shiftingLetters(String s, int[] shift)
+    {
+        long[]dp = new long[s.length()];
+        
+        for(int i = 0;i<shift.length;i++)
+        {
+            int val = shift[i];
+            dp[0]+=(long)val;
+            if(i+1<dp.length) dp[i+1]-=(long)val;
+        }
+        
+        for(int i = 1;i<dp.length;i++) dp[i] += dp[i-1];
+        
+        for(int i = 0;i<dp.length;i++) dp[i] += (long)s.charAt(i);
+        
+        StringBuilder sb = new StringBuilder();
+        
+        for(long ele : dp)
+        {
+            long val = ((ele-97)%26) + 97;
+            sb.append((char)val);
+        }
+        return sb.toString();
+    }
+
+
+    // 2095. Delete the Middle Node of a Linked List
+
+    public ListNode deleteMiddle(ListNode head) 
+    {
+       if(null == head || null == head.next) return null; 
+       ListNode  slow = head , fast = head.next.next;
+        while( fast != null && fast.next != null )
+        {
+            slow =  slow.next; 
+            fast = fast.next.next;
+        }
+        slow.next = slow.next.next;
+        return head;
+    }
+
+    // Celebrity Problem O(n) approach using stack
+
+    public static void findCelebrity(int[][] arr) {
+        // if a celebrity is there print it's index (not position), if there is not then print "none"
+        Stack < Integer > st = new Stack < > ();
+        for (int i = 0; i < arr.length; i++) 
+        {
+            st.push(i);
+        }
+
+        while (st.size() > 1)
+        {
+            int i = st.pop();
+            int j = st.pop();
+
+            if (arr[i][j] == 1) 
+            {
+                st.push(j);
+            } 
+            else 
+            {
+                st.push(i);
+            }
+        }
+
+        int pot = st.pop(); // Potential Celebrity
+        boolean flag = true;
+        for (int i = 0; i < arr.length; i++) 
+        {
+            if (i != pot) 
+            {
+                if (arr[i][pot] == 0 || arr[pot][i] == 1) 
+                {
+                    flag = false;
+                    break;
+                }
+            }
+        }
+
+        if (flag) 
+        {
+            System.out.println(pot);
+        } 
+        else 
+        {
+            System.out.println("none");
+        }
+    }
+    
+    
 }

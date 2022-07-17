@@ -1,4 +1,4 @@
-class trees
+class Trees
 {
     // Construct Binary Tree from String with bracket representation
     // Simple Recursive Solution

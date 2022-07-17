@@ -249,7 +249,7 @@ class leftDpQues
         return ans;
     }
         
-    public int jobScheduling(int[] s, int[] e, int[] profit) 
+    public int jobScheduling(int[] s, int[] e, int[] profit)
     {
         pair[] arr = new pair[profit.length];
         for(int i = 0;i<profit.length;i++)

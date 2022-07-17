@@ -282,11 +282,13 @@ class BinarySearchTrees
         while(top(rst) > top(lst))
         {
             if(top(lst) + top(rst) == k) return true;
-            else if(top(lst) + top(rst) < k){
+            else if(top(lst) + top(rst) < k)
+            {
                 TreeNode temp = lst.removeLast();
                 incMeLeft(temp.right,lst);
             }
-            else{
+            else
+            {
                 TreeNode temp = rst.removeLast();
                 incMeRight(temp.left,rst);
             }

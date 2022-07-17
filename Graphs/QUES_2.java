@@ -348,24 +348,30 @@ class extraFaang
         }
         queue.addLast(start);
         
-        while(queue.size()!=0){
+        while(queue.size()!=0)
+        {
             int size = queue.size();
-            while(size-->0){
+            while(size-->0)
+            {
                 String temp = queue.removeFirst();
-                if(temp.equals(finalStr)){
+                if(temp.equals(finalStr))
+                {
                     System.out.println(temp);
                     return level;
                 }
                 vis.add(temp);
                 int idx = 0;
                 
-                for(int i = 0;i<6;i++){
-                    if(temp.charAt(i) == '0'){
+                for(int i = 0;i<6;i++)
+                {
+                    if(temp.charAt(i) == '0')
+                    {
                         idx = i;
                         break;
                     }
                 }
-                for(int ele : swapMap[idx]){
+                for(int ele : swapMap[idx])
+                {
                     int idx2 = ele;
                     StringBuilder sb = new StringBuilder();
                     sb.append(temp);
@@ -549,6 +555,7 @@ class extraFaang
     }
 
     // DR STRANGE NOT SUBMITTING ON GEEKS FOR GEEKS
+    // Articulation Point and Bridges
     static int[] dis;
     static int[] low;
     static boolean[] vis;
@@ -749,7 +756,7 @@ class extraFaang
             }
         }
     }
-    public int shortestBridge(int[][] grid) 
+    public int shortestBridge(int[][] grid)
     {
         int n = grid.length;
         int m = grid[0].length;
@@ -769,6 +776,7 @@ class extraFaang
             }
             if(stop) break;
         }
+
         int level = 0;
         int ans = (int)1e9;
         while(queue.size()!=0)
@@ -783,7 +791,8 @@ class extraFaang
                     int x = ele[0] + temp[0];
                     int y = ele[1] + temp[1];
                     
-                    if(x>=0&&y>=0&&x<n&&y<m){
+                    if(x>=0&&y>=0&&x<n&&y<m)
+                    {
                         if(grid[x][y] == 0)
                         {
                             queue.addLast(new int[]{x,y});
@@ -802,14 +811,18 @@ class extraFaang
     // basic union find problem 
 
     int[] unions;
-    public int removeStones(int[][] stones) {
+    public int removeStones(int[][] stones)
+    {
         int len = stones.length;
         unions = new int[len];
-        for (int i = 0; i < len; i++){
+        for (int i = 0; i < len; i++)
+        {
             unions[i] = i;
         }
-        for (int i = 0; i < len; i++){
-            for (int j = i + 1; j < len; j++){
+        for (int i = 0; i < len; i++)
+        {
+            for (int j = i + 1; j < len; j++)
+            {
                 if (stones[i][0] == stones[j][0] || stones[i][1] == stones[j][1]){
                     union(i, j);
                 }
@@ -897,8 +910,9 @@ class extraFaang
     // 332. Reconstruct Itinerary
     // This question we have done using Heirholzer's Algorithm
     // This Algorithm is used to print the Eularian Path in O(E + V) time complexity
-    // Kyoki hume saare journey(edges) complete(visit) karni hei 1 time and Location kitni bhi baar 
-    // visit kar sakte hie 
+    // Kyoki hume saare journey(edges) complete(visit) karni hei
+    // 1 time and Location kitni bhi baar
+    // visit kar sakte hei
     public List<String> findItinerary(List<List<String>> tickets) 
     {
         HashMap<String,PriorityQueue<String>> graph = new HashMap<>();
@@ -1040,7 +1054,7 @@ class extraFaang
             return pathFound;
         }
 
-    // NUMBER OF DISTINCT ISLANDS LEETCODE LOCKED SUBMITTED ON PEPCODING PORTAL
+    // NUMBER OF DISTINCT ISLANDS LEETCODE LOCKED SUBMITTED ON GFG
     
     public static int numDistinctIslands(int[][] arr) 
     {
@@ -1173,13 +1187,14 @@ class extraFaang
             int type = ele[0];
             int u = ele[1];
             int v = ele[2];
-
+            // Alex Appne Area Mei Traversable Hona Cahahiye and Bob Apne Area Mei
             if(type == 1)
             {
                 int pu = findPar(u,par1);
                 int pv = findPar(v,par1);
 
-                if(pu !=pv) {
+                if(pu !=pv) 
+                {
                     par1[pv] = pu;
                     c1++;
                 }
@@ -1190,7 +1205,8 @@ class extraFaang
                 int pu = findPar(u,par2);
                 int pv = findPar(v,par2);
 
-                if(pu!=pv) {
+                if(pu!=pv) 
+                {
                     par2[pv] = pu;
                     c2++;
                 }
@@ -1200,18 +1216,26 @@ class extraFaang
             {
                 int pu1 = findPar(u,par1);
                 int pv1 = findPar(v,par1);
-                int pu2 = findPar(u,par2);
-                int pv2 = findPar(v,par2);
+                // int pu2 = findPar(u,par2);
+                // int pv2 = findPar(v,par2);
 
-                if(pu1!=pv1) {
+                if(pu1!=pv1) 
+                {
                     par1[pv1] = pu1;
+                    par2[pv1] = pu1;
                     c1++;
-                }
-                if(pu2!=pv2) {
-                    par2[pv2] = pu2;
                     c2++;
                 }
-                if(pu1 == pv1 && pu2 == pv2) removeCount++;
+                // if(pu2!=pv2) {
+                //     par2[pv2] = pu2;
+                //     c2++;
+                // }
+                // Because at the same time in both the 
+                // graphs redundancy will occure in case 
+                // Of Type 3 Edges
+                // Both will work
+                if(pu1 == pv1) removeCount++;
+                // if(pu1 == pv1&&pu2 == pv2) removeCount++;
             }
         }
         return (c1 > 0 && c2 > 0 && c1 == n-1 && c2 == n-1) ? removeCount : -1;
@@ -1289,128 +1313,127 @@ class extraFaang
     // ALIEN DICTONARY
     // TOPOSORT USING KHANS ALGO
     // USING HASHSET TO REMOVE DUPLICACY
-    public static String alienOrder(String[] words) 
+    // My Important and Simple Solution
+    public String findOrder(String [] dict, int N, int K)
     {
-        HashMap<Character, HashSet<Character>> map = new HashMap<Character, HashSet<Character>>();
-        HashMap<Character, Integer> degree = new HashMap<Character, Integer>();
-        String result = "";
-        if (words == null || words.length == 0) return result;
-        for (String s : words) 
-        {
-          for (char c : s.toCharArray()) 
-          {
-            degree.put(c, 0);
-          }
-        }
-
-        for (int i = 0; i < words.length - 1; i++)
-        {
-          boolean flag = false;
-          String cur = words[i];
-          String next = words[i + 1];
-          int length = Math.min(cur.length(), next.length());
-
-          for (int j = 0; j < length; j++) 
-          {
-            char c1 = cur.charAt(j);
-            char c2 = next.charAt(j);
-            
-            if (c1 != c2) 
-            {
-              HashSet<Character> set = new HashSet<Character>();
-              if (map.containsKey(c1)) set = map.get(c1);
-              if (!set.contains(c2)) 
-              {
-                set.add(c2);
-                map.put(c1, set);
-                degree.put(c2, degree.get(c2) + 1);
-              }
-              flag = true;
-              break;
-            }
-          }
-    
-          if (flag == false && next.length() < cur.length()) 
-          {
-            return "";
-          }
-        }
-
+        HashMap<Character,HashSet<Character>> graph = new HashMap<>();
+        int[] indeg = new int[K];
         
-        LinkedList<Character> q = new LinkedList<Character>();
-        for (char c : degree.keySet()) 
+        for(int i =0;i<dict.length-1;i++)
         {
-          if (degree.get(c) == 0) q.addLast(c);
-        }
-
-        while (!q.isEmpty()) 
-        {
-          char c = q.removeFirst();
-          result += c;
-          if (map.containsKey(c)) 
-          {
-            for (char c2 : map.get(c)) 
+            String one = dict[i];
+            String two = dict[i+1];
+            char p1 = '#';
+            char p2 = '#';
+            
+            for(int k = 0;k<Math.min(one.length(),two.length());k++)
             {
-              degree.put(c2, degree.get(c2) - 1);
-              if (degree.get(c2) == 0) q.addLast(c2);
-            }
-          }
-        }
+                char a = one.charAt(k);
+                char b = two.charAt(k);
+                if(a == b) continue;
     
-        if (result.length() != degree.size()) return "";
-        return result;
-      }
+                if(p1 == p2)
+                {
+                    if(!graph.containsKey(a)) graph.put(a,new HashSet<>());
+                    if(!graph.containsKey(b)) graph.put(b,new HashSet<>());
+                    if(!graph.get(a).contains(b))
+                    {
+                        graph.get(a).add(b);
+                        indeg[b-'a']++;
+                    }
+                    p1 = a;
+                    p2 = b;
+                }
+                else break;
+                
+            }
+        }
+        
+        StringBuilder ans = new StringBuilder();
+        LinkedList<Character> queue = new LinkedList<>();
+        
+        for(int i = 0;i<K;i++) if(indeg[i] == 0 && graph.containsKey((char)('a'+i))) queue.add((char)('a'+i));
+        
+        while(queue.size() > 0)
+        {
+            char ch = queue.removeFirst();
+            ans.append(ch);
+            
+            for(char ele : graph.get(ch))
+            {
+                indeg[ele-'a']--;
+                if(indeg[ele-'a'] == 0) queue.add(ele);
+            }
+        }
+        
+        return ans.toString();
+        
+    }
 
     // REDUNDANT CONNETCIONS 2
 
     public int[] parent;
     public int[] rank;
 
-    public int[] findRedundantDirectedConnection(int[][] edges) {
+    public int[] findRedundantDirectedConnection(int[][] edges) 
+    {
         int n = edges.length;
         int[] indegree = new int[n + 1];
         Arrays.fill(indegree, -1);
         int bl1 = -1;
         int bl2 = -1;
-        for (int i = 0; i < edges.length; i++) {
+        for (int i = 0; i < edges.length; i++) 
+        {
             int[] edge = edges[i];
             int u = edge[0];
             int v = edge[1];
 
-            if (indegree[v] == -1) {
+            if (indegree[v] == -1) 
+            {
                 indegree[v] = i;
-            } else {
+            } 
+            else 
+            {
                 bl1 = i;
                 bl2 = indegree[v];
             }
         }
         parent = new int[n + 1];
         rank = new int[n + 1];
-        for (int i = 1; i < parent.length; i++) {
+        for (int i = 1; i < parent.length; i++) 
+        {
             parent[i] = i;
             rank[i] = 1;
         }
-        for (int i = 0; i < edges.length; i++) {
-            if (bl1 == i) {
+        for (int i = 0; i < edges.length; i++) 
+        {
+            if (bl1 == i) 
+            {
                 continue; // ignoring that edge which we have removed
             }
             int[] edge = edges[i];
             int u = edge[0];
             int v = edge[1];
             boolean flag = union(u, v); // return true only when parents are same
-            if (flag == true) {
-                if (bl1 == -1) {
-                return edge;
-                } else {
-                return edges[bl2];
+            if (flag == true) 
+            {
+                if (bl1 == -1) 
+                {
+                    return edge;
+                } 
+                else 
+                {
+                    return edges[bl2];
                 }
             }
         }
         return edges[bl1];
     }
 
-    public int find(int x) {
-        if (parent[x] == x) {
+    public int find(int x) 
+    {
+        if (parent[x] == x) 
+        {
           return x;
         }
         int temp = find(parent[x]);
@@ -1418,23 +1441,29 @@ class extraFaang
         return temp;
       }
     
-      public boolean union(int x, int y) {
+      public boolean union(int x, int y) 
+      {
         int lx = find(x);
         int ly = find(y);
     
-        if (lx == ly) {
+        if (lx == ly) 
+        {
           return true;
         }
     
-        if (rank[lx] > rank[ly]) {
+        if (rank[lx] > rank[ly]) 
+        {
           parent[ly] = lx;
-        } else if (rank[lx] < rank[ly]) {
+        } 
+        else if (rank[lx] < rank[ly]) 
+        {
           parent[lx] = ly;
-        } else {
+        } 
+        else 
+        {
           parent[lx] = ly;
           rank[ly]++;
         }
-    
         return false;
       }
 

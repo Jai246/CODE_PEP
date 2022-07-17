@@ -535,7 +535,7 @@ class stack
     }
 
 
-    // Traping Rain Water
+    // Trapping Rain Water
 
     // Approach 1 Using Stack
 
@@ -1457,8 +1457,4 @@ class stack
       sum+=val;
       return sum/queue.size();
     }
-
-
-
-
 }

@@ -2,18 +2,20 @@ import java.util.*;
 
 class treesLeftQues
 {
-    public class TreeNode {
-             int val;
-             TreeNode left;
-             TreeNode right;
-             TreeNode() {}
-             TreeNode(int val) { this.val = val; }
-             TreeNode(int val, TreeNode left, TreeNode right) {
-                 this.val = val;
-                 this.left = left;
-                 this.right = right;
-             }
+    public class TreeNode 
+    {
+        int val;
+        TreeNode left;
+        TreeNode right;
+        TreeNode() {}
+        TreeNode(int val) { this.val = val; }
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
         }
+    }
+
     // 1302. Deepest Leaves Sum
 
     public int height(TreeNode root)
@@ -136,6 +138,51 @@ class treesLeftQues
         inorder(r.left,ans);
         ans.add(r.val);
         inorder(r.right,ans);
+    }
+
+    // Simple O(N) approach Using Stack
+    // Very Important Approach
+    // Important Problem
+    public List<Integer> getAllElements(TreeNode root1, TreeNode root2)
+    {
+        Stack<TreeNode> left = new Stack<>();
+        Stack<TreeNode> right = new Stack<>();
+        
+        List<Integer> ans = new ArrayList<>();
+        
+        TreeNode l = root1;
+        TreeNode r = root2;
+        
+        while(l!=null || r!=null || left.size() > 0 || right.size() > 0)
+        {
+            while(l!=null)
+            {
+                left.add(l);
+                l = l.left;
+            }
+            while(r!=null)
+            {
+                right.add(r);
+                r = r.left;
+            }
+            
+            if((right.size()==0)||(left.size() > 0 && left.peek().val <= right.peek().val))
+            {
+                TreeNode pop = left.pop();
+                ans.add(pop.val);
+                l = pop;
+                l = l.right;
+            }
+            else if((left.size()==0)||(right.size() > 0 && right.peek().val < left.peek().val))
+            {
+                TreeNode pop = right.pop();
+                ans.add(pop.val);
+                r = pop;
+                r = r.right;
+            }
+            
+        }
+        return ans;
     }
 
     // 1382. Balance a Binary Search Tree
@@ -392,8 +439,8 @@ class treesLeftQues
 
 
     // 513. Find Bottom Left Tree Value
-
-        public int findBottomLeftValue(TreeNode root) 
+    // We Can Do this Using BFS as well
+    public int findBottomLeftValue(TreeNode root) 
     {
         int level = 0;
         int[] val = new int[]{0};
@@ -405,6 +452,7 @@ class treesLeftQues
     public void findLeftMost(TreeNode root , int level , int[]val , int[]lev)
     {
         if(root == null) return;
+        findLeftMost(root.left,level-1,val,lev);
         if(root.left == null && root.right == null)
         {
             if(level < lev[0])
@@ -413,16 +461,37 @@ class treesLeftQues
                 val[0] = root.val;
             }
         }
-        findLeftMost(root.left,level-1,val,lev);
         findLeftMost(root.right,level-1,val,lev);
     }
 
 
     // 669. Trim a Binary Search Tree
-    // Importannt Question
+    // Important Question
     // Agar left and right child dono include hei toh parent bhi hoga
     // Agar sirf left yaa fir right child include honge toh parent par check lagana padega kyoki 
     // zaroori nahi hei ki parent hamesha include hoo
+
+    // Simple Solution
+
+    public TreeNode trimBST(TreeNode root, int low, int high) 
+    {
+        return getTrimmed(root,low,high);
+    }
+    
+    public TreeNode getTrimmed(TreeNode root , int low , int high)
+    {
+        if(root == null) return null;
+        root.left = getTrimmed(root.left,low,high);
+        root.right = getTrimmed(root.right,low,high);
+        int val = root.val;
+        
+        if(root.val < low) return root.right;
+        else if(root.val > high) return root.left;
+        return root;
+    }
+
+    // hahahahahahahahahahahahahahaha
+
     public TreeNode trimBST(TreeNode root, int low, int high) 
     {
         return trim(root,low,high);
@@ -759,7 +828,7 @@ class treesLeftQues
 
     // 971. Flip Binary Tree To Match Preorder Traversal
     // Important Question
-
+    // Good and Simple Solutionn
     List<Integer> res = new ArrayList<>();
     int i = 0;
     public List<Integer> flipMatchVoyage(TreeNode root, int[] v) 

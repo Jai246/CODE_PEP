@@ -464,12 +464,14 @@ class leftGraphsQues
         
         PriorityQueue<pair> queue = new PriorityQueue<>(new psf());
         
+
         // We could have used this as well
         // PriorityQueue<double[]> pq = new PriorityQueue<double[]>((a,b)->{
         //     return Double.compare(b[1],a[1]);
         // });
-        
-        
+
+
+
         double[] max = new double[n];
         queue.add(new pair(start,1.0));
         
@@ -477,10 +479,12 @@ class leftGraphsQues
         {
             pair pop = queue.remove();
             if(pop.v == end) return pop.w;
-            
+            // max[pop.v] = pop.w;
+            // Insted Of Doing it down we could have done that here as well
+            // But this Will Take more Time
             for(pair2 e : graph[pop.v]) 
             {
-                if(max[e.v] < e.d*pop.w) // We Have to check this to get rid of tle as th graph is not connected always
+                if(max[e.v] < e.d*pop.w) // We Have to check this to get rid of TLE as th graph is not connected always
                 {
                     queue.add(new pair(e.v,e.d*pop.w));
                     max[e.v] = e.d*pop.w;
@@ -577,7 +581,8 @@ class leftGraphsQues
                 ancestorList.get(node).add(currNode);
                 
                 degree[node]--;
-                if(degree[node] == 0){
+                if(degree[node] == 0)
+                {
                     queue.add(node);
                 }
             }
@@ -684,6 +689,10 @@ class leftGraphsQues
         {
             int[] pop = queue.remove();
 
+            // Insted Of Updating them down we can do this here as well
+            if(pop[1] == 1) one[pop[0]] = Math.min(one[pop[0]],pop[2]+1);
+            if(pop[1] == 0) zero[pop[0]] = Math.min(zero[pop[0]],pop[2]+1);
+
             ans[pop[0]] = Math.min(ans[pop[0]],pop[2]);
             // Updating The Answer With Miminum Path So Far
 
@@ -695,7 +704,7 @@ class leftGraphsQues
                     {
                         if(one[ele.val] > pop[2]+1)
                         {
-                            one[ele.val] = pop[2]+1;
+                            // one[ele.val] = pop[2]+1;
                             queue.add(new int[]{ele.val,ele.c,pop[2]+1});
                         }
                     }
@@ -703,7 +712,7 @@ class leftGraphsQues
                     {
                         if(zero[ele.val] > pop[2]+1)
                         {
-                            zero[ele.val] = pop[2]+1;
+                            // zero[ele.val] = pop[2]+1;
                             queue.add(new int[]{ele.val,ele.c,pop[2]+1});
                         }
                     }
@@ -882,7 +891,8 @@ class leftGraphsQues
 
 
     // 1786. Number of Restricted Paths From First to Last Node
-
+    // Important Problem
+    // Dijikstra + Cached DFS
     public int calcResPath(ArrayList<int[]>[] graph , int[]dist , int p , boolean[]vis , int[]dp)
     {
         if(dp[p]!=-1) return dp[p];
@@ -897,6 +907,7 @@ class leftGraphsQues
         dp[p] = c%((int)1e9 + 7);
         return dp[p];
     }
+
     public int countRestrictedPaths(int n, int[][] edges) 
     {
         ArrayList<int[]>[] graph = new ArrayList[n+1];

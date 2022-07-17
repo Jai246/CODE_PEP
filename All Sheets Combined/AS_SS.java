@@ -246,6 +246,7 @@ public class AS_SS
 
 
     // Three way partitioning 
+    // Dutch National flag algorithm
     public void threeWayPartition(int arr[], int a, int b)
     {
         int i = 0;
@@ -349,19 +350,25 @@ public class AS_SS
 
 
     // Find A Specific Pair In Matrix
+    // Important Problem
+    // Given an n x n matrix mat[n][n] of integers, 
+    // Find the maximum value of mat(c, d) – mat(a, b) over all choices of indexes such that both c > a and d > b.
 
     public static int findMaxValue(int mat[][], int n)
     {
         int[][] max = new int[n][n];
-        for(int i = n-1;i>=0;i--){
-            for(int j = n-1;j>=0;j--){
+        for(int i = n-1;i>=0;i--)
+        {
+            for(int j = n-1;j>=0;j--)
+            {
                 int right = ((j+1) < n) ? max[i][j+1] : -(int)1e9;
                 int down = ((i+1) < n) ? max[i+1][j] : -(int)1e9;
                 max[i][j] = Math.max(mat[i][j],Math.max(right,down));
             }
         }
         int ans = -(int)1e9;
-        for(int i = n-2;i>=0;i--){
+        for(int i = n-2;i>=0;i--)
+        {
             for(int j = n-2;j>=0;j--) ans = Math.max(ans,max[i+1][j+1]-mat[i][j]);
         }
         return ans;
@@ -469,8 +476,8 @@ public class AS_SS
 
     // 696. Count Binary Substrings
 
-    // Simple Solution
-    // It is simple because there is no need to have take to pointers
+    // Simple but important Solution
+    // It is simple because there is no need to take to pointers
     // because we only need previous count 
 
     public int countBinarySubstrings(String s)
@@ -613,14 +620,14 @@ public class AS_SS
             }
         }
         int count = 0;
-        count+=open/2;
-        count+=close/2;
-        count += (open%2) + (close%2);
+        count+=open/2; // Khud hi khud mei adjust
+        count+=close/2; // Khud hi khud mei adjust
+        count += (open%2) + (close%2); // Aaapas mei adjust
         return count;
     }
 
 
-    // Count occurences of a given word in a 2-d array 
+    // Count occurences of a given word in a 2-d array
     // Simple Recursive Solution
 
    public int findOccurrence(char mat[][], String target)
@@ -729,9 +736,47 @@ public class AS_SS
        return "";
    }
 
+   // Simple Solution Using Sorting
+
+   String secFrequent(String arr[], int N)
+    {
+        Arrays.sort(arr,(a,b)->{
+           return a.compareTo(b); 
+        });
+        
+        int j = 0;
+        String most1 = "";
+        int m1 = 0;
+        String most2 = "";
+        int m2 = 0;
+        for(int i = 0;i<N;i++)
+        {
+            String str1 = arr[i];
+            String str2 = ((i+1 == N) ? "" : arr[i+1]); 
+            if(!str1.equals(str2))
+            {
+                int count = i-j+1;
+                if(count > m1)
+                {
+                    m2 = m1;
+                    most2 = most1;
+                    m1 = count;
+                    most1 = arr[i];
+                }
+                else if(count < m1 && count > m2)
+                {
+                    m2 = count;
+                    most2 = arr[i];
+                }
+                j = i+1;
+            }
+        }
+        return most2;
+    }
 
    // 1963. Minimum Number of Swaps to Make the String Balanced
    // Note that open and close brackets are present in equal quantity
+   // Important 
    // After removing the balanced out brackette string we will get equal no of ] and [ facing in opposit d*r^n
    public int minSwaps(String s) 
     {
@@ -805,7 +850,7 @@ public class AS_SS
 
 
     // 1047. Remove All Adjacent Duplicates In String
-
+    // Simple Stack Solution
     public String removeDuplicates(String s) 
     {
         StringBuilder sb = new StringBuilder();        
@@ -818,11 +863,15 @@ public class AS_SS
         return sb.toString();
     }
 
-    // Transform String 
+    // Transform String
+
     // Bhai Jai Please oolta chalna seekhle
     // Important Question
     // Since Peeche Wala oothke aage Jayenge
-    // Matlab agar last ke do character match nahi kar rahe then 100% voh character aaga gaya hei A mei se
+    // Matlab agar last ke do character match nahi kar rahe then 100% voh character aage gaya hei A mei se
+    // ABC
+    // CBA
+    // BAS UNMATCHED CHARACTER NIKALNE HEI THATS IT , AUR KUSH NAHI KARNA
     int transform (String A, String B)
     {
         if (A.length() != B.length()) return -1;
@@ -868,6 +917,7 @@ public class AS_SS
         while (start <= end) 
         { 
             int mid = start + (end - start) / 2;
+            // not doing mid*mid to handle overflow
             if (mid > x / mid) end = mid-1;
             else 
             {
@@ -881,7 +931,7 @@ public class AS_SS
 
     // Find Missing And Repeating 
     // We did kind of same question earlier in which we mark negative
-    // Use inx zero to mark N **IMP**
+    // Use index zero to mark N **IMP**
 
     int[] findTwoElement(int arr[], int n) 
     {
@@ -985,37 +1035,62 @@ public class AS_SS
     }
 
 
-    // K-th element of two sorted Arrays 
+    // K-th element of two sorted Arrays
     // Important
-
-    public static long kthElement( int arr1[], int arr2[], int n, int m, int k)
+    // Note that according to our algorithm the kth element is left oriented
+    public long kthElement( int arr1[], int arr2[], int m, int n, int k) 
     {
-        if(m < n) return kthElement(arr2,arr1,m,n,k);
+        if(n < m) return kthElement(arr2,arr1,n,m,k);
+        int start = Math.max(k-n-1,-1);
+        int end = Math.min(k-1,m-1);
         
-        int low = Math.max(-1,k-m-1), high = Math.min(k-1,n-1);
-        while(low <= high)
+        while(start <= end)
         {
-            int mid1 = (low+high)/2;
-            int mid2 = k-2-mid1;
-
-
-            int x1 = -1;
-            if(mid1 == -1) x1 = -(int)1e9;
-            else x1 = arr1[mid1];
-            int x2 = -1;
-            if(mid1 == arr1.length-1) x2 = (int)1e9;
-            else x2 = arr1[mid1+1];
+            int mid1 = (start+end)/2; // Calculate Middle && Calculate Elements you are covering in first Array
+            int left = k-(mid1+1); // Calculate Left Out Elements to be takken from second array
+            int mid2 = -1+left; // Take those Elements
             
-            int y1 = -1;
-            if(mid2 == -1) y1 = -(int)1e9;
-            else  y1 = arr2[mid2];
-            int y2 = -1;
-            if(mid2 == arr2.length-1) y2 = (int)1e9;
-            else y2 = arr2[mid2+1];
             
-            if(y1<=x2 && x1<=y2) return Math.max(x1,y1);
-            else if(y1 > x2) low = mid1+1;
-            else high = mid1-1;
+            int l1 = -1;
+            int l2 = -1;
+            
+            if(mid1 == -1)
+            {
+                l1 = -(int)1e9;
+                l2 = arr1[mid1+1];
+            }
+            else if(mid1 == m-1)
+            {
+                l1 = arr1[mid1];
+                l2 = (int)1e9;
+            }
+            else
+            {
+                l1 = arr1[mid1];
+                l2 = arr1[mid1+1];
+            }
+            int r1 = -1;
+            int r2 = -1;
+            
+            if(mid2 == -1)
+            {
+                r1 = -(int)1e9;
+                r2 = arr2[mid2+1];
+            }
+            else if(mid2 == n-1)
+            {
+                r1 = arr2[mid2];
+                r2 = (int)1e9;
+            }
+            else
+            {
+                r1 = arr2[mid2];
+                r2 = arr2[mid2+1];
+            }
+            
+            if(r1<=l2 && l1<=r2) return Math.max(l1,r1);
+            else if(r1 > l2) start = mid1+1;
+            else end = mid1-1;
         }
         return -1;
     }
@@ -1043,8 +1118,10 @@ public class AS_SS
     {
         int cntCows = 1;
         int lastPlacedCow = a[0];
-        for (int i = 1; i < n; i++) {
-            if (a[i] - lastPlacedCow >= minDist) {
+        for (int i = 1; i < n; i++) 
+        {
+            if (a[i] - lastPlacedCow >= minDist) 
+            {
                 cntCows++;
                 lastPlacedCow = a[i];
             }
@@ -1052,26 +1129,17 @@ public class AS_SS
         if (cntCows >= cows) return true;
         return false;
     }
-    public static void main(String args[]) 
+    public static void main(String args[])
     {
         int n = 5, cows = 3;
         int a[]={1,2,8,4,9};
         Arrays.sort(a);
-
         int low = 1, high = a[n - 1] - a[0];
-
         while (low <= high) 
         {
             int mid = (low + high) >> 1;
-
-            if (isPossible(a, n, cows, mid)) 
-            {
-                low = mid + 1;
-            } 
-            else 
-            {
-                high = mid - 1;
-            }
+            if (isPossible(a, n, cows, mid)) low = mid + 1;
+            else high = mid - 1;
         }
         System.out.println("The largest minimum distance is " + high);
     }
@@ -1084,9 +1152,7 @@ public class AS_SS
     {
         int[] ans = new int[arr.length];
         Arrays.fill(ans,-1);
-        Arrays.sort(arr,(a,b)->{
-            return b.profit-a.profit;
-        });
+        Arrays.sort(arr,(a,b)->{return b.profit-a.profit;});
         int sum = 0;
         int count = 0;
         for(int i = 0;i<arr.length;i++)
@@ -1110,8 +1176,11 @@ public class AS_SS
     // Important
     // Using Binary Search log(n)
     // Not Available to submit
-    // Mujhe largest correct section mei jaana hei
+    // Mujhe largest correct section ko dhoondna hei
     // jiske end tak saare elements present hooo starting from arr[0];
+    // Agar mujhe voh mil jata hei toh mei right side mei chalajaunga i.e low = mid+1;
+    // Note that First yaa last element se pehle yaa baad mei koi element missing nahi ho sakta
+    // think over this carefully
     public static int findMissingUtil(int arr[], int low,int high, int diff)
     {   
         while (low <= high)
@@ -1125,6 +1194,9 @@ public class AS_SS
 
     public static int findMissing(int arr[], int n)
     {
+        // An = A0 + (n-1)*D
+        // D = An-A0/n;
+        // Because 1 element is missing
         int diff = (arr[n - 1] - arr[0]) / n;
         return findMissingUtil(arr, 0, n - 1, diff);
     }
@@ -1350,7 +1422,7 @@ public class AS_SS
     }
 
 
-        // Check if it is possible to survive on Island 
+    // Check if it is possible to survive on Island 
     // My Solution
     // Important
     static int minimumDays(int S, int N, int M)
@@ -1464,8 +1536,10 @@ public class AS_SS
         Arrays.sort(a);
         for(int i = 0;i<a.length;i++)
         {
-            if(k > 0){
-                if(a[i] < 0){
+            if(k > 0)
+            {
+                if(a[i] < 0)
+                {
                     a[i] = -1*a[i];
                     k--;
                 }
@@ -1643,7 +1717,8 @@ public class AS_SS
        return sum;
     }
 
-     // Array Removals 
+    // Array Removals 
+    // Important Solution 
      int removals(int[] arr, int n, int k) 
      {
          if(n == 1 && arr[0] > k) return 0;
@@ -1658,13 +1733,14 @@ public class AS_SS
              
              if(v2-v1 <= k)
              {
-                 max = Math.max(max,j-i+1);
-                 j++;
+                max = Math.max(max,j-i+1);
+                j++;
              }
              else if(v2-v1 > k) i++;
          }
          return n - max;
     }
+
 
     // 209. Minimum Size Subarray Sum
     // Simple Sliding Window
@@ -1719,7 +1795,9 @@ public class AS_SS
    // We converted in tn to log n because
    // if n would be -2^31 and when we convert it to positive then it will overflow
    // because int range is 2^31-1 and we have 2^31 that's why
-   // Just to a dryrun
+   // Just to a dryrun on 
+    // pow(2,5)
+    // pow(2,4)
    public double myPow(double x, int n) 
    {
        double ans = 1.0;
@@ -1858,7 +1936,7 @@ public class AS_SS
         return longestStreak;
     }
 
-    / 26. Remove Duplicates from Sorted Array
+    // 26. Remove Duplicates from Sorted Array
     // Good Question
 
     public int removeDuplicates(int[] nums)
@@ -1894,24 +1972,28 @@ public class AS_SS
     // where d is till what decimal place you need the answer
 
 
-    private static double multiply(double number, int n) {
+    private static double multiply(double number, int n)
+    {
         double ans = 1.0;
         for(int i = 1;i<=n;i++) {
             ans = ans * number;
         }
         return ans; 
     }
-    private static void getNthRoot(int n, int m) {
+    private static void getNthRoot(int n, int m) 
+    {
         double low = 1;
         double high = m;
         double eps = 1e-6; 
         
         while((high - low) > eps) {
             double mid = (low + high) / 2.0; 
-            if(multiply(mid, n) < m) {
+            if(multiply(mid, n) < m) 
+            {
                 low = mid; 
             }
-            else {
+            else 
+            {
                 high = mid; 
             }
         }

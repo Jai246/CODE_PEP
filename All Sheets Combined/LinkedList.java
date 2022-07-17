@@ -1,6 +1,6 @@
 public class LinkedList 
 {
-    / Intersection of two sorted Linked lists 
+    // Intersection of two sorted Linked lists 
     public static Node findIntersection(Node head1, Node head2)
     {
         Node par = new Node(-1);
@@ -303,7 +303,7 @@ public class LinkedList
     // 1019. Next Greater Node In Linked List
     // Similar to next greater element 2
 
-        public int[] nextLargerNodes(ListNode head) 
+    public int[] nextLargerNodes(ListNode head) 
     {
        ArrayList<Integer> a = new ArrayList<>();
        ListNode current = head;

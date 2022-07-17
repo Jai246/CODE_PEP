@@ -78,7 +78,7 @@ class ll
     {
         if(head == null || head.next == null || head.next.next == null) return;
         ListNode c1 = head;
-        ListNode temp = middleNode_(head);
+        ListNode temp = middleNode_(head); // First Middle
         ListNode c2 = reverseList(temp.next);
         temp.next = null;
         ListNode f1 = null;
@@ -611,10 +611,7 @@ class ll
 
 
 
-    // 
-
-
-
+    // 328. Odd Even Linked List
     public static ListNode divide(int N,ListNode head)
     {
         ListNode dummyOdd = new ListNode(-1);
@@ -1032,55 +1029,42 @@ class ll
     }
     public ListNode swapNodes(ListNode head, int k) 
     {
-        ListNode d = new ListNode(-1);
-        d.next = head;
-        ListNode prev1 = d;
-        ListNode prev2 = null;
+        ListNode ret = head;
+        k = k - 1;
+        int length = length(head);
         
-        int len = length(head);
-        if(k > len ) return head;
-        int fIdx = Math.min(k , len-k+1);
-        int lIdx = Math.max(k , len-k+1);
+        int start = k;
+        int end = length-k-1;
         
-        int c1 = 1;
-        
-        while(c1 < fIdx)
+        if(end < start)
         {
+            int temp = end;
+            end = start;
+            start = temp;
+        }
+        
+        ListNode c1 = null;
+        ListNode c2 = null;
+        
+        int c = 0;
+        
+        while(head!=null)
+        {
+            if(start == c) c1 = head;
+            if(end == c) c2 = head;
             head = head.next;
-            prev1 = prev1.next;
-            c1++;
-        }
-        ListNode temp1 = head;
-        prev2 = prev1;
-        
-        int c2 = c1;
-        while(c2 < lIdx)
-        {
-            head = head.next;
-            prev2 = prev2.next;
-            c2++;
+            c++;
         }
         
+        int val = c1.val;
+        c1.val = c2.val;
+        c2.val = val;
         
-        if(lIdx - fIdx == 1)
-        {
-            prev1.next = head;
-            temp1.next = head.next;
-            head.next = temp1;
-        }
-        else if(lIdx - fIdx > 1)
-        {
-            ListNode forw = head.next;
-            head.next = temp1.next;
-            temp1.next = forw;
-            prev1.next = head;
-            prev2.next = temp1;
-        }
-        
-        return d.next;
+        return ret;
     }
 
-    //LEETCODE 725 SPLIT LINKEDLISTS IN PARTS IMPORTANT QUESTION
+    //LEETCODE 725 SPLIT LINKEDLISTS IN PARTS
+    // IMPORTANT QUESTION
     public ListNode[] splitListToParts(ListNode head, int k) 
     {
         int size = 0;
@@ -1092,7 +1076,6 @@ class ll
             cur = cur.next;
             size++;
         }
-        
         
         int partSize = size/k;
         int remainder = size%k;
@@ -1544,33 +1527,40 @@ class ll
     // IMPORTANT
     public static Node sortedInsert(Node head,int data)
     {
-        if(head == null) return new Node(data);
-        if(data < head.data)
+        Node dummy = new Node(-1);
+        dummy.next = head;
+        Node prev = head;
+        
+        while(prev.next != dummy.next) prev = prev.next;
+        
+        if(data <= head.data)
         {
-            Node temp = head.next;
-            while(temp!=head)
-            {
-                if(temp.next == head) break; // doing this to stop temp on tha last node so that i can point the new node
-                temp = temp.next;
-            }
-            Node Ndata = new Node(data);
-            Ndata.next = head;
-            head = Ndata;
-            temp.next = head;
-            return head;
+            Node d = new Node(data);
+            d.next = head;
+            prev.next = d;
+            return d;
         }
-        Node check = head;
-        Node prev = new Node(-1);
-        while(prev.next!=check && head.data<=data)
+        
+        Node t = new Node(-1);
+        prev.next = t;
+        t.next = head;
+        prev = t;
+        
+        while(data > head.data && head.data!=-1)
         {
             prev = head;
             head = head.next;
         }
-        Node temp = new Node(data);
-        temp.next = head;
-        prev.next = temp;
-        return check;
-    } 
+        
+        Node val = new Node(data);
+        prev.next = val;
+        val.next = head;
+        
+        while(prev.next.data!=-1) prev = prev.next;
+        
+        prev.next = prev.next.next;
+        return dummy.next;
+    }
 
 
     // Remove duplicate element from sorted Linked List 

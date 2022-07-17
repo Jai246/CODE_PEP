@@ -216,7 +216,6 @@ class graphQues
         int m = grid[0].length;
         int[]par = new int[n*m];
         for(int i = 0;i<(n*m);i++) par[i] = i;
-        // Arrays.fill(par,-1);
         int[][] dir = new int[][]{{1,0},{0,-1}};
         int count = 0;
         for(int i = 0;i<n;i++)
@@ -450,39 +449,40 @@ class graphQues
 
     // Leetcode 743. Network Delay Time
 
-    public static int networkDelayTime(int[][] times, int n, int k) // Another Approach In Notes
+    public static int networkDelayTime(int[][] times, int n, int k)
     {
         int MinTime = 0;
-        int N = 1;
-        boolean[] added = new boolean[n+1];
+        int N = 0;
         boolean[] vis = new boolean[n+1];
-        PriorityQueue<int[]> queue = new PriorityQueue<>((a,b)->{
-            return a[1] - b[1];
-        });
+        PriorityQueue<int[]> queue = new PriorityQueue<>((a,b)->{return a[1] - b[1];});
         queue.add(new int[]{k,0});
-        added[k] = true;
         while(queue.size()!=0)
         {
             int[] temp = queue.remove();
             if(vis[temp[0]]) continue;
+            N++;
             vis[temp[0]] = true;
-            if(N == n) MinTime = Math.max(MinTime,temp[1]);
+            if(N == n) 
+            {
+                // kyuki main jab ki kahi pahuchunga
+                // minimum vlue ke saath pahuchunga
+                MinTime = Math.max(MinTime,temp[1]);
+                break;
+            }
             for(int[]d : times)
             {
                 if(d[0] == temp[0] && !vis[d[1]])
                 {
                     queue.add(new int[]{d[1],d[2] + temp[1]});
-                    if(!added[d[1]]) N++;
-                    added[d[1]] = true;
-
                 }
             }
         }
-        
-        System.out.println(N);
         return (N == n) ? MinTime : -1; 
     }
-    // Critical Connections
+
+
+    // 1192. Critical Connections in a Network
+    // Articulation Points And Bridges
     public static List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) 
     {
         @SuppressWarnings("unchecked")
@@ -523,7 +523,7 @@ class graphQues
             }
         }
     }
-    // MiniMize Malware Spread
+    // 924. Minimize Malware Spread
     // Agar eak city mei 1 se zyada nodes infected hei toh vaha se 1 node hatane ke baad bhi infection nahi rukega
     // toh hume maximum size ki voh city dhoondni hei jismei 1 hi node infected hoo
     public static int minMalwareSpread(int[][] graph, int[] initial) 
@@ -538,13 +538,17 @@ class graphQues
         }
 
         Arrays.sort(initial);// because we need the minimum index
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (i != j && graph[i][j] == 1) {
+        for (int i = 0; i < n; i++) 
+        {
+            for (int j = 0; j < n; j++) 
+            {
+                if (i != j && graph[i][j] == 1) 
+                {
                     int p1 = findPar(i,par);
                     int p2 = findPar(j,par);
 
-                    if (p1 != p2) {
+                    if (p1 != p2) 
+                    {
                         par[p1] = p2;
                         size[p2] += size[p1];
                     }
@@ -573,15 +577,18 @@ class graphQues
         return ans;
     }
 
+
+
     // 787. Cheapest Flights Within K Stops
-    // USING BELLMAN FORD 
+    // USING BELLMAN FORD
     // BFS SOLUTION IS GIVING TLE
     // BFS SOLUTION IS IN LEETCODE NOTES
     // Iss Question Mei Bellman Ford Lagana Isliye Bhi sahi raha kyoki hum yaha ensure karenge ki
     // Count k se zyada naa ho , kyo ki har bellman ford ki iteration mei yaa toh new edge add
     // hoti hei yaa toh edge connect nahi hoti toh yeh cheez hamesha ensure karegi ki edge kaa count
     // k se zyada naa ho
-    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int K) 
+
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int K)
     {
         int[] dis = new int[n];
         Arrays.fill(dis, (int) 1e9);
@@ -590,19 +597,14 @@ class graphQues
         for (int EdgeCount = 1; EdgeCount <= K + 1; EdgeCount++) 
         {
             int[] ndis = new int[n];
-            for (int i = 0; i < n; i++)
-                ndis[i] = dis[i];
-
+            for (int i = 0; i < n; i++) ndis[i] = dis[i];
             for (int[] e : flights) 
             {
                 int u = e[0], v = e[1], w = e[2];
-                if (dis[u] != (int) 1e9 && dis[u] + w < ndis[v])
-                    ndis[v] = dis[u] + w;
+                if (dis[u] != (int) 1e9 && dis[u] + w < ndis[v]) ndis[v] = dis[u] + w;
             }
-
             dis = ndis;
         }
-
         return dis[dst] != (int) 1e9 ? dis[dst] : -1;
     }
 
