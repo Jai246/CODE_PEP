@@ -4914,5 +4914,401 @@ class leetcode
         }
     }
     
+    // 2. Add Two Numbers
+
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) 
+    {
+        ListNode dummy = new ListNode(-1);
+        ListNode prev = dummy;
+        
+        int carry = 0;
+        
+        while(l1!=null || l2!=null)
+        {
+            int a = (l1!=null) ? l1.val : 0;
+            int b = (l2!=null) ? l2.val : 0;
+            
+            int val = a + b + carry;
+            
+            int nVal = val % 10;
+            carry = val / 10;
+            
+            prev.next = new ListNode(nVal);
+            prev = prev.next;
+            
+            if(l1!=null) l1 = l1.next;
+            if(l2!=null) l2 = l2.next;
+        }
+        
+        if(carry > 0) prev.next = new ListNode(carry);
+        
+        return dummy.next;
+    }
+
+
+    // 6. Zigzag Conversion
+
+    public String convert(String s, int numRows) 
+    {
+        if(numRows == 1) return s;
+        ArrayList<ArrayList<Character>> map = new ArrayList<>();
+        for(int i = 0;i<numRows;i++) map.add(new ArrayList<>());
+        
+        int i = 0;
+        int idx = 0;
+        boolean toggle = false;
+        while(i < s.length())
+        {
+            char ch = s.charAt(i);
+            if(!toggle)
+            {
+                map.get(idx).add(ch);
+                idx++;
+            }
+            else
+            {
+                map.get(idx).add(ch);
+                idx--;
+            }
+            
+            if(idx == numRows)
+            {
+                toggle = true;
+                idx-=2;
+            }
+            else if(idx == -1)
+            {
+                toggle = false;
+                idx+=2;
+            }
+            i++;
+        }
+        
+        
+        
+        StringBuilder ans = new StringBuilder();
+        
+        for(ArrayList<Character> list : map)
+        {
+            for(char ele : list)
+            {
+                ans.append(ele);
+            }
+        }
+            
+        return ans.toString();
+    }
+
+    // 59. Spiral Matrix II
+
+    public int[][] generateMatrix(int n) 
+    {
+        int[][] matrix = new int[n][n];
+        int m = n;
+        int x = 0;
+        int y = 0;
+        int dx = n-1;
+        int dy = m-1;
+        int k = 1;
+        
+        while(k <= n*n)
+        {
+            for(int i = y;i<=dy;i++) matrix[x][i] = k++;
+            for(int i = x+1;i<=dx;i++) matrix[i][dy] = k++;
+            for(int i = dy-1;i>=y;i--) matrix[dx][i] = k++;
+            for(int i = dx-1;i>x;i--) matrix[i][y] = k++;
+            
+            y++;
+            x++;
+            dy--;
+            dx--;
+        }
+        return matrix;
+    }
+
+    // 78. Subsets
+
+    public List<List<Integer>> subsets(int[] nums) 
+    {
+        List<List<Integer>> list = new ArrayList<>();
+        Arrays.sort(nums);
+        backtrack(list, new ArrayList<>(), nums, 0);
+        return list;
+    }
+
+    private void backtrack(List<List<Integer>> list , List<Integer> tempList, int [] nums, int start)
+    {
+        list.add(new ArrayList<>(tempList));
+        for(int i = start; i < nums.length; i++)
+        {
+            tempList.add(nums[i]);
+            backtrack(list, tempList, nums, i + 1);
+            tempList.remove(tempList.size() - 1);
+        }
+    }
+
+
+    // 235. Lowest Common Ancestor of a Binary Search Tree
+
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) 
+    {        
+        while((root.val > p.val && root.val > q.val) ||(root.val < p.val && root.val < q.val))
+        {
+            if(root.val > p.val && root.val > q.val) root = root.left;
+            else root = root.right;
+        }
+        return root;
+    }
+
+
+    // 396. Rotate Function
+
+    public int maxRotateFunction(int[] nums) 
+    {
+        int bSum = 0;
+        int sum = 0;
+        int max = -(int)1e11;
+        for(int i = 0;i<nums.length;i++)
+        {
+            sum += nums[i];
+            bSum += (i*nums[i]);
+        }
+        
+        for(int i = nums.length-1;i>=0;i--)
+        {
+            bSum = bSum+sum-(nums[i]*nums.length);
+            max = Math.max(max,bSum);
+        }
+        return max;
+    }
+
+
+    // 414. Third Maximum Number
+
+    public int thirdMax(int[] nums) 
+    {
+        long f = Long.MIN_VALUE;
+        long s = Long.MIN_VALUE;
+        long t = Long.MIN_VALUE;
+        for (int n: nums) 
+        {
+            if (n == f || n == s || n == t) continue;
+            if (n >= f) 
+            {
+                t = s;
+                s = f;
+                f = n;
+            } 
+            else if (n >= s) 
+            {
+                t = s;
+                s = n;
+            } 
+            else if (n >= t) 
+            {
+                t = n;
+            }
+        }
+        if (t != Long.MIN_VALUE) return (int)t;
+        else if (f != Long.MIN_VALUE) return (int)f;
+        else return (int)s;    
+    }
+
+
+    // 384. Shuffle an Array
+
+    private int[] array;
+    private int[] original;
+
+    Random rand = new Random();
+
+    private int randRange(int min, int max) 
+    {
+        return rand.nextInt(max - min) + min;
+    }
+
+    private void swapAt(int i, int j) 
+    {
+        int temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+
+    public Solution(int[] nums) 
+    {
+        array = nums;
+        original = nums.clone();
+    }
+    
+    public int[] reset() 
+    {
+        array = original;
+        original = original.clone();
+        return original;
+    }
+    
+    public int[] shuffle() 
+    {
+        for (int i = 0; i < array.length; i++) 
+        {
+            swapAt(i, randRange(i, array.length));
+            // Apne Aage wale indexes se swap kare hei
+            // jisse Ki yeh Ensure Ho jaye ki hum jisse swap huie hei oose wapis naa hojaye
+        }
+        return array;
+    }
+
+    // 443. String Compression
+
+
+    public int compress(char[] chars) 
+    {
+        int indexAns = 0, index = 0;
+        while(index < chars.length)
+        {
+            char currentChar = chars[index];
+            int count = 0;
+            while(index < chars.length && chars[index] == currentChar)
+            {
+                index++;
+                count++;
+            }
+            chars[indexAns++] = currentChar;
+            if(count != 1)
+            {
+                for(char c : Integer.toString(count).toCharArray()) 
+                {
+                    chars[indexAns++] = c;
+                }
+            }
+        }
+        return indexAns;
+    }
+
+
+    // 449. Serialize and Deserialize BST
+    // Nice Tarika
+
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) 
+    {
+        StringBuilder sb = new StringBuilder();
+        dfs(root, sb);
+        return sb.toString();
+    }
+    private void dfs(TreeNode root, StringBuilder sb) 
+    {
+        if (root == null) 
+        {
+            return;
+        }
+        sb.append(root.val + ",");
+        dfs(root.left, sb);
+        dfs(root.right, sb);
+        return;
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) 
+    {
+        String[] arr = data.split(",");
+        TreeNode root = null;
+        for (String s : arr) 
+        {
+            if (s.length() > 0) 
+            {
+                root = buildBST(root, Integer.parseInt(s));
+            }
+        }
+        return root;
+    }
+
+    public TreeNode buildBST(TreeNode root, int v) 
+    {
+        if (root == null) return new TreeNode(v);
+        if (v < root.val) 
+        {
+            root.left = buildBST(root.left, v);
+        } 
+        else 
+        {
+            root.right = buildBST(root.right, v);
+        }
+        return root;
+    }
+
+
+
+    // 459. Repeated Substring Pattern
+    // Bahut Zyada BruteForce
+    // Creating String with all substrings
+    public boolean repeatedSubstringPattern(String str) 
+    {
+        int l = str.length();
+        for(int i=l/2;i>=1;i--) 
+        {
+            if(l%i==0) 
+            {
+                int m = l/i;
+                String subS = str.substring(0,i);
+                StringBuilder sb = new StringBuilder();
+                for(int j=0;j<m;j++) 
+                {
+                    sb.append(subS);
+                }
+                if(sb.toString().equals(str)) return true;
+            }
+        }
+        return false;
+    }
+
+    // 1092. Shortest Common Supersequence
+
+    public void dfs(int[][] dp ,int i ,int j,String str1,String str2,StringBuilder sb)
+    {
+        if(i >= dp.length || j >= dp[0].length || dp[i][j] == 0) return;
+        if( i!=dp.length-1 && j!=dp[0].length-1 && str1.charAt(i) == str2.charAt(j))
+        {
+            sb.append(str1.charAt(i));
+            dfs(dp,i+1,j+1,str1,str2,sb);
+        }
+        else if((i+1 < dp.length && j+1 < dp[0].length && dp[i+1][j] < dp[i][j+1]) || j == dp[0].length-1)
+        {
+            sb.append(str1.charAt(i));
+            dfs(dp,i+1,j,str1,str2,sb);
+        }
+        else
+        {
+            sb.append(str2.charAt(j));
+            dfs(dp,i,j+1,str1,str2,sb);
+        }
+    }
+    public String shortestCommonSupersequence(String str1, String str2) 
+    {
+        int m = str1.length();
+        int n = str2.length();
+        int[][] dp = new int[m+1][n+1];
+        
+        for(int i = m;i>=0;i--)
+        {
+            for(int j = n;j>=0;j--)
+            {
+                if(i == m && j == n) continue;
+                else if(i == m) dp[i][j] = dp[i][j+1] + 1;
+                else if(j == n) dp[i][j] = dp[i+1][j] + 1;
+                else
+                {
+                    char ch1 = str1.charAt(i);
+                    char ch2 = str2.charAt(j);
+                    if(ch1 == ch2) dp[i][j] = dp[i+1][j+1]+1;
+                    else dp[i][j] = Math.min(dp[i+1][j],dp[i][j+1]) + 1;
+                }
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        dfs(dp,0,0,str1,str2,sb);
+        return sb.toString();
+    }
+
     
 }
