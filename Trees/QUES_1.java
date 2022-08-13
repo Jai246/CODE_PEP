@@ -122,6 +122,8 @@ class extraFaang
         return sum;
     }
 
+    // Clone Tree
+
     public static Tree cloneTree(Tree root)
     {
         HashMap<Tree,Tree> map = new HashMap<>();  
@@ -258,7 +260,7 @@ class extraFaang
     // MERGE BOTH THE SINGLY LINKED LIST
     // CONVERT THIS CONVERTED LIST TO A BINARY SEARCH TREE
 
-    // We Can Do This Using Stck As WEll 
+    // We Can Do This Using Stack As WEll 
     // Leetcode 1305
     // Check Question 1 File
 
@@ -643,6 +645,7 @@ class extraFaang
 
     // 894. All Possible Full Binary Trees
     // Catalan Number Application
+    // Check Dryrun
     public List<TreeNode> allPossibleFBT(int n) 
     {
         if(n%2==0) return new ArrayList<>();

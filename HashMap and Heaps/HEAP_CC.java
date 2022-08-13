@@ -11,7 +11,7 @@ public class HEAP_CC
       data = new ArrayList< T >();
     }
 
-    private boolean isSmaller(int i, int j)
+    private boolean isSmaller(int i, int j) // Value at i is smaller thAN VALUE AT J then it will return val < 0;
     {
       Comparable ith = (Comparable) data.get(i);
       Comparable jth = (Comparable) data.get(j);

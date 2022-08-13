@@ -252,7 +252,7 @@ class traversals
         return ans;
     }
 
-    // BOTTOM VIEW OF A BONARY TREE GFG
+    // BOTTOM VIEW OF A BINARY TREE GFG
     // last element of the vertical traversal
     public ArrayList <Integer> bottomView(TreeNode root) 
     {

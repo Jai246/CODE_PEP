@@ -610,6 +610,44 @@ class pepYtList
 
 	// Find All Anagrams In A String
 
+
+	// Simple Approach
+	// +ve means requirement
+	// -ve means extra
+	// 0 means setteled
+
+	public List<Integer> findAnagrams(String s, String p)
+    {
+		List<Integer> list = new ArrayList<>();
+		if (p.length() > s.length()) return list;
+        int[] freq = new int[26];
+		for (int i = 0; i < p.length(); i++) 
+        {
+			freq[p.charAt(i) - 'a'] += 1;
+			freq[s.charAt(i) - 'a'] -= 1;
+		}
+		int i = 0;
+		for (; i < s.length() - p.length(); i++) 
+        {
+			if (checkAnagram(freq)) list.add(i);
+			freq[s.charAt(i) - 'a'] += 1;
+			freq[s.charAt(i + p.length()) - 'a'] -= 1;
+		}
+	   if(checkAnagram(freq)) list.add(i); 
+	   return list;
+	}
+	
+	private boolean checkAnagram(int[] freq) 
+    {
+		for (int i = 0; i < freq.length; i++) 
+        {
+			if (freq[i] != 0) return false;
+		}
+		return true;
+	}
+
+	// Tedious Code but approach is simple
+
 	public List<Integer> findAnagrams(String s, String p) 
     {
         HashMap<Character,Integer> smap = new HashMap<>();
@@ -1330,7 +1368,7 @@ class pepYtList
 	}
 
 
-    public static int solve(int[][] nums1, int[][] nums2, int k) 
+    public static int solve(int[][] nums1, int[][] nums2, int k)
 	{
 		int count = 0;
 		for(int[]arr : nums2)

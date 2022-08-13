@@ -3437,6 +3437,25 @@ class leetcode
         return this.pointer < this.comb.size();
     }
 
+    // Iterative Way to generate all combinations
+
+    set<string>GenaretallComb(string s,int len)
+    {
+        int mask = 1<<s.length();
+        set<string>hold;
+        string comString = "";
+        for(int no=1;no<mask;no++){
+            int num = no,i = 0;
+            while(num){
+                if(num&1)comString = comString + s[i];
+                i++,num>>=1;
+            }
+            if(comString.length()==len)hold.insert(comString);
+            comString = "";
+        }
+        return hold;
+    }
+
     // 1371. Find the Longest Substring Containing Vowels in Even Counts
 
     // Its a HashMap Counting Problem
@@ -3768,11 +3787,15 @@ class leetcode
         int count = 0;
         Arrays.sort(nums);
         int prevNum = nums[0];
-        for (int i = 1; i < nums.length; i++) {
-            if (nums[i] <= prevNum) {
+        for (int i = 1; i < nums.length; i++) 
+        {
+            if (nums[i] <= prevNum) 
+            {
                 prevNum++;
                 count += (prevNum - nums[i]);
-            } else {
+            } 
+            else 
+            {
                 prevNum = nums[i];
             }
         }
@@ -5310,5 +5333,436 @@ class leetcode
         return sb.toString();
     }
 
+    // 131. Palindrome Partitioning
+
+    public List<List<String>> partition(String s) 
+    {
+        int n = s.length();
+        boolean[][]dp = new boolean[n][n];
+        
+        for(int gap = 0;gap<n;gap++)
+        {
+            for(int i = 0,j=gap;j<n;j++,i++)
+            {
+                if(gap == 0) 
+                {
+                    dp[i][j] = true;
+                    continue;
+                }
+                if(gap == 1) 
+                {
+                    if(s.charAt(i) == s.charAt(j))  dp[i][j] = true;
+                    continue;
+                }
+                
+                if(s.charAt(i) == s.charAt(j) && dp[i+1][j-1]) 
+                {
+                    dp[i][j] = true;    
+                }
+            }
+        }
+                
+        List<List<String>> ans = new ArrayList<>();
+        List<String> temp = new ArrayList<>();
+        
+        getPalindromes(s,0,dp,ans,temp);
+        
+        return ans;
+        
+    }
     
+    public void getPalindromes(String s , int start , boolean[][] dp,List<List<String>> ans , List<String> temp)
+    {
+        if(start == s.length())
+        {
+            List<String> t = new ArrayList<>(temp);
+            ans.add(t);
+            return;
+        }
+        for(int i = start;i<s.length();i++)
+        {
+            if(dp[start][i])
+            {
+                temp.add(s.substring(start,i+1));
+                getPalindromes(s,i+1,dp,ans,temp);
+                temp.remove(temp.size()-1);
+            }
+        }
+    }
+
+    // 132. Palindrome Partitioning II
+
+    public int minCut(String s) 
+    {
+        int n = s.length();
+        boolean[][]dp = new boolean[n][n];
+        
+        for(int gap = 0;gap<n;gap++)
+        {
+            for(int i = 0,j=gap;j<n;j++,i++)
+            {
+                if(gap == 0) 
+                {
+                    dp[i][j] = true;
+                    continue;
+                }
+                if(gap == 1) 
+                {
+                    if(s.charAt(i) == s.charAt(j))  dp[i][j] = true;
+                    continue;
+                }
+                
+                if(s.charAt(i) == s.charAt(j) && dp[i+1][j-1]) 
+                {
+                    dp[i][j] = true;    
+                }
+            }
+        }
+        
+        int[] dp2 = new int[n];
+        Arrays.fill(dp2,(int)1e9);
+        dp2[n-1] = 0;
+        
+        for(int i = n-1;i>=0;i--)
+        {
+            for(int j = i;j<n;j++)
+            {
+                if(dp[i][j])
+                {
+                    int val = (j+1 < n) ? dp2[j+1] : -1;
+                    dp2[i] = Math.min(dp2[i] , val+1);
+                }
+            }
+        }
+        
+        return dp2[0];
+    }
+
+
+    // Egg Dropping Problem
+    // General Solution
+    // Submmitted On Geek For Geeks
+    // TLE on leetcode
+    public static int eggDrop(int n, int k)
+    {
+        int[][] dp = new int[n + 1][k + 1];
+        //if number of floors == 1 ans number of eggs >= 1, then we need only one attempt
+        for(int i = 1; i <= n; i++)
+        {
+            dp[i][1] = 1;
+        }
+        //if number of eggs == 1
+        for(int i = 1 ; i <= k; i++)
+        {
+            dp[1][i] = i;
+        }
+
+        for(int i = 2; i <= n; i++)
+        {
+            for(int j = 2; j <= k; j++)
+            {
+                dp[i][j] = Integer.MAX_VALUE;
+                int max = Integer.MIN_VALUE;
+                for(int f = 1; f <= j; f++)
+                {
+                    max = 1 + Math.max(dp[i - 1][f - 1], dp[i][j - f]);
+                    if(max < dp[i][j])
+                    {
+                        dp[i][j] = max;
+                    }
+                }
+            }
+        }
+        return dp[n][k];
+    } 
+
+
+    // 225. Implement Stack using Queues
+
+    Queue<Integer> queue;
+    
+    public MyStack()
+    {
+        this.queue=new LinkedList<Integer>();
+    }
+    
+    // Push element x onto stack.
+    public void push(int x) 
+    {
+       queue.add(x);
+       for(int i=0;i<queue.size()-1;i++)
+       {
+           queue.add(queue.poll());
+       }
+    }
+
+    // Removes the element on top of the stack.
+    public int pop() 
+    {
+        return queue.poll();
+    }
+
+    // Get the top element.
+    public int top() 
+    {
+        return queue.peek();
+    }
+
+    // Return whether the stack is empty.
+    public boolean empty() 
+    {
+        return queue.isEmpty();
+    }
+
+    // GFG
+    // Maximum of minimum for every window size
+
+    //     Result for length i, i.e. ans[i] would always be greater or same as result for length i+1, 
+//     i.e., ans[i+1]. 
+//     If ans[i] is not filled it means there is no direct element which is minimum of length i
+//     and therefore either the element of length ans[i+1], or ans[i+2], and so on is same as ans[i] 
+//     So we fill rest of the entries using below loop. 
+    static void nsor(int[]arr , int[]ans)
+    {
+        int i = 0;
+        Stack<Integer> st = new Stack<>();
+        while(i < arr.length)
+        {
+            if(st.size() == 0) st.push(i);
+            else
+            {
+                while(st.size() > 0 && arr[st.peek()] > arr[i]) ans[st.pop()] = i;
+                st.push(i);
+            }
+            i++;
+        }
+    }
+    
+    static void nsol(int[]arr , int[]ans)
+    {
+        int i = arr.length-1;
+        Stack<Integer> st = new Stack<>();
+        while(i >= 0)
+        {
+            if(st.size() == 0) st.push(i);
+            else
+            {
+                while(st.size() > 0 && arr[st.peek()] > arr[i]) ans[st.pop()] = i;
+                st.push(i);
+            }
+            i--;
+        }
+    }
+    static int[] maxOfMin(int[] arr, int n) 
+    {
+        int[]left = new int[n];
+        int[]right = new int[n];
+        
+        Arrays.fill(left,-1);
+        Arrays.fill(right,n);
+        
+        nsor(arr,right);
+        nsol(arr,left);
+        
+        // System.out.println(Arrays.toString(left));
+        // System.out.println(Arrays.toString(right));
+        
+        int[] ans = new int[n];
+        
+        for(int i = 0;i<n;i++)
+        {
+            int l = left[i];
+            int r = right[i];
+            
+            int length = (r-l)-1; // Exclude the boundries
+            ans[length-1] = Math.max(ans[length-1],arr[i]);
+        }
+        
+        for(int i = n-2;i>=0;i--)
+        {
+            ans[i] = Math.max(ans[i],ans[i+1]);
+        }
+        return ans;
+    }
+
+
+    // 8. String to Integer (atoi)
+
+    public int myAtoi(String str) 
+    {
+        int index = 0, sign = 1, total = 0;
+        if(str.length() == 0) return 0;
+
+        while(index < str.length() && str.charAt(index) == ' ') index ++;
+
+        if(index < str.length() && (str.charAt(index) == '+' || str.charAt(index) == '-'))
+        {
+            sign = str.charAt(index) == '+' ? 1 : -1;
+            index ++;
+        }
+
+        while(index < str.length())
+        {
+            int digit = str.charAt(index) - '0';
+            if(digit < 0 || digit > 9) break;
+
+            //check if total will be overflow after 10 times and add digit
+            // Integer max value is 2147483647
+            // max/10 = 214748364
+            // max%10 == 7
+            // so at the end we can atmax add 7
+            // because when we are at 2147483647
+            // then we will do 2147483647*10 -> 21474836470
+            // and then we can add atmax 7
+            if(Integer.MAX_VALUE/10 < total || Integer.MAX_VALUE/10 == total && Integer.MAX_VALUE %10 < digit)
+            {
+                return sign == 1 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            }
+
+            total = 10 * total + digit;
+            index ++;
+        }
+        return total * sign;
+    }
+
+    // 165. Compare Version Numbers
+
+    // . is a special pattern token in a regular expression. It matches any one character. When you split on every possible                     // character you get an empty array (because there is nothing left).
+    // In contrast, when you escape the . with \\. the token is rendered as a literal (and only matches a literal .).
+    public int compareVersion(String version1, String version2)
+    {
+        String[] levels1 = version1.split("\\.");
+        String[] levels2 = version2.split("\\.");
+        // System.out.println(Arrays.toString(levels1));
+        // System.out.println(Arrays.toString(levels2));
+        int length = Math.max(levels1.length, levels2.length);
+        for (int i=0; i<length; i++) 
+        {
+            Integer v1 = i < levels1.length ? Integer.parseInt(levels1[i]) : 0;
+            Integer v2 = i < levels2.length ? Integer.parseInt(levels2[i]) : 0;
+            int compare = v1.compareTo(v2);
+            // System.out.println(compare);
+            if (compare != 0) 
+            {
+                return compare;
+            }
+        }
+
+        return 0;
+    }
+
+    // Minimum characters to be added at front to make string palindrome
+    // Important , Solven Using KMP
+    // Reverse and Append String
+    public static int minChar(String str) 
+    {
+        return getMinCharToAddedToMakeStringPalin(str);
+    }
+    public static int[] computeLPSArray(String str)
+    {
+        int n = str.length();
+        int lps[] = new int[n];
+        int i = 1, len = 0;
+        lps[0] = 0; // lps[0] is always 0
+         
+        while (i < n)
+        {
+            if (str.charAt(i) == str.charAt(len))
+            {
+                len++;
+                lps[i] = len;
+                i++;
+            }
+            else
+            {
+                // This is tricky. Consider the example.
+                // AAACAAAA and i = 7. The idea is similar
+                // to search step.
+                if (len != 0)
+                {
+                    len = lps[len - 1];
+                     
+                    // Also, note that we do not increment
+                    // i here
+                }
+                else
+                {
+                    lps[i] = 0;
+                    i++;
+                }
+            }
+        }
+        return lps;
+    }
+     
+    // Method returns minimum character to be added at
+    // front to make string palindrome
+    static int getMinCharToAddedToMakeStringPalin(String str)
+    {
+        StringBuilder s = new StringBuilder();
+        s.append(str);
+         
+        // Get concatenation of string, special character
+        // and reverse string
+        String rev = s.reverse().toString();
+        s.reverse().append("$").append(rev);
+         
+        // Get LPS array of this concatenated string
+        int lps[] = computeLPSArray(s.toString());
+        return str.length() - lps[s.length() - 1];
+    }
+
+    // 151. Reverse Words in a String
+
+    public String reverseWords(String s) 
+    {
+        String [] words = s.split(" ");
+        StringBuilder sb = new StringBuilder();
+        int end = words.length - 1;
+        for(int i = 0; i<= end; i++)
+        {
+            if(!words[i].isEmpty()) 
+            {
+                sb.insert(0, words[i]);
+                if(i < end) sb.insert(0, " ");
+            }
+        }
+        return sb.toString();
+    }
+
+    // 13. Roman to Integer
+    // Simplest and the easiest solution
+
+    public int getValue(char c)
+    {
+        if(c=='I') return 1;
+        else if(c=='V') return 5;
+        else if(c=='X') return 10;
+        else if(c=='L') return 50;
+        else if(c=='C') return 100;
+        else if(c=='D') return 500;
+        else return 1000;
+    }
+    public int romanToInt(String s) 
+    {
+        int n = s.length();
+        int res = 0;
+        for(int i=0;i<n-1;i++)
+        {
+            int a = getValue(s.charAt(i));
+            int b = getValue(s.charAt(i+1));
+            if(a<b)
+            {
+                res-=a;
+            }
+            else
+            {
+                res+=a;
+            }           
+        }
+        res += getValue(s.charAt(n-1));     
+        return res;
+    }
+
+   
 }

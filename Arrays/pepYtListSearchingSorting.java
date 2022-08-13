@@ -378,6 +378,35 @@ public class pepYtListSearchingSorting
         return -1;
     }
 
+    // 81. Search in Rotated Sorted Array II
+
+    public static boolean search(int[] arr, int data) 
+    {
+        int lo = 0;
+        int hi = arr.length-1;
+        
+        while(lo<=hi)
+        {
+            int mid = (lo + hi)/2;
+            if(data == arr[mid] || data == arr[hi]) return true; [1,1,1,0,1]
+            else if(arr[mid] > arr[lo])
+            {
+                if(data <= arr[mid] && data >= arr[lo]) hi = mid - 1;
+                else lo = mid + 1;
+            }
+            else if(arr[hi] > arr[mid])
+            {
+                if(data <= arr[hi] && data >= arr[mid]) lo = mid+1;
+                else hi = mid-1;
+            }
+            else hi--; // [1,0,1,1,1]
+        }
+        return false;
+    }
+
+
+
+
     // 153. Find Minimum in Rotated Sorted Array
 
     public int findMin(int[] nums) 
@@ -448,8 +477,7 @@ public class pepYtListSearchingSorting
         int low = 0; // Code is running with both -1 and 0
 
         int high = x;
-        // we can't take high = x-1 because consider this case
-
+        // Here we are setting up pointers on xR and yR and not on xl and yL
         while(low<=high)
         {
             int partX =  (low+high)/2;

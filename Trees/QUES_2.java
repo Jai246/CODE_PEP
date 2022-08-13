@@ -825,10 +825,65 @@ class treesLeftQues
         return true;
     }
 
+    // Burning Tree
+    // This can be done without calulating root to node path
+    
+    public static void getLongest(Node root , Node block , int count , int[]max)
+    {
+        if(root == null)
+        {
+            max[0] = Math.max(max[0],count-1);
+            return;
+        }
+        if(root == block) return;
+        
+        getLongest(root.left,block,count+1,max);
+        getLongest(root.right,block,count+1,max);
+    }
+    public static ArrayList<Node> rtnp(Node root , int tar)
+    {
+        if(root == null) return null;
+        if(root.data == tar)
+        {
+            ArrayList<Node> list = new ArrayList<>();
+            list.add(root);
+            return list;
+        }
+        ArrayList<Node> left = rtnp(root.left,tar);
+        if(left!=null)
+        {
+            left.add(root);
+            return left;
+        }
+        ArrayList<Node> right = rtnp(root.right,tar);
+        if(right!=null)
+        {
+            right.add(root);
+            return right;
+        }
+        return null;
+    }
+    public static int minTime(Node root, int target) 
+    {
+        ArrayList<Node> list = rtnp(root,target);
+        Node block = null;
+        int maxTime = 0;
+        
+        int ctr = 0;
+        
+        for(Node ele : list)
+        {
+            int[] m = new int[]{0};
+            getLongest(ele,block,0,m);
+            block = ele;
+            maxTime = Math.max(maxTime,m[0]+ctr++);
+        }
+        return maxTime;
+    }
 
     // 971. Flip Binary Tree To Match Preorder Traversal
     // Important Question
-    // Good and Simple Solutionn
+    // Good and Simple Solution
     List<Integer> res = new ArrayList<>();
     int i = 0;
     public List<Integer> flipMatchVoyage(TreeNode root, int[] v) 

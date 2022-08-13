@@ -465,6 +465,45 @@ class BinarySearchTrees
         return createTree(finalArr);
     }
 
+    // Serialize and Deserialize a Binary tree
+    
+    public class Codec {
+
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        StringBuilder sb = new StringBuilder();
+        serialize(root, sb);
+        return sb.toString();
+    }
+    
+    public void serialize(TreeNode root, StringBuilder sb) {
+        if (root == null) {
+            sb.append("#").append(",");
+        } else {
+            sb.append(root.val).append(",");
+            serialize(root.left, sb);
+            serialize(root.right, sb);
+        }
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        Queue<String> q = new LinkedList<>(Arrays.asList(data.split(",")));
+        return deserialize(q);
+    }
+    
+    public TreeNode deserialize(Queue<String> q) {
+        String s = q.poll();
+        if (s.equals("#")) return null;
+        TreeNode root = new TreeNode(Integer.parseInt(s));
+        root.left = deserialize(q);
+        root.right = deserialize(q);
+        return root;
+    }
+    
+}
+
+
     public static void main(String[] args) 
     {
         int[] arr = new int[]{1,2,3,4,5,6,7,8,9,10,11,22,33,44,55,66,77,88,99};
