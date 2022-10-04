@@ -94,23 +94,22 @@ class stack
 
     public int[] nextGreaterElements(int[] arr) 
     {
-        int n = arr.length;
-        int[] ans = new int[n];
+        Stack<Integer> st = new Stack<>();
+        int n = nums.length;
+        int[]ans = new int[n];
         Arrays.fill(ans,-1);
-        Stack<int[]> st = new Stack<>();
-        st.push(new int[]{0,arr[0]});
-        
         for(int i = 0;i<2*n;i++)
         {
-            int idx = i;
-            if(i >= n) idx = i - n;
-            int[] val = new int[]{i,arr[idx]};
+            int k = i%n;
+            int val = nums[k];
             
-            while(st.size() > 0 && val[0] > st.peek()[0] && val[1] > st.peek()[1] ){
-                ans[(st.peek()[0]>=n) ? st.peek()[0]-n : st.peek()[0]] = val[1];
-                st.pop();
+            while(st.size() > 0 && nums[st.peek()%n] < val && ((st.peek()%n < k) || (i>=n && st.peek()%n > k)))
+            {
+                if(ans[st.peek()%n] == -1) ans[st.pop()%n] = val;
+                else st.pop();
             }
-            if(val[0] < n) st.push(val);
+            
+            st.push(i);
         }
         return ans;
     }
@@ -401,7 +400,10 @@ class stack
     }
 
     // Approach 2 Important
-
+    // Consider This Test case
+    // ((()()
+    // if we run this algo we will get (()) and not ()() BOTH ARE VALID
+    // Peeche se chalte huie koi bhi open brackette hatado farq Nahi padhta
     public String minRemoveToMakeValid(String s) 
     {
         int open = 0;
@@ -582,12 +584,14 @@ class stack
         int j = h.length-1;
         while(i<j)
         {
-            if(rmax<lmax){
+            if(rmax<lmax)
+            {
                 water += rmax - h[j];
                 j--;
                 rmax = Math.max(rmax,h[j]);
             }
-            else{
+            else
+            {
                 water +=lmax-h[i];
                 i++;
                 lmax = Math.max(lmax,h[i]);
@@ -724,7 +728,7 @@ class stack
 
     // With Stack Solution Copied From Leetcode
     // Dryrun On this
-    //Previous operation kee basis par chalenge in
+    // Previous operation kee basis par chalenge in
     // This doesnot have '(' and ')' 
     public int calculate(String s) 
     {
@@ -782,22 +786,20 @@ class stack
                     else if(mdSign == -1) res/=number;
                 }
             }
-            else if(ch == '+'){
+            else if(ch == '+')
+            {
                 ans += pmSign*res;
                 pmSign = 1;
                 res = -(int)1e10;
             }
-            else if(ch == '-'){
+            else if(ch == '-')
+            {
                 ans += pmSign*res;
                 pmSign = -1;
                 res = -(int)1e10;
             }
-            else if(ch == '*'){
-                mdSign = 1;
-            }
-            else if(ch == '/'){
-                mdSign = -1;
-            }
+            else if(ch == '*') mdSign = 1;
+            else if(ch == '/') mdSign = -1;
         }
         if(res > 0) return ans+= res*pmSign;
         return ans;
@@ -805,203 +807,7 @@ class stack
 
 
     // Basic Calculator |||
-    // Non Working Code
-
-    public static int calculate(String s) 
-    {
-        Stack<Integer> st = new Stack<>();
-        st.push(0);
-        st.push(1);
-        int pmd = 2;
-        int pas = 1;
-
-        int res = -(int)1e9;
-        int ans = 0;
-
-        for(int i = 0;i<s.length();i++)
-        {
-            char ch = s.charAt(i);
-            if(Character.isDigit(ch+""))
-            {
-                int number = Integer.parseInt(ch+"");
-                while(i+1 < s.length() && Character.isDigit(s.charAt(i+1)))
-                {
-                    number = number*10 + Integer.parseInt(s.charAt(i+1)+"");
-                    i++;
-                }
-
-                if(res == -(int)1e9)
-                {
-                    res = number;
-                }
-                else
-                {
-                    if(pmd == 2)
-                    {
-                        res*= number;
-                    }
-                    else if(pmd == -2)
-                    {
-                        res/=number;
-                    }
-                }
-            }
-            else if(ch == '+')
-            {
-                ans += res*pas;
-                res = -(int)1e9;
-                pas = 1;
-            }
-            else if(ch == '-')
-            {
-                ans += res*pas;
-                res = -(int)1e9;
-                pas = -1;
-            }
-            else if(ch == '*')
-            {
-                if(i + 1 < s.length() && s.charAt(i+1) == '(') continue;
-                else pmd = 2;
-            }
-            else if(ch == '/')
-            {
-                if(i + 1 < s.length() && s.charAt(i+1) == '(') continue;
-                else pmd = -2;
-            }
-            else if(ch == '(')
-            {
-                if(res == -(int)1e9)
-                {
-                    st.push(ans);
-                    st.push(pas);
-                }
-                else if(res!=-(int)1e9)
-                {
-                    st.push(ans);
-                    st.push(pas);
-
-                    st.push(res);
-                    if(i-1 >= 0 && s.charAt(i-1) == '*') st.push(2);
-                    if(i-1 >= 0 && s.charAt(i-1) == '/') st.push(-2);
-                    else st.push(1);
-                }
-                
-                pmd = 2;
-                pas = 1;
-                ans = 0;
-                res = -(int)1e9;
-            }
-            else if(ch == ')')
-            {
-                if(i + 1 < s.length() && s.charAt(i+1) == '*' || s.charAt(i+1) == '/') continue; 
-                if(res!=-(int)1e9)
-                {
-                    ans += pas*res;
-                }
-                int ope = st.pop();
-                int val = st.pop();
-                if(ope == 1)
-                {
-                    st.push(val + ans);
-                }
-                else if(ope == -1)
-                {
-                    st.push(val - ans);
-                }
-                else if(ope == 2)
-                {
-                    st.push(val * ans);
-                }
-                else if(ope == -2)
-                {
-                    st.push(val/ans);
-                }
-                ans = 0;
-                res = -(int)1e9;
-            }
-        }
-
-        if(ans != 0 || res!=-(int)1e9)
-        {
-            if(ans!=0 && res == -(int)1e9) st.push(ans);
-            else if(ans!=0 && res != -(int)1e9)
-            {
-                if(pmd == 2)
-                {
-                    st.push(ans*res);
-                }
-                else if(pmd == -2)
-                {
-                    st.push(ans/res);
-                }
-
-            }
-            else if(ans == 0 && res!=-(int)1e9)
-            {
-                st.push(res);
-            }
-        }
-
-
-        st.push(1);
-
-        int FinalResult = 0;
-
-        while(st.size() > 0)
-        {
-            int op = st.pop();
-            if(op == 1)
-            {
-                FinalResult = FinalResult + st.pop();
-            }
-            else if(op == -1)
-            {
-                FinalResult = st.pop() - FinalResult ;
-            }
-            else if(op == 2)
-            {
-                FinalResult = st.pop()*FinalResult;
-            }
-            else if(op == -2)
-            {
-                FinalResult = st.pop()/FinalResult;
-            }
-        }
-
-
-        return FinalResult;
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // Do This When Free
 
 
 
@@ -1205,7 +1011,7 @@ class stack
     // Max Stack Most Optimized Solution
 
     public static class MaxStack 
-  {
+    {
     public class node{
       int data = 0;
       node prev = null;
@@ -1339,13 +1145,17 @@ class stack
 
     // Most Optimized Solution 
 
-    public boolean isValid(String s) {
+    public boolean isValid(String s) 
+    {
         Stack<Character> stack = new Stack<>();
         for (char c: s.toCharArray()) {
-            if (c == 'c') {
+            if (c == 'c') 
+            {
                 if (stack.isEmpty() || stack.pop() != 'b') return false;
                 if (stack.isEmpty() || stack.pop() != 'a') return false;
-            } else {
+            } 
+            else 
+            {
                 stack.push(c);
             }
         }

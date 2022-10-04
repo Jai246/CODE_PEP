@@ -6,11 +6,13 @@ class WRITE_HASHMAP
 {
     public static class HashMap<K, V> // FOR GENERIC SUPPORT
     {
-        private class HMNode {
+        private class HMNode 
+        {
           K key;
           V value;
     
-          HMNode(K key, V value) {
+          HMNode(K key, V value) 
+          {
             this.key = key;
             this.value = value;
           }
@@ -24,7 +26,8 @@ class WRITE_HASHMAP
           size = 0;
         }
     
-        public void put(K key, V value) throws Exception {
+        public void put(K key, V value) throws Exception 
+        {
           int bi = hashFunction(key);
           int di = findInBucket(bi, key);
     
@@ -116,13 +119,14 @@ class WRITE_HASHMAP
         // return data index for a bucket and key
         private int findInBucket(int bi, K key) {
           int di = 0;
-          for (HMNode node : buckets[bi]) {
-            if (node.key.equals(key)) {
+          for (HMNode node : buckets[bi]) 
+          {
+            if (node.key.equals(key)) 
+            {
               return di;
             }
             di++;
           }
-    
           return -1;
         }
     

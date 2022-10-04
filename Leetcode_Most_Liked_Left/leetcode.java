@@ -5764,5 +5764,1378 @@ class leetcode
         return res;
     }
 
-   
+
+    // 315. Count of Smaller Numbers After Self
+
+    public List<Integer> countSmaller(int[] nums) 
+    {
+        int n = nums.length;
+        int[][] arr = new int[n][2];
+        int[][] temp = new int[n][2];
+        int[] ans = new int[n];
+        for(int i = 0;i<n;i++) 
+        {
+            arr[i][0] = nums[i];
+            arr[i][1] = i;
+        }
+        
+        mergeSort(arr,0,n-1,ans,temp);
+        
+        List<Integer> finalAns = new ArrayList<>();
+        for(int ele : ans) finalAns.add(ele); 
+
+        return finalAns;
+    }
+    
+    public void mergeSort(int[][] nums , int i , int j ,int[] ans,int[][]temp)
+    {
+        if(i == j) return;
+        int mid = (i+j)/2;
+        mergeSort(nums,i,mid,ans,temp);
+        mergeSort(nums,mid+1,j,ans,temp);
+        getInversions(nums,ans,i,mid+1,mid,j,temp);
+    }
+    
+    public void getInversions(int[][] nums ,int[]ans, int s1 , int s2 , int e1 , int e2,int[][]temp)
+    {
+        int len = e2-s1+1;
+        int u = s1;
+        int v = s2;
+        
+        while(u <= e1)
+        {
+            while(v <= e2 && nums[v][0] < nums[u][0]) v++;
+            ans[nums[u][1]] += (v-s2);
+            u++;
+        }
+        u = s1;
+        int k = u;
+
+        while(s1<=e1 && s2<=e2)
+        {
+            int v1 = nums[s1][0];
+            int v2 = nums[s2][0];
+            
+            if(v1<=v2)
+            {
+                temp[k][0] = v1;
+                temp[k][1] = nums[s1][1];
+                s1++;
+            }
+            else
+            {
+                temp[k][0] = v2;
+                temp[k][1] = nums[s2][1];
+                s2++;
+            }
+            k++;
+        }
+        
+        while(s1<=e1)
+        {
+            temp[k][0] = nums[s1][0];
+            temp[k][1] = nums[s1][1];
+            s1++;
+            k++;
+        }
+        while(s2<=e2)
+        {
+            temp[k][0] = nums[s2][0];
+            temp[k][1] = nums[s2][1];
+            s2++;
+            k++;
+        }
+        
+                
+        while(u<=e2)
+        {
+            nums[u][0] = temp[u][0];
+            nums[u][1] = temp[u][1];
+            u++;
+        }
+    }
+
+
+    // 126. Word Ladder II
+    // TLE Approach
+    // 32/35 passed
+
+    private Set<String> set;
+    private Queue<Node> q;
+
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) 
+    {
+        List<List<String>> result = new ArrayList<>();
+        
+        set = new HashSet<>();
+        q = new LinkedList<>();
+        
+        for(String s : wordList) set.add(s);
+
+        if(!set.contains(endWord)) return result; 
+        
+        q.add(new Node(beginWord));
+        
+        while(!q.isEmpty())
+        {
+            int size = q.size(); 
+            Set<String> removeSet = new HashSet<>(); 
+            for(int i=0; i < size; i++)
+            {
+                Node cur = q.poll();
+                if(cur.name.equals(endWord)) 
+                {
+                    result.add(cur.path);
+                }
+                else
+                {
+                    List<String> neighbours = getNeighbours(cur.name);
+                    for(String n : neighbours)
+                    {
+                        q.add(new Node(n, cur.path));
+                        removeSet.add(n);
+                    }
+                }
+            }
+            set.removeAll(removeSet);
+        }
+        
+        return result;
+    }
+    
+    private List<String> getNeighbours(String word)
+    {
+        char[] ch = word.toCharArray();
+        List<String> words = new ArrayList<>();
+        for(int i=0; i < ch.length; i++)
+        {
+            char temp = ch[i];
+            for(char j = 'a'; j <= 'z'; j++)
+            {
+                ch[i] = j;
+                String newWord = new String(ch);
+                if(set.contains(newWord)) words.add(newWord);
+            }
+            ch[i] = temp;
+        }
+        return words;
+    }
+
+    class Node
+    {
+        String name;
+        LinkedList<String> path;
+        
+        public Node(String name)
+        {
+            this.name = name;
+            this.path = new LinkedList<>();
+            this.path.add(name);
+        }
+        public Node(String name, LinkedList<String> path)
+        {
+            this.name = name;
+            this.path = new LinkedList<>();
+            this.path.addAll(path);
+            this.path.add(name);
+        }
+       
+    }
+
+    // BFS + DAG also giving TLE
+
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList)
+    {
+        LinkedList<String> queue = new LinkedList<>();
+        HashSet<String> words = new HashSet<>();
+        for(String ele : wordList) words.add(ele);
+        HashMap<String ,Integer> size = new HashMap<>();
+        size.put(beginWord,0);
+        HashMap<String,LinkedList<String>> map = new HashMap<>();
+        queue.add(beginWord);
+        map.put(beginWord,new LinkedList<>());
+        while(queue.size() > 0)
+        {
+            int s = queue.size();
+            while(s-- > 0)
+            {
+                String pop = queue.removeFirst();
+                for(int i = 0;i<pop.length();i++)
+                {
+                    StringBuilder sb = new StringBuilder(pop);
+                    for(int j = 0;j<26;j++)
+                    {
+                        char ch = (char)('a'+j);
+                        sb.setCharAt(i,ch);
+                        String temp = sb.toString();
+                        if(words.contains(temp))
+                        {
+                            if(!size.containsKey(temp))
+                            {
+                                map.put(temp,new LinkedList());
+                                map.get(pop).addLast(temp);
+                                queue.addLast(temp);
+                                size.put(temp,size.get(pop)+1);
+                            }
+                            else if(size.get(pop)+1 == size.get(temp))
+                            {
+                                map.get(pop).addLast(temp);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        List<List<String>> ans = new ArrayList<>();
+        getPaths(map,beginWord,endWord,ans,new ArrayList<>());
+        return ans;
+    }
+    
+    public void getPaths(HashMap<String,LinkedList<String>> map , String beginWord , String endWord,List<List<String>> ans,List<String> temp)
+    {
+        if(beginWord.equals(endWord))
+        {
+            temp.add(beginWord);
+            List<String> l = new ArrayList<>();
+            for(String ele : temp) l.add(ele);
+            ans.add(l);
+            temp.remove(temp.size()-1);
+            return;
+        }
+        temp.add(beginWord);
+        for(String ele : map.get(beginWord))
+        {
+            getPaths(map,ele,endWord,ans,temp);
+        }
+        temp.remove(temp.size()-1);
+    }
+
+
+    // Accepted Solution 
+    // BFS + reverse DAG Traversal
+    // This will remove redundancy
+    // endWord to beginWord
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList)
+    {
+        LinkedList<String> queue = new LinkedList<>();
+        HashSet<String> words = new HashSet<>();
+        for(String ele : wordList) words.add(ele);
+        HashMap<String ,Integer> size = new HashMap<>();
+        size.put(beginWord,0);
+        HashMap<String,LinkedList<String>> map = new HashMap<>();
+        HashMap<String,LinkedList<String>> newMap = new HashMap<>();
+        queue.add(beginWord);
+        map.put(beginWord,new LinkedList<>());
+        while(queue.size() > 0)
+        {
+            int s = queue.size();
+            while(s-- > 0)
+            {
+                String pop = queue.removeFirst();
+                for(int i = 0;i<pop.length();i++)
+                {
+                    StringBuilder sb = new StringBuilder(pop);
+                    for(int j = 0;j<26;j++)
+                    {
+                        char ch = (char)('a'+j);
+                        sb.setCharAt(i,ch);
+                        String temp = sb.toString();
+                        if(words.contains(temp))
+                        {
+                            if(!size.containsKey(temp))
+                            {
+                                map.put(temp,new LinkedList());
+                                map.get(pop).addLast(temp);
+                                queue.addLast(temp);
+                                size.put(temp,size.get(pop)+1);
+                            }
+                            else if(size.get(pop)+1 == size.get(temp))
+                            {
+                                map.get(pop).addLast(temp);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        for(String ele : map.keySet())
+        {
+            for(String e : map.get(ele))
+            {
+                if(!newMap.containsKey(e)) newMap.put(e,new LinkedList<>());
+                newMap.get(e).addLast(ele);
+            }
+        }
+        
+        List<List<String>> ans = new ArrayList<>();
+        getPaths(newMap,endWord,beginWord,ans,new ArrayList<>());
+        return ans;
+    }
+    
+    public void getPaths(HashMap<String,LinkedList<String>> map , String beginWord , String endWord,List<List<String>> ans,List<String> temp)
+    {
+        if(beginWord.equals(endWord))
+        {
+            temp.add(beginWord);
+            List<String> l = new LinkedList<>();
+            for(String ele : temp) l.add(0,ele);
+            ans.add(l);
+            temp.remove(temp.size()-1);
+            return;
+        }
+        temp.add(beginWord);
+        if(!map.containsKey(beginWord)) return;
+        for(String ele : map.get(beginWord))
+        {
+            getPaths(map,ele,endWord,ans,temp);
+        }
+        temp.remove(temp.size()-1);
+    }
+
+
+    // 980. Unique Paths III
+    // Simple Backtracking brute force
+
+    int res = 0, empty = 1, sx, sy, ex, ey;
+    public int uniquePathsIII(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid[i][j] == 0) empty++;
+                else if (grid[i][j] == 1) {
+                    sx = i;
+                    sy = j;
+                }
+            }
+        }
+        dfs(grid, sx, sy);
+        return res;
+    }
+
+    public void dfs(int[][] grid, int x, int y) {
+        if (x < 0 || x >= grid.length || y < 0 || y >= grid[0].length || grid[x][y] < 0)
+            return;
+        if (grid[x][y] == 2) {
+            if (empty == 0) res++;
+            return;
+        }
+        grid[x][y] = -2;
+        empty--;
+        dfs(grid, x + 1, y);
+        dfs(grid, x - 1, y);
+        dfs(grid, x, y + 1);
+        dfs(grid, x, y - 1);
+        grid[x][y] = 0;
+        empty++;
+    }
+
+
+    // 135. Candy
+    // Simple Solution like temple offerings 
+
+    public int candy(int[] ratings) 
+    {
+        int n = ratings.length;
+        int[] dp = new int[n];
+        int prev = 0;
+        
+        int val = -(int)1e9;
+        
+        for(int i = 0;i<n;i++)
+        {
+            int cVal = ratings[i];
+            
+            if(cVal > val) dp[i] = ++prev;
+            else if(cVal == val) 
+            {
+                dp[i] = 1;
+                prev = 1;
+            }
+            else {
+                dp[i] = 1;
+                prev = 1;
+            }
+            val = cVal;
+        }
+        
+        
+        prev = 0;
+        val = -(int)1e9;
+        
+        for(int i = n-1;i>=0;i--)
+        {
+            int cVal = ratings[i];
+            if(cVal > val)
+            {
+                dp[i] = Math.max(dp[i],++prev);
+                prev = Math.max(prev,dp[i]);
+            }
+            else if(cVal == val)
+            {
+                dp[i] = Math.max(dp[i],1);
+                prev = Math.max(dp[i],1);
+            }
+            else if(cVal < val)
+            {
+                dp[i] = Math.max(dp[i],1);
+                prev = Math.max(1,dp[i]);
+            }
+            val = cVal;
+        }
+        
+        int ans = 0;
+        for(int ele : dp) ans+=ele;
+        return ans;
+        
+    }
+
+
+
+    // 336. Palindromic Pairs
+
+    // Once all the words are added to HashMap,
+    // there are 4 cases to be considered for each word:
+
+    // Check if reverse of word is present.
+    // Check if there is empty string. 
+    // In that case if word is palindrome, 
+    // empty string can be added before and after the word.
+    // Check if some other word can be added as prefix.
+    // Check if some other word can be added as suffix.
+
+    // Code Not Mine , Logic is Mine
+    // Not passing 135/136 passed
+
+    // Every Solution is giving tle now
+    // check for new Solutions Afterwords
+
+    List<List<Integer>> result = new ArrayList<>();
+    public List<List<Integer>> palindromePairs(String[] words) 
+    {
+        Map<String, Integer> map = new HashMap<>();
+        int i = 0;
+        for (String s: words) map.put(s, i++);
+        
+        // if empty string exists then check if any other word is palindrome
+        if(map.containsKey(""))
+        {
+            int id = map.get("");
+            for(i=0;i<words.length;i++)
+            {
+                if(i != id && isPalindrome(words[i]))
+                {
+                    addList(i, id);
+                    addList(id, i);
+                }
+            }
+        }
+        
+        // if reverse exist for a word then add it
+        for(i=0;i<words.length;i++)
+        {
+            String word = words[i];
+            String reverse = new StringBuilder(word).reverse().toString();
+            mapAndAdd(map, reverse, i, false);
+        }
+        
+        // if first portion of word is palindrome and reverse of second section then add
+        // if second portion is palindrome and reverse of first section then add
+
+
+        // This is also Giving TLE
+        for(i=0;i<words.length;i++)
+        {
+            String word = words[i];
+            StringBuilder left = new StringBuilder();
+            StringBuilder right = new StringBuilder(word);
+
+            for (int j=1;j<word.length();j++)
+            {
+                left.append(right.charAt(0));
+                right.deleteCharAt(0);
+                if(isPalindrome(left.toString()))
+                {
+                    String reverse = new StringBuilder(right.toString()).reverse().toString();
+                    mapAndAdd(map, reverse, i, false);
+                }
+                if(isPalindrome(right.toString()))
+                {
+                    String reverse = new StringBuilder(left.toString()).reverse().toString();
+                    mapAndAdd(map, reverse, i, true);
+                }
+            }
+        }
+
+        // for(i=0;i<words.length;i++)
+        // {
+        //     String word = words[i];
+        //     for (int j=1;j<word.length();j++)
+        //     {
+        //         String left = word.substring(0,j);
+        //         String right = word.substring(j);
+        //         if(isPalindrome(left))
+        //         {
+        //             String reverse = new StringBuilder(right).reverse().toString();
+        //             mapAndAdd(map, reverse, i, false);
+        //         }
+        //         if(isPalindrome(right))
+        //         {
+        //             String reverse = new StringBuilder(left).reverse().toString();
+        //             mapAndAdd(map, reverse, i, true);
+        //         }
+        //     }
+        // }
+        
+        return result;
+    }
+    
+    public void mapAndAdd(Map<String, Integer> map, String word, int i, boolean flag)
+    {
+        if(map.containsKey(word) && i != map.get(word)) 
+        {
+            if (flag) addList(i, map.get(word));
+            else addList(map.get(word), i);
+        }
+    }
+    
+    public void addList(int i, int j)
+    {
+        List<Integer> temp = new ArrayList<>();
+        temp.add(i);
+        temp.add(j);
+        result.add(temp);
+    }
+    
+    public boolean isPalindrome(String s)
+    {
+        int left = 0;
+        int right = s.length()-1;
+        while (left < right) if (s.charAt(left++) != s.charAt(right--)) return false;
+        return true;
+    }
+
+    // 847. Shortest Path Visiting All Nodes
+    // o(n*2^n)
+    // Mera Dimag Kharab Hogaya Tha
+    // Itna Mushkil bhi sawaal nahi hei
+    class Node
+    {
+        int visited;
+        int dist;
+        int node;
+        Node(int node, int dist, int visited) 
+        {
+            this.node = node;
+            this.dist = dist;
+            this.visited = visited;
+        }
+    }
+    public int shortestPathLength(int[][] graph) 
+    {
+        int n = graph.length;
+        Set<Integer>[] visited = new HashSet[n];
+        Queue<Node> queue = new LinkedList<>();
+
+        for(int i = 0; i < n; i++) 
+        {
+            visited[i] = new HashSet<>();
+            queue.add(new Node(i, 0, 1 << i));
+            visited[i].add(1 << i);
+        }
+        while(!queue.isEmpty()) 
+        {
+            Node node = queue.poll();
+            if(node.visited == (1 << n) - 1)  return node.dist;
+            for(int nei : graph[node.node]) // kahi Oos element ke Visited mei hum same Mask ke saath toh nahi aa rahe
+            {
+                int mask = node.visited | (1 << nei);
+                if(visited[nei].add(mask)) queue.add(new Node(nei, 1 + node.dist, mask));
+            }
+        }
+        return -1;
+    }
+
+
+    // 827. Making A Large Island
+
+    public int findPar(int[] par , int[]size , int u)
+    {
+        if(par[u] == u) return u;
+        int p = findPar(par,size,par[u]);
+        return par[u] = p;
+    }
+    
+    public void findAndSetPar(int i , int j , int m , int n , int up , int left , int[]par, int[]size)
+    {
+        int parUp =  (up == -1) ? -1 : findPar(par,size,up);
+        int parLeft = (left == -1) ? -1 : findPar(par,size,left);
+        if(parUp != parLeft)
+        {
+            if(up !=-1 && left!=-1)
+            {
+                if(size[parUp] < size[parLeft])
+                {
+                    par[parUp] = parLeft;
+                    par[i*m+j] = parLeft;
+                    size[parLeft] += size[parUp]+1;
+                }
+                else
+                {
+                    par[parLeft] = parUp;
+                    par[i*m+j] = parUp;
+                    size[parUp] += size[parLeft]+1;
+                }
+            }
+            else
+            {
+                if(parUp == -1 && parLeft != -1)
+                {
+                    par[i*m+j] = parLeft;
+                    size[parLeft] += 1;
+                }
+                else if(parUp != -1 && parLeft == -1)
+                {
+                    par[i*m+j] = parUp;
+                    size[parUp] += 1;
+                }
+            }
+        }
+        else if(parUp == parLeft && parUp!=-1 && parLeft!=-1)
+        {
+            par[i*m+j] = parUp;
+            size[parUp] += 1;
+        }
+    }
+    
+    public int largestIsland(int[][] grid) 
+    {
+        int n = grid[0].length;
+        int m = grid[0].length;
+        int[] par = new int[n*n];
+        int[] size = new int[n*n];
+        Arrays.fill(size,1);
+        
+        for(int i=0;i<n*n;i++) par[i]=i;
+        
+        for(int i = 0;i<n;i++)
+        {
+            for(int j = 0;j<n;j++)
+            {
+                if(grid[i][j] == 0) continue;
+                int up = (i == 0 || grid[i-1][j] == 0) ? -1 : n*(i-1)+j ;
+                int left = (j == 0 || grid[i][j-1] == 0) ? -1 : n*(i)+(j-1);
+                findAndSetPar(i,j,m,m,up,left,par,size);
+            }
+        }
+        
+        int max = 0;
+        int max2 = 0;
+        boolean isZero = false;
+        for(int i = 0;i<n;i++)
+        {
+            for(int j = 0;j<n;j++)
+            {
+                if(grid[i][j] == 1) {
+                    continue;
+                }
+                isZero = true;
+                HashSet<Integer> set = new HashSet<>();
+                
+                int left = (j == 0 || grid[i][j-1] == 0) ? -1 : findPar(par,size,(i*m)+j-1);
+                int right = (j == n-1 || grid[i][j+1] == 0) ? -1 : findPar(par,size,(i*m)+j+1);
+                int up = (i == 0 || grid[i-1][j] == 0) ? -1 : findPar(par,size,((i-1)*m)+j);
+                int down = (i == n-1 || grid[i+1][j] == 0) ? -1 : findPar(par,size,((i+1)*m)+j);
+                
+                if(left!=-1) set.add(left);
+                if(right!=-1) set.add(right);
+                if(up!=-1) set.add(up);
+                if(down!=-1) set.add(down);
+                
+                int sum = 1;
+                for(int ele : set) sum+=size[ele];
+                max = Math.max(max,sum);
+            }
+        }
+        if(!isZero) return n*n;
+        return max;
+    }
+
+    // 1293. Shortest Path in a Grid with Obstacles Elimination
+
+    // All the cells would be visited more than once as we could reach same cell 
+    // with more distance but less obstacles which could be helpful later in
+    // traversal so we need to consider all the paths passing through
+    // same cell even with more distance.
+
+
+    public int shortestPath(int[][] grid, int k) 
+    {
+        int minDistance = 0;
+        Queue<int[]> queue = new LinkedList<>();
+        int[][] visited = new int[grid.length][grid[0].length];
+        for(int[] row: visited) Arrays.fill(row, -1);
+        
+        queue.add(new int[] {0,0,k});
+        
+        while(!queue.isEmpty()) 
+        {
+            int size = queue.size();
+            while(size-- > 0) 
+            {
+                int[] currentPos = queue.poll();
+                int i = currentPos[0], j = currentPos[1], obs = currentPos[2];
+                
+                if (i<0 || j<0 || i>=grid.length || j>=grid[i].length) continue;
+                if (obs <= visited[i][j]) continue;
+                visited[i][j] = obs;
+                if (i == grid.length-1 && j == grid[i].length-1) return minDistance;
+                
+                if (grid[i][j] == 0 || --obs >= 0) 
+                {
+                    queue.add(new int[] {i+1, j, obs});
+                    queue.add(new int[] {i-1, j, obs});
+                    queue.add(new int[] {i, j+1, obs});
+                    queue.add(new int[] {i, j-1, obs});
+                }
+            }
+            ++minDistance;
+        }
+        return -1;
+    }
+
+
+    // 480. Sliding Window Median
+    // Using the Idea of Median In a data stream
+
+    public double[] medianSlidingWindow(int[] nums, int k) 
+    {
+        PriorityQueue<Integer> max = new PriorityQueue<>((a,b)->{
+            return (b.compareTo(a));
+        });
+        PriorityQueue<Integer> min = new PriorityQueue<>();
+        int i = 0;
+        int j = 0;
+        int n = nums.length;
+        int l = 0;
+        double[] ans = new double[n-k+1];
+        while(j < n)
+        {
+            while(min.size()+max.size() < k && j < n)
+            {
+                int val = nums[j];
+                if(min.size() == 0 || val < min.peek()) max.add(val);
+                else min.add(val);
+
+                int diff = Math.abs(min.size()-max.size());
+                
+                if(diff == 2)
+                {
+                    if(min.size() > max.size()) max.add(min.poll());
+                    else min.add(max.poll());
+                }
+                else if(min.size() > max.size()) max.add(min.poll());
+                j++;
+            }
+            
+            if(k%2 == 1) ans[l++] = (double)max.peek();
+            else ans[l++] = (long)((long)max.peek()+(long)min.peek())/2.0;
+            int rem = nums[i];
+            if(min.contains(rem)) min.remove(rem); 
+            else max.remove(rem);
+            int diff = Math.abs(min.size()-max.size());                
+            if(diff == 2)
+            {
+                if(min.size() > max.size()) max.add(min.poll());
+                else min.add(max.poll());
+            }
+            else if(min.size() > max.size()) max.add(min.poll());
+            i++;
+        }
+        return ans;
+    }
+
+
+    // 164. Maximum Gap
+    // Solve This Using  Bucket Sort
+
+
+    // 778. Swim in Rising Water
+    // Simple Dijikstra Problem
+
+        public int swimInWater(int[][] grid)
+    {
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> {return a[2] - b[2];});
+        
+        // It is not possible to come at same point with Less Time
+        // So Boolean Matrix Is suffic 
+        boolean[][] isVisited = new boolean[grid.length][grid[0].length];
+        
+        pq.add(new int[] {0, 0, grid[0][0]});
+        while(!pq.isEmpty()) 
+        {
+            int[] arr = pq.poll();
+            int row = arr[0];
+            int col = arr[1];
+            int time = arr[2];
+
+            if(isVisited[row][col]) continue;
+            isVisited[row][col] = true;
+            
+            if(row == grid.length - 1 && col == grid[0].length - 1) return Math.max(time, grid[row][col]);
+            
+            if(isValid(grid, row - 1, col, isVisited)) 
+            {
+                pq.add(new int[] {row - 1, col, Math.max(time, grid[row - 1][col])});
+            }
+            
+            if(isValid(grid, row, col + 1, isVisited)) 
+            {
+                if(row == grid.length - 1 && col + 1 == grid[0].length - 1) return Math.max(time, grid[row][col + 1]);
+                pq.add(new int[] {row, col + 1, Math.max(time, grid[row][col + 1])});
+            }
+            
+            if(isValid(grid, row + 1, col, isVisited)) 
+            {
+                if(row + 1 == grid.length - 1 && col == grid[0].length - 1) return Math.max(time, grid[row + 1][col]);
+                pq.add(new int[] {row + 1, col, Math.max(time, grid[row + 1][col])});
+            }
+            
+            if(isValid(grid, row, col - 1, isVisited)) 
+            {
+                pq.add(new int[] {row, col - 1, Math.max(time, grid[row][col - 1])});
+            }
+        }
+        return -1;
+    }
+    
+    public boolean isValid(int[][] arr, int row, int col, boolean[][] isVisited) 
+    {
+        return row >= 0 && col >= 0 && row < arr.length && col < arr[0].length && !isVisited[row][col];
+    }
+
+
+    
+
+    // 1387. Sort Integers by The Power Value
+
+    // Simple Memoized Solution
+
+        public int setUpDp(HashMap<Integer,Integer> map , int x)
+    {
+        if(map.containsKey(x)) return map.get(x);
+        if(x%2 == 0) map.put(x,setUpDp(map,x/2)+1);
+        else map.put(x,setUpDp(map,(3*x) + 1)+1);
+        return map.get(x);
+    }
+    public int getKth(int lo, int hi, int k)
+    {
+        HashMap<Integer,Integer> map = new HashMap<>();
+        map.put(1,0);
+        
+        PriorityQueue<int[]> queue = new PriorityQueue<>((a,b)->{
+            if(a[1]!=b[1]) return a[1]-b[1];
+            return a[0]-b[0];
+        });
+        
+        for(int i = lo;i<=hi;i++) queue.add(new int[]{i,setUpDp(map,i)});        
+        while(k-- > 1) queue.remove();
+        return queue.peek()[0];
+    }
+
+
+    // 1054. Distant Barcodes
+    // Similar Questions we did earlier
+
+    public int[] rearrangeBarcodes(int[] barcodes) 
+    {
+        int n = barcodes.length;
+        if(n == 1) return barcodes;
+        HashMap<Integer,Integer> map = new HashMap<>();
+        for(int ele : barcodes) map.put(ele,map.getOrDefault(ele,0)+1);
+        
+        int[] ans = new int[n];
+        
+        PriorityQueue<int[]> queue = new PriorityQueue<>((a,b)->{return b[1]-a[1];});
+        for(int ele : map.keySet()) queue.add(new int[]{ele,map.get(ele)});
+        int ptr = 0;
+        
+        while(queue.size() > 1)
+        {
+            int[] first = queue.remove();
+            int[] second = queue.remove();
+            
+            ans[ptr++] = first[0];
+            first[1]--;
+            ans[ptr++] = second[0];
+            second[1]--;
+            
+            if(first[1] > 0)queue.add(first);
+            if(second[1] > 0)queue.add(second);
+        }
+        
+        if(queue.size() > 0) ans[ptr++] = queue.peek()[0];
+        return ans;
+    }
+
+
+    // 1654. Minimum Jumps to Reach Home
+    // BFS Solution
+
+        public int minimumJumps(int[] forbidden, int a, int b, int x)
+    {
+        HashSet<Integer> set = new HashSet<>();
+        HashSet<String> vis = new HashSet<>();
+        int maxLimit = x+a+b;
+        for(int ele : forbidden) {
+            set.add(ele);
+            maxLimit = Math.max(maxLimit, ele + (2 * b));
+        }
+        
+        LinkedList<int[]> queue = new LinkedList<>();
+        queue.add(new int[]{0,0});
+        int level = 0;
+        
+        while(queue.size() > 0)
+        {
+            int size = queue.size();
+            while(size-- > 0)
+            {
+                int[] pop = queue.removeFirst();
+                if(vis.contains(pop[0]+","+pop[1])) continue;
+                vis.add(pop[0]+","+pop[1]);
+                if(pop[0] == x) return level;
+                if(!set.contains(pop[0]+a)&&!vis.contains((pop[0]+a)+","+0)&&(pop[0]+a<=maxLimit)) queue.addLast(new int[]{pop[0]+a,0});
+                if(pop[0]-b>=0&&!set.contains(pop[0]-b)&&!vis.contains((pop[0]-b)+","+(pop[1]-1))&&pop[1]-1>-2) queue.addLast(new int[]{pop[0]-b,pop[1]-1});
+            }
+            level++;
+        }
+        return -1;
+    }
+
+
+
+    // 823. Binary Trees With Factors
+
+    public int numFactoredBinaryTrees(int[] arr)
+    {
+        int mod = (int)1e9 + 7;
+        HashMap<Integer,Long> map = new HashMap<>();
+        map.put(1,1l);
+        for(int ele : arr) map.put(ele,1l);
+        Arrays.sort(arr);
+        
+        for(int ele : arr)
+        {
+            for(int div : arr)
+            {
+                if(div < ele)
+                {
+                    if(ele%div == 0)
+                    {
+                        int v1 = ele/div;
+                        int v2 = div;
+                        if(!map.containsKey(v1) || !map.containsKey(v2)) continue;
+                        map.put(ele,(long)(map.get(ele)+((long)map.get(v1)*(long)map.get(v2))%mod)%mod);
+                    }
+                }
+                else break;
+            }
+        }
+        long sum = 0;
+        for(long ele : map.values()) sum=(sum+ele)%mod;
+        return (int)(sum-1)%mod;
+    }
+
+
+    // 1424. Diagonal Traverse II
+
+    public int[] findDiagonalOrder(List<List<Integer>> nums) 
+    {
+        HashMap<Integer,LinkedList<Integer>> map = new HashMap<>();
+        int size = 0;
+        int maxCoord = nums.size();
+        for(int i = 0;i<nums.size();i++)
+        {
+            for(int j = 0;j<nums.get(i).size();j++)
+            {
+                maxCoord = Math.max(nums.get(i).size(),maxCoord);
+                int idx = i+j;
+                if(!map.containsKey(idx)) map.put(idx,new LinkedList<>());
+                int val = nums.get(i).get(j);
+                map.get(idx).addFirst(val);
+                size++;
+            }
+        }
+        int[] ans = new int[size];
+        int k = 0;
+        for(int i = 0;i<2*maxCoord;i++)
+        {
+            if(map.containsKey(i)) for(int ele : map.get(i)) ans[k++] = ele;
+        }
+        return ans;
+    }
+
+
+
+    // 1856. Maximum Subarray Min-Product
+    // Simple Approach
+    public int maxSumMinProduct(int[] nums) 
+    {
+        int mod = (int)1e9 + 7;
+        int n = nums.length;
+        int[] left = new int[n];
+        Arrays.fill(left,-1);
+        int[] right = new int[n];
+        Arrays.fill(right,-1);
+        long[] pfx = new long[n];
+        
+        pfx[0] = (long)nums[0];
+        for(int i=1;i<n;i++) pfx[i] = pfx[i-1]+nums[i];
+        Stack<Integer> st = new Stack<>();
+        for(int i = 0;i<n;i++)
+        {
+            int val = nums[i];
+            while(st.size() > 0 && nums[st.peek()] > val) right[st.pop()] = i; 
+            st.push(i);
+        }
+        st = new Stack<>();
+        for(int i = n-1;i>=0;i--)
+        {
+            int val = nums[i];
+            while(st.size() > 0 && nums[st.peek()] > val) left[st.pop()] = i; 
+            st.push(i);
+        }
+        
+        long maxAns = 0;
+        
+        for(int i = 0;i<n;i++)
+        {
+            int l = left[i];
+            int r = right[i];
+            
+            long sum = ((r!=-1) ? pfx[r-1] : pfx[n-1])-((l!=-1) ? pfx[l] : 0);
+            
+            maxAns = Math.max(maxAns , (sum*nums[i]));
+        }
+        return (int)(maxAns%mod);
+    }
+
+    // 1712. Ways to Split Array Into Three Subarrays
+    // Important Problem
+    // Check O(n) solution if you want
+    // this is BS solution
+    // We Need to find the range of valid points
+    // Article Link -> https://leetcode.com/problems/ways-to-split-array-into-three-subarrays/discuss/999113/JavaScala-Detailed-Explanation-Prefix-Sum-Binary-Search
+
+    // [0,0,0,0]
+    // [1,1,1,1]
+    // [2,3,5,10]
+    // [2,3,5,2,1,10]
+
+    // [2,3,5,10]
+    // first cut [1,2]
+    // second cut [2,2]
+
+    public int getLeftCut(int[] pfx , int x)
+    {
+        int n = pfx.length;
+        int ans = -1;
+        int j = n-2; // Imp
+        int i = x;
+        while(i <= j)
+        {
+            int mid = (i+j)/2;
+            
+            if(pfx[x-1] <= pfx[mid]-pfx[x-1] && pfx[mid]-pfx[x-1] <= pfx[n-1]-pfx[mid])
+            {
+                ans = mid;
+                j = mid-1;
+            }
+            else if(pfx[x-1] > pfx[mid]-pfx[x-1]) i = mid+1;
+            else j = mid-1;
+        }
+        return ans;
+    }
+    public int getRightCut(int[] pfx , int x)
+    {
+        int n = pfx.length;
+        int ans = -1;
+        int j = n-2; // Imp
+        int i = x;
+        while(i <= j)
+        {
+            int mid = (i+j)/2;
+            if(pfx[x-1] <= pfx[mid]-pfx[x-1] && pfx[mid]-pfx[x-1] <= pfx[n-1]-pfx[mid])
+            {
+                ans = mid;
+                i = mid+1;
+            }
+            else if(pfx[x-1] > pfx[mid]-pfx[x-1]) i = mid+1;
+            else j = mid-1;
+        }
+        return ans;
+    }
+    public int waysToSplit(int[] nums)
+    {
+        long mod = (int)1e9+7;
+        int n = nums.length;
+        int[] pfx = new int[n];
+        pfx[0] = nums[0];
+        
+        for(int i=1;i<n;i++) pfx[i] = pfx[i-1] + nums[i];
+        long ans = 0;
+        for(int i = 0;i<n-2;i++)
+        {
+            int left = getLeftCut(pfx,i+1);
+            int right = getRightCut(pfx,i+1);
+            if(right == -1 || left == -1) continue; 
+            ans = (ans + (right-left+1))%mod;
+        }
+        return (int)(ans);
+    }
+
+    // 355. Design Twitter
+    // Simple Solution
+    // Check for other solution as well
+    HashMap<Integer,HashSet<Integer>> map;
+    LinkedList<int[]> posts;
+    public Twitter() 
+    {
+        map = new HashMap<>();
+        posts = new LinkedList<>();
+    }
+    
+    public void postTweet(int userId, int tweetId) 
+    {
+        if(!map.containsKey(userId)) map.put(userId,new HashSet<>());
+        posts.addFirst(new int[]{userId,tweetId});
+    }
+    
+    public List<Integer> getNewsFeed(int userId)
+    {
+        List<Integer> ans = new ArrayList<>();
+        
+        for(int[] ele : posts)
+        {
+            if(map.get(userId).contains(ele[0]) || ele[0] == userId) ans.add(ele[1]);
+            if(ans.size() == 10) break;
+        }
+        return ans;
+    }
+    
+    public void follow(int followerId, int followeeId) 
+    {
+        if(!map.containsKey(followerId)) map.put(followerId,new HashSet<>());
+        if(!map.containsKey(followeeId)) map.put(followeeId,new HashSet<>());
+        map.get(followerId).add(followeeId);
+    }
+    
+    public void unfollow(int followerId, int followeeId) 
+    {
+        map.get(followerId).remove(followeeId);
+    }
+
+    // 842. Split Array into Fibonacci Sequence
+    // Recursive solution
+
+    public List<Integer> splitIntoFibonacci(String num) 
+    {
+        List<Integer> ans = new ArrayList<>();
+        getFib(num,0,0,0,false,false,ans);
+        return ans;
+    }
+    
+    public boolean getFib(String num , int i , int pp , int p , boolean isFirst , boolean isSecond ,  List<Integer> ans)
+    {
+        if(i == num.length() && ans.size()>2) return true;
+        if(i == num.length() && ans.size()<=2) return false;
+        int n = 0;
+        boolean res = false;
+        boolean isPrevZero = false;
+        for(int j = i;j<num.length();j++)
+        {
+            int v = Integer.parseInt(""+num.charAt(j));
+            if(n*10 < 0) return false;
+            n*=10;
+            if(n+10 < 0) return false; 
+            n+=v;
+            if(n == p + pp || !isFirst || !isSecond) 
+            {
+                if(n == 0) isPrevZero = true;
+                ans.add(n);
+                if(!isFirst) res = getFib(num,j+1,p,n,true,isSecond,ans);
+                else if(!isSecond) res = getFib(num,j+1,p,n,isFirst,true,ans);
+                else res = getFib(num,j+1,p,n,isFirst,isSecond,ans);
+                if(!res) ans.remove(ans.size()-1);
+                if(res) return true;
+            }
+            if(isPrevZero) break;
+        }
+        return res;
+    }
+
+    // 1551. Minimum Operations to Make Array Equal
+
+    public int minOperations(int n) 
+    {
+        if(n%2==1)
+        {
+            n/=2;
+            return (n*(n+1));
+        }        
+        n/=2;
+        return n*n;
+    }
+
+    // 2419. Longest Subarray With Maximum Bitwise AND
+    public int longestSubarray(int[] nums) 
+    {
+        List<int[]> ans = new ArrayList<>();
+        int n = nums.length;
+        int i = 0;
+        int j = 0;
+        while(j < n)
+        {
+            while(j < n && nums[j] == nums[i])
+            {
+                j++;
+            }
+            ans.add(new int[]{nums[i],j-i});
+            i = j;
+        }
+        
+        // for(int[] ele : ans) System.out.println(Arrays.toString(ele));
+        
+        int res = 0;
+        int a = 0;
+        
+        for(int[]ele : ans)
+        {
+            if(ele[0] >= a)
+            {
+                if(a == ele[0]) res = Math.max(res,ele[1]);
+                else res = ele[1];
+                a = ele[0];
+                
+            }
+        }
+        
+        return res;
+    }
+
+
+    // 2420. Find All Good Indices
+    public List<Integer> goodIndices(int[] arr, int k) 
+    {
+        
+        if(k == 1)
+        {
+            List<Integer> ans = new ArrayList<>();
+            for(int i = 1;i<arr.length-1;i++) ans.add(i);
+            return ans;
+        }
+        
+        
+        int n = arr.length;
+        boolean[] left = new boolean[n];
+        boolean[] right = new boolean[n];
+        
+        int j = 1;
+        
+        
+        int count = k-1;
+        while(j < n)
+        {
+            
+            while(count > 0 && j < n)
+            {
+                if(arr[j] <= arr[j-1])
+                {
+                    count--;
+                    j++;
+                }
+                else break;
+            }
+            if(count == 0 && j<n) 
+            {
+                left[j] = true;
+                count++;
+            }
+            else 
+            {
+                count = k-1;
+                j++;
+            }
+        }
+        
+        int i = n-2;
+        count = k-1;
+        while(i >= 0)
+        {
+            while(count > 0 && i>=0)
+            {
+                if(arr[i] <= arr[i+1])
+                {
+                    count--;
+                    i--;
+                }
+                else break;
+            }
+            if(count == 0 && i>=0) 
+            {
+                right[i] = true;
+                count++;
+            }
+            else 
+            {
+                count = k-1;
+                i--;
+            }
+        }
+        
+        List<Integer> ans = new ArrayList<>();
+        for(int h = 0;h<n;h++)
+        {
+            if(left[h] && right[h]) ans.add(h);
+        }
+        // System.out.println(Arrays.toString(left));
+        // System.out.println(Arrays.toString(right));
+        return ans;
+        // System.out.println(Arrays.toString(left));
+        // System.out.println(Arrays.toString(right));
+        // return null;
+    }
+
+
+    // 926. Flip String to Monotone Increasing
+    // Prefix Sum Solution
+
+    // Basically we go through string and found out how much 1 before index much be 
+    // flipped to 0 and how much 0 after index need to be flipped to 1.
+    // adds them up and get min for result
+    // We Are going to find that perfect splitting point
+
+    public int minFlipsMonoIncr(String S) {
+        int N = S.length();
+        int[] P = new int[N + 1];
+        for (int i = 0; i < N; ++i)
+            P[i+1] = P[i] + (S.charAt(i) == '1' ? 1 : 0);
+
+        int ans = Integer.MAX_VALUE;
+        for (int j = 0; j <= N; ++j) {
+            ans = Math.min(ans, P[j] + N-j-(P[N]-P[j]));
+        }
+
+        return ans;
+    }
+
+
+
+
+    // 2104. Sum of Subarray Ranges
+    // Tedious Problem
+
+    
 }

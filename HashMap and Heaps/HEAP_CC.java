@@ -2,9 +2,9 @@ import java.util.*;
 import java.lang.Comparable;
 public class HEAP_CC
 {
-    public static class PriorityQueue < T>
+  public static class PriorityQueue <T>
   {
-    ArrayList< T> data;
+    ArrayList<T> data;
 
     public PriorityQueue()
     {
@@ -132,7 +132,6 @@ public class HEAP_CC
   public static void main(String[] args)
   {
     PriorityQueue< Student> pq = new PriorityQueue<>();
-
     pq.add(new Student(1, 180, 82));
     pq.add(new Student(2, 170, 81));
     pq.add(new Student(3, 200, 85));
