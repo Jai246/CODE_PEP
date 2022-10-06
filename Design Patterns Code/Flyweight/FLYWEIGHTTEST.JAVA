@@ -65,15 +65,14 @@ public class FlyWeightTest extends JFrame{
 	            long startTime = System.currentTimeMillis();
 	            
 	            
-	            for(int i=0; i < 100000; ++i) {
-	            	
+	            for(int i=0; i < 100000; ++i) 
+				{	
 	            	// 
 	            	// Uses rectangles stored in the HashMap to
 	            	// speed up the program
 	            	
 	            	MyRect rect = RectFactory.getRect(getRandColor());
-	                rect.draw(g, getRandX(), getRandY(), 
-	                		getRandX(), getRandY());
+	                rect.draw(g, getRandX(), getRandY(),getRandX(), getRandY());
 	                
 	            	// 
 	            	/*
@@ -120,5 +119,4 @@ public class FlyWeightTest extends JFrame{
 		return shapeColor[randInt]; 
 		
 	}
-	
 }
